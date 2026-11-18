@@ -19,3 +19,18 @@ test('every build has a unique id, a name, a known set-up and a theme', () => {
     assert.match(b.id, /^[a-z0-9-]+$/);
   }
 });
+
+test('each set-up has exactly 12 builds, at least three per theme', () => {
+  for (const setup of SETUP_IDS) {
+    const list = BUILDS.filter(b => b.setup === setup);
+    assert.equal(list.length, 12, setup);
+    for (const theme of Object.keys(THEMES)) assert.ok(list.filter(b => b.theme === theme).length >= 3, `${setup} ${theme}`);
+  }
+});
+
+test('only two-couch builds use a second couch', () => {
+  for (const b of BUILDS) {
+    const usesSecond = b.pieces.flat().some(p => p.couch === 2);
+    assert.equal(usesSecond, b.setup === 'two-couch', b.id);
+  }
+});
