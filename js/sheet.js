@@ -47,7 +47,12 @@ export function initSheet() {
   $('setup').addEventListener('change', () => { prefs.set('setup', $('setup').value); render(); });
   for (const id of ['kid', 'nug', 'nug2', 'chk']) {
     $(id).value = id === 'nug2' ? prefs.colors().nug2 : prefs.get(id);
-    $(id).addEventListener('input', () => { prefs.set(id, $(id).value); redrawSoon(); });
+    $(id).addEventListener('input', () => {
+      prefs.set(id, $(id).value);
+      // until the second couch has its own colour, its picker follows the first
+      if (id === 'nug' && !prefs.get('nug2')) $('nug2').value = $(id).value;
+      redrawSoon();
+    });
   }
   $('print').addEventListener('click', () => window.print());
   window.addEventListener('resize', fit);

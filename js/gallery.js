@@ -52,7 +52,12 @@ export function initGallery() {
   $('themes').addEventListener('change', e => { theme = e.target.value; renderGrid(); });
   for (const id of ['nug', 'nug2', 'chk']) {
     $(id).value = id === 'nug2' ? prefs.colors().nug2 : prefs.get(id);
-    $(id).addEventListener('input', () => { prefs.set(id, $(id).value); redrawSoon(); });
+    $(id).addEventListener('input', () => {
+      prefs.set(id, $(id).value);
+      // until the second couch has its own colour, its picker follows the first
+      if (id === 'nug' && !prefs.get('nug2')) $('nug2').value = $(id).value;
+      redrawSoon();
+    });
   }
   renderGrid();
 }
