@@ -3,10 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Couch Coach</title>
+<title>Couch Coach: build ideas for your play couch</title>
+<meta name="description" content="Build ideas for a play couch and round add-on: cars, forts, slides and more, in 3D and as a printable sheet.">
+<link rel="stylesheet" href="css/site.css">
 </head>
 <body>
-<h1>Couch Coach</h1>
-<p><a href="sheet.html">Printable sheet of builds</a></p>
+<div class="wrap">
+  <div class="top">
+    <h1>🛋️ Couch Coach</h1>
+    <a class="to-sheet" href="sheet.html">Printable sheet →</a>
+  </div>
+  <p class="pitch">Build ideas for your play couch and round add-on. Tap one to see it in 3D. Fits the Nugget and Chunk; not affiliated with their maker.</p>
+
+  <fieldset class="chips" id="owned"><legend>What do you own?</legend></fieldset>
+  <fieldset class="chips" id="themes"><legend>Theme</legend></fieldset>
+  <details class="colors">
+    <summary>Couch colors</summary>
+    <div class="row">
+      <label>Couch <input type="color" id="nug"></label>
+      <label id="nug2-row" hidden>Second couch <input type="color" id="nug2"></label>
+      <label>Round add-on <input type="color" id="chk"></label>
+    </div>
+  </details>
+
+  <p class="count" id="count" aria-live="polite"></p>
+  <main class="gallery" id="grid"></main>
+</div>
+<script type="module">
+  import { initGallery } from './js/gallery.js';
+  initGallery();
+</script>
 </body>
 </html>
