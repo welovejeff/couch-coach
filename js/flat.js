@@ -1,5 +1,6 @@
 // Flat isometric SVG renderer: turns a build's solids into shaded, depth-sorted tiles.
 import { solidsOf } from './pieces.js';
+import { esc } from './html.js';
 
 const COS = Math.cos(Math.PI / 6), SIN = 0.5, TILE = 7;
 const proj = p => [(p[0] - p[1]) * COS, (p[0] + p[1]) * SIN - p[2]];
@@ -182,7 +183,7 @@ export function drawBuild(build, pal) {
     stick += `<foreignObject x="${f(s[0] - size)}" y="${f(s[1] - size * 1.2)}" width="${size * 2}" height="${size * 1.5}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${size}px;line-height:1.3;text-align:center">${ch}</div></foreignObject>`;
   }
   const p = 5;
-  return `<svg viewBox="${f(x0 - p)} ${f(y0 - p)} ${f(x1 - x0 + 2 * p)} ${f(y1 - y0 + 2 * p)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${build.name}">
+  return `<svg viewBox="${f(x0 - p)} ${f(y0 - p)} ${f(x1 - x0 + 2 * p)} ${f(y1 - y0 + 2 * p)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(build.name)}">
     <style>path{stroke-width:.8px;stroke-linejoin:round;vector-effect:non-scaling-stroke}.ln{fill:none;stroke-width:1.5px;stroke-linecap:butt}</style>
     <polygon points="${rug.map(s => f(s[0]) + ',' + f(s[1])).join(' ')}" fill="#fff" stroke="#fff" stroke-width="10" stroke-linejoin="round" opacity=".85"/>
     ${out}${stick}</svg>`;

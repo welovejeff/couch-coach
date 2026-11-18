@@ -3,6 +3,7 @@ import { BUILDS } from './builds.js';
 import { canMake, SETUPS, SETUP_IDS, THEMES, untestedLabel } from './setups.js';
 import { drawBuild, palette } from './flat.js';
 import { browserPrefs } from './prefs.js';
+import { esc, oncePerFrame } from './html.js';
 
 // The builds to show for the visitor's choices; nothing chosen shows everything.
 export const visibleBuilds = (builds, { owned, theme }) => canMake(builds, owned).filter(b => !theme || b.theme === theme);
@@ -15,8 +16,6 @@ export const EMPTY_MESSAGE = 'No builds match those choices. Try another theme.'
 
 // A second couch colour only makes sense once the visitor owns two couches.
 export const showsSecondColor = owned => SETUPS[owned]?.couches === 2;
-
-const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 const chips = (name, options, current) => options.map(([value, text]) =>
   `<label><input type="radio" name="${name}" value="${value}"${value === current ? ' checked' : ''}><span>${esc(text)}</span></label>`).join('');
@@ -46,13 +45,14 @@ export function initGallery() {
     $('nug2-row').hidden = !showsSecondColor(owned);
   };
 
+  const redrawSoon = oncePerFrame(renderGrid);
   $('owned').insertAdjacentHTML('beforeend', chips('owned', [['', 'Show everything'], ...SETUP_IDS.map(id => [id, SETUPS[id].label])], prefs.get('setup')));
   $('themes').insertAdjacentHTML('beforeend', chips('theme', [['', 'All'], ...Object.entries(THEMES)], ''));
   $('owned').addEventListener('change', e => { prefs.set('setup', e.target.value); renderGrid(); });
   $('themes').addEventListener('change', e => { theme = e.target.value; renderGrid(); });
   for (const id of ['nug', 'nug2', 'chk']) {
     $(id).value = id === 'nug2' ? prefs.colors().nug2 : prefs.get(id);
-    $(id).addEventListener('input', () => { prefs.set(id, $(id).value); renderGrid(); });
+    $(id).addEventListener('input', () => { prefs.set(id, $(id).value); redrawSoon(); });
   }
   renderGrid();
 }

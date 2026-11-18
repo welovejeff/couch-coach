@@ -204,5 +204,3 @@ export const BUILDS = [
     second(tri(36, 33, 0, 'x'), tri(69, 33, 0, 'x')),
   ], [[62, 16.5, 34, '💥', 20]]),
 ];
-
-export const buildById = id => BUILDS.find(b => b.id === id);

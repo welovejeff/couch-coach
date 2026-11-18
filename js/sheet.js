@@ -2,9 +2,8 @@
 import { BUILDS } from './builds.js';
 import { drawBuild, palette } from './flat.js';
 import { browserPrefs } from './prefs.js';
-import { SETUPS, SETUP_IDS, DEFAULT_SETUP, untestedLabel } from './setups.js';
-
-const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+import { SETUPS, SETUP_IDS, DEFAULT_SETUP, THEMES, untestedLabel } from './setups.js';
+import { esc, oncePerFrame } from './html.js';
 
 // A stored choice wins; with none, the sheet assumes one couch plus the round add-on.
 export const sheetSetup = stored => SETUPS[stored] ? stored : DEFAULT_SETUP;
@@ -29,7 +28,7 @@ export function sheetHtml(builds, { kid, pal, setupId }) {
   return sheetPages(builds).map((list, pg) => `<article class="page">
       <header><span class="em">${pg ? '🚀' : '🛋️'}</span><h2>${sheetTitle(kid, pg)}</h2><span class="em">${pg ? '🚀' : '⭐'}</span></header>
       <div class="grid">${list.map((b, i) => card(b, pg * 6 + i)).join('')}</div>
-      <footer><span class="key"><span><i style="background:var(--go)"></i>Things that go</span><span><i style="background:var(--fort)"></i>Forts</span><span><i style="background:var(--climb)"></i>Climb &amp; slide</span><span>★ Color the star when you build it!</span></span>
+      <footer><span class="key">${Object.entries(THEMES).map(([id, name]) => `<span><i style="background:var(--${id})"></i>${esc(name)}</span>`).join('')}<span>★ Color the star when you build it!</span></span>
       <span>${footerLine(setupId)} · grown-up nearby</span></footer></article>`).join('');
 }
 
@@ -41,13 +40,14 @@ export function initSheet() {
     $('chk-row').hidden = !show.chk;
     $('pages').innerHTML = sheetHtml(sheetBuilds(BUILDS, setupId), { kid: prefs.get('kid').trim(), pal: palette(prefs.colors()), setupId });
   };
+  const redrawSoon = oncePerFrame(render);
   const fit = () => { $('pages').style.zoom = Math.min(1, (window.innerWidth - 32) / 816); };
   $('setup').innerHTML = SETUP_IDS.map(id => `<option value="${id}">${SETUPS[id].label}</option>`).join('');
   $('setup').value = sheetSetup(prefs.get('setup'));
   $('setup').addEventListener('change', () => { prefs.set('setup', $('setup').value); render(); });
   for (const id of ['kid', 'nug', 'nug2', 'chk']) {
     $(id).value = id === 'nug2' ? prefs.colors().nug2 : prefs.get(id);
-    $(id).addEventListener('input', () => { prefs.set(id, $(id).value); render(); });
+    $(id).addEventListener('input', () => { prefs.set(id, $(id).value); redrawSoon(); });
   }
   $('print').addEventListener('click', () => window.print());
   window.addEventListener('resize', fit);
