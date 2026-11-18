@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build · Couch Coach</title>
+<link rel="stylesheet" href="css/site.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three/three.module.js" } }</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1><a href="index.html">🛋️ Couch Coach</a></h1>
+    <a class="to-sheet" href="sheet.html">Printable sheet →</a>
+  </div>
+  <div class="build-head">
+    <a href="index.html">← All builds</a>
+    <h2 id="name"></h2>
+    <span class="untested" id="label"></span>
+  </div>
+  <div class="stage" id="stage">
+    <canvas id="view" aria-label="3D view of the build"></canvas>
+    <p class="note" id="loading">Loading 3D view…</p>
+  </div>
+  <div class="steps" id="steps">
+    <button id="back" type="button" aria-label="Previous step">←</button>
+    <span class="caption" id="caption" aria-live="polite"></span>
+    <button id="next" type="button" aria-label="Next step">→</button>
+    <button id="all" class="all" type="button">Show all</button>
+  </div>
+  <p class="hint" id="hint">Drag to spin. Pinch or scroll to zoom. Use the arrows to add one piece at a time.</p>
+</div>
+<script type="module">
+  import { initBuildPage } from './js/build-page.js';
+  initBuildPage();
+</script>
+</body>
+</html>
