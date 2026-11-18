@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couch Coach</title>
+<style>
+  :root {
+    --ink: #1b2440;
+    --vehicle: #2f7de1; --vehicle-bg: #e4f0ff;
+    --fort: #8a4fd3;    --fort-bg: #f1e7ff;
+    --climb: #ef7d1a;   --climb-bg: #ffeeda;
+    --round: "Arial Rounded MT Bold", ui-rounded, "SF Pro Rounded", "Chalkboard SE", "Comic Sans MS", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #dfe4ec; color: var(--ink); font-family: var(--round); }
+
+  /* ---------- toolbar (screen only) ---------- */
+  .bar {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center;
+    padding: 12px 18px; background: #fff; border-bottom: 2px solid #c9d1de;
+    font-family: system-ui, sans-serif; font-size: 14px;
+  }
+  .bar h1 { font-family: var(--round); font-size: 20px; margin: 0 8px 0 0; }
+  .bar label { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .bar input[type=text] { font: inherit; padding: 6px 10px; border: 2px solid #c9d1de; border-radius: 8px; width: 150px; }
+  .bar input[type=color] { width: 38px; height: 32px; padding: 0; border: 2px solid #c9d1de; border-radius: 8px; background: none; }
+  .bar button {
+    font-family: var(--round); font-size: 17px; color: #fff; background: #12a150;
+    border: 0; border-radius: 12px; padding: 10px 22px; cursor: pointer; margin-left: auto;
+  }
+  .bar button:hover { background: #0e8a44; }
+  .tip { flex-basis: 100%; margin: 0; color: #55607a; font-size: 13px; }
+
+  /* ---------- pages ---------- */
+  .pages { padding: 24px 16px 60px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  .page {
+    width: 8.5in; height: 11in; background: #fff; padding: 0.35in;
+    display: flex; flex-direction: column; gap: 0.14in;
+    box-shadow: 0 6px 24px rgba(20, 30, 60, .25); overflow: hidden;
+  }
+  .page header { display: flex; align-items: center; justify-content: center; gap: 0.2in; height: 0.72in; flex: none; }
+  .page header h2 { margin: 0; font-size: 34pt; line-height: 1; letter-spacing: .5px; text-align: center; white-space: nowrap; }
+  .page header .em { font-size: 30pt; }
+  .grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); gap: 0.16in; }
+  .card {
+    position: relative; min-height: 0; min-width: 0; display: flex; flex-direction: column;
+    border: 4px solid var(--c); background: var(--bg); border-radius: 0.24in; overflow: hidden;
+  }
+  .card.vehicle { --c: var(--vehicle); --bg: var(--vehicle-bg); }
+  .card.fort    { --c: var(--fort);    --bg: var(--fort-bg); }
+  .card.climb   { --c: var(--climb);   --bg: var(--climb-bg); }
+  .card .pic { flex: 1; min-height: 0; padding: 0.1in 0.3in 0.02in; }
+  .card svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .card .name {
+    flex: none; background: var(--c); color: #fff; font-size: 21pt; line-height: 1;
+    padding: 0.085in 0.1in 0.1in; text-align: center; white-space: nowrap;
+  }
+  .card .num {
+    position: absolute; top: 0.07in; left: 0.07in; width: 0.5in; height: 0.5in; border-radius: 50%;
+    background: var(--c); color: #fff; font-size: 22pt; display: grid; place-items: center; line-height: 1;
+  }
+  .card .star {
+    position: absolute; top: 0.07in; right: 0.07in; width: 0.5in; height: 0.5in; border-radius: 50%;
+    border: 3px dashed var(--c); background: #fff; color: var(--c); font-size: 20pt; display: grid; place-items: center; line-height: 1;
+  }
+  .page footer { flex: none; height: 0.2in; display: flex; justify-content: space-between; align-items: center;
+    font-family: system-ui, sans-serif; font-size: 7.5pt; color: #55607a; white-space: nowrap; }
+  .key { display: flex; gap: 0.13in; align-items: center; }
+  .key i { display: inline-block; width: 0.13in; height: 0.13in; border-radius: 50%; margin-right: 0.05in; vertical-align: -1px; }
+
+  @page { size: letter portrait; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .bar { display: none; }
+    .pages { padding: 0; gap: 0; display: block; zoom: 1 !important; }
+    .page { box-shadow: none; break-after: page; }
+    .page:last-child { break-after: auto; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <h1>🛋️ Couch Coach</h1>
+  <label>Builder's name <input type="text" id="kid" placeholder="e.g. Max" maxlength="14"></label>
+  <label>Nugget color <input type="color" id="nug"></label>
+  <label>Chunk color <input type="color" id="chk"></label>
+  <button id="print">🖨️ Print / Save PDF</button>
+  <p class="tip">In the print window: paper <b>US Letter</b>, <b>Two-sided</b> on (flip on long edge), scale 100%, background graphics on. To save a file instead, pick <b>Save as PDF</b>.</p>
+</div>
+
+<main class="pages" id="pages"></main>
+
+<script>
+/* =========================================================
+   Tiny isometric foam-block renderer.
+   Every piece is a 2D profile pushed along the x, y or z axis.
+   Units are inches. x runs down-right, y runs down-left, z is up.
+   ========================================================= */
+const COS = Math.cos(Math.PI / 6), SIN = 0.5, TILE = 7;
+const proj = p => [(p[0] - p[1]) * COS, (p[0] + p[1]) * SIN - p[2]];
+const LIGHT = [0.24, 0.52, 0.82];
+
+function clipToCell(poly, x0, y0, x1, y1) {
+  const planes = [[1, 0, x0], [-1, 0, -x1], [0, 1, y0], [0, -1, -y1]];
+  let out = poly;
+  for (const [a, b, c] of planes) {
+    const inp = out; out = [];
+    for (let i = 0; i < inp.length; i++) {
+      const p = inp[i], q = inp[(i + 1) % inp.length];
+      const dp = a * p[0] + b * p[1] - c, dq = a * q[0] + b * q[1] - c;
+      if (dp >= 0) out.push(p);
+      if ((dp >= 0) !== (dq >= 0)) { const k = dp / (dp - dq); out.push([p[0] + k * (q[0] - p[0]), p[1] + k * (q[1] - p[1])]); }
+    }
+    if (!out.length) break;
+  }
+  return out;
+}
+
+function extrude({ profile, hole, axis, o, len, role, smooth }) {
+  const map = (t, u, v) => axis === 'x' ? [o[0] + t, o[1] + u, o[2] + v] : axis === 'y' ? [o[0] + u, o[1] + t, o[2] + v] : [o[0] + u, o[1] + v, o[2] + t];
+  const dir = (t, u, v) => axis === 'x' ? [t, u, v] : axis === 'y' ? [u, t, v] : [u, v, t];
+  const seen = n => n[0] + n[1] + n[2] > 1e-6;
+  const tiles = [];
+  const c = profile.reduce((s, p) => [s[0] + p[0] / profile.length, s[1] + p[1] / profile.length], [0, 0]);
+
+  function sides(poly, inward) {
+    const n = poly.length, norms = [], vis = [];
+    for (let i = 0; i < n; i++) {
+      const a = poly[i], b = poly[(i + 1) % n];
+      let nu = b[1] - a[1], nv = -(b[0] - a[0]);
+      const l = Math.hypot(nu, nv) || 1; nu /= l; nv /= l;
+      const dot = nu * ((a[0] + b[0]) / 2 - c[0]) + nv * ((a[1] + b[1]) / 2 - c[1]);
+      if ((dot < 0) !== inward) { nu = -nu; nv = -nv; }
+      norms[i] = dir(0, nu, nv); vis[i] = seen(norms[i]);
+    }
+    for (let i = 0; i < n; i++) {
+      if (!vis[i]) continue;
+      const a = poly[i], b = poly[(i + 1) % n];
+      const su = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / TILE));
+      const st = Math.max(1, Math.ceil(len / TILE));
+      const P = (s, j) => map(len * j / st, a[0] + (b[0] - a[0]) * s / su, a[1] + (b[1] - a[1]) * s / su);
+      const edgeA = !smooth || (!inward && !vis[(i + n - 1) % n]);
+      const edgeB = !smooth || (!inward && !vis[(i + 1) % n]);
+      for (let s = 0; s < su; s++) for (let j = 0; j < st; j++) {
+        const edges = [];
+        if (j === 0) edges.push([P(s, 0), P(s + 1, 0)]);
+        if (j === st - 1) edges.push([P(s, st), P(s + 1, st)]);
+        if (s === 0 && edgeA) edges.push([P(0, j), P(0, j + 1)]);
+        if (s === su - 1 && edgeB) edges.push([P(su, j), P(su, j + 1)]);
+        tiles.push({ pts: [P(s, j), P(s + 1, j), P(s + 1, j + 1), P(s, j + 1)], n: norms[i], edges, role });
+      }
+    }
+  }
+  sides(profile, false);
+  if (hole) sides(hole, true);
+
+  const onRim = (p, q) => profile.some((a, i) => {
+    const b = profile[(i + 1) % profile.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+    const d = r => Math.abs((b[0] - a[0]) * (r[1] - a[1]) - (b[1] - a[1]) * (r[0] - a[0])) / l;
+    return d(p) < 1e-6 && d(q) < 1e-6;
+  });
+  for (const [t, n] of [[0, dir(-1, 0, 0)], [len, dir(1, 0, 0)]]) {
+    if (!seen(n)) continue;
+    if (hole) {
+      for (let i = 0; i < profile.length; i++) {
+        const j = (i + 1) % profile.length;
+        const A = map(t, ...profile[i]), B = map(t, ...profile[j]), Cc = map(t, ...hole[j]), D = map(t, ...hole[i]);
+        tiles.push({ pts: [A, B, Cc, D], n, edges: [[A, B], [Cc, D]], role });
+      }
+    } else {
+      const us = profile.map(p => p[0]), vs = profile.map(p => p[1]);
+      const u0 = Math.min(...us), u1 = Math.max(...us), v0 = Math.min(...vs), v1 = Math.max(...vs);
+      const nu = Math.max(1, Math.ceil((u1 - u0) / TILE)), nv = Math.max(1, Math.ceil((v1 - v0) / TILE));
+      for (let i = 0; i < nu; i++) for (let j = 0; j < nv; j++) {
+        const cell = clipToCell(profile, u0 + (u1 - u0) * i / nu, v0 + (v1 - v0) * j / nv, u0 + (u1 - u0) * (i + 1) / nu, v0 + (v1 - v0) * (j + 1) / nv);
+        if (cell.length < 3) continue;
+        const edges = [];
+        cell.forEach((p, k) => { const q = cell[(k + 1) % cell.length]; if (onRim(p, q)) edges.push([map(t, ...p), map(t, ...q)]); });
+        tiles.push({ pts: cell.map(p => map(t, ...p)), n, edges, role });
+      }
+    }
+  }
+  return tiles;
+}
+
+/* ---------- the real pieces ---------- */
+const R = 16.5, PUCK_R = 10.875, TRI = [[0, 0], [15, 0], [7.5, 13.5]];
+const circle = r => Array.from({ length: 36 }, (_, i) => [r * Math.cos(i * Math.PI / 18), r * Math.sin(i * Math.PI / 18)]);
+
+const box  = (x, y, z, w, d, h, role) => extrude({ profile: [[0, 0], [w, 0], [w, d], [0, d]], axis: 'z', o: [x, y, z], len: h, role });
+const baseFlat = (x, y, z, along) => along === 'x' ? box(x, y, z, 66, 33, 5.5, 'base') : box(x, y, z, 33, 66, 5.5, 'base');
+const cushFlat = (x, y, z, along) => along === 'x' ? box(x, y, z, 66, 33, 3.25, 'cush') : box(x, y, z, 33, 66, 3.25, 'cush');
+const baseFolded = (x, y, z) => [...box(x, y, z, 33, 33, 5.5, 'base'), ...box(x, y, z + 5.5, 33, 33, 5.5, 'base')];
+const cushFolded = (x, y, z) => [...box(x, y, z, 33, 33, 3.25, 'cush'), ...box(x, y, z + 3.25, 33, 33, 3.25, 'cush')];
+// base standing on its long edge, bent into a corner at (x, y)
+const baseCorner = (x, y) => [...box(x, y - 5.5, 0, 33, 5.5, 33, 'base'), ...box(x - 5.5, y, 0, 5.5, 33, 33, 'base')];
+// triangle pillow: a tent running along x or y, or stood on end ('z')
+const tri  = (x, y, z, axis) => extrude({ profile: TRI, axis, o: [x, y, z], len: 33, role: 'tri' });
+const puck = (cx, cy, z) => extrude({ profile: circle(PUCK_R), axis: 'z', o: [cx, cy, z], len: 5.5, role: 'puck', smooth: true });
+const pad  = (cx, cy, z) => extrude({ profile: circle(R), axis: 'z', o: [cx, cy, z], len: 3.25, role: 'pad', smooth: true });
+const hoop = (cx, cy, z) => extrude({ profile: circle(R), hole: circle(PUCK_R), axis: 'z', o: [cx, cy, z], len: 11, role: 'hoop', smooth: true });
+// hoop stood on its rim, hole facing along x; (x, cy) is the back face, z is what it sits on
+const hoopUp = (x, cy, z) => extrude({ profile: circle(R), hole: circle(PUCK_R), axis: 'x', o: [x, cy, z + R], len: 11, role: 'hoop', smooth: true });
+// puck stood on its rim as a wheel, facing along y
+const wheel = (cx, y) => extrude({ profile: circle(PUCK_R), axis: 'y', o: [cx, y, PUCK_R], len: 5.5, role: 'puck', smooth: true });
+const ottoman = (cx, cy, z) => [...hoop(cx, cy, z), ...puck(cx, cy, z), ...puck(cx, cy, z + 5.5), ...pad(cx, cy, z + 11)];
+// a slab leaning from (a0, z0) to (a1, z1); 'x' slopes along x and is 33 wide in y, 'y' the other way
+function lean(along, a0, z0, a1, z1, at, thick, side, role) {
+  const l = Math.hypot(a1 - a0, z1 - z0), nx = -(z1 - z0) / l * side * thick, nz = (a1 - a0) / l * side * thick;
+  const profile = [[a0, z0], [a1, z1], [a1 + nx, z1 + nz], [a0 + nx, z0 + nz]];
+  return extrude({ profile, axis: along === 'x' ? 'y' : 'x', o: along === 'x' ? [0, at, 0] : [at, 0, 0], len: 33, role });
+}
+
+/* ---------- the 12 builds ---------- */
+const BUILDS = [
+  { name: 'Race Car', theme: 'vehicle', stickers: [[-6, 16, 30, '🏁', 20]], make: () => [
+      baseFlat(0, 0, 0, 'x'), cushFlat(0, 0, 5.5, 'x'),
+      tri(0, 0, 8.75, 'y'), tri(51, 0, 8.75, 'y'),
+      wheel(14, 33), wheel(52, 33),
+      hoop(82.5, 16.5, 0), pad(82.5, 16.5, 11) ] },
+  { name: 'Castle', theme: 'fort', stickers: [[2, 40, 44, '🚩', 16], [36.5, 40, 44, '🚩', 16]], make: () => [
+      baseCorner(0, 0),
+      hoopUp(33, 16.5, 0), cushFlat(44, 0, 0, 'x'),
+      tri(-5.5, 33, 0, 'z'), tri(29, 33, 0, 'z'),
+      pad(16.5, 16.5, 0), puck(13, 13, 3.25), puck(13, 13, 8.75) ] },
+  { name: 'Big Slide', theme: 'climb', stickers: [[92, 16, 12, '💨', 16]], make: () => [
+      baseFolded(0, 0, 0), box(0, 0, 11, 33, 33, 3.25, 'cush'),
+      lean('x', 33, 11, 64.1, 0, 0, 3.25, 1, 'cush'),
+      ottoman(16.5, 49.5, 0).filter(t => t.role !== 'puck'), puck(16.5, 49.5, 0), puck(16.5, 78, 0),
+      tri(33, -15, 0, 'x'), tri(66, 0, 0, 'y') ] },
+  { name: 'Pirate Ship', theme: 'vehicle', stickers: [[49.5, 115.5, 20, '💎', 16], [14, 16.5, 50, '🏴‍☠️', 18]], make: () => [
+      baseFlat(0, 0, 0, 'x'), tri(66, 0, 0, 'y'), tri(-15, 0, 0, 'y'),
+      hoopUp(8, 16.5, 5.5), puck(42, 16.5, 5.5),
+      cushFlat(33, 33, 0, 'y'), pad(49.5, 115.5, 0), puck(49.5, 115.5, 3.25) ] },
+  { name: 'Secret Hideout', theme: 'fort', stickers: [[16, 18, 44, '🤫', 16]], make: () => [
+      lean('y', 0, 0, 18, 27.66, 0, 5.5, 1, 'base'), lean('y', 36, 0, 18, 27.66, 0, 5.5, -1, 'base'),
+      cushFlat(-20, 1.5, 0, 'x'), hoopUp(33, 18, 3.25),
+      tri(0, -20, 0, 'x'), tri(0, 41, 0, 'x'),
+      puck(60, 18, 0), puck(84, 18, 0), pad(113, 18, 0) ] },
+  { name: 'Mountain Climb', theme: 'climb', stickers: [[33, 16.5, 38, '🚩', 16]], make: () => [
+      baseFlat(0, 0, 0, 'x'), cushFolded(16.5, 0, 5.5),
+      tri(0, 0, 5.5, 'y'), tri(51, 0, 5.5, 'y'),
+      pad(33, 16.5, 12), puck(33, 16.5, 15.25), puck(33, 16.5, 20.75),
+      hoop(33, 53, 0) ] },
+  { name: 'Choo-Choo Train', theme: 'vehicle', stickers: [[96, 16.5, 36, '💨', 18]], make: () => [
+      cushFolded(0, 0, 0), pad(16.5, 16.5, 6.5),
+      hoop(53.5, 16.5, 0),
+      baseFolded(74, 0, 0), tri(74, 0, 11, 'y'), puck(96, 16.5, 11), puck(96, 16.5, 16.5),
+      tri(107, 0, 0, 'y') ] },
+  { name: 'Clubhouse', theme: 'fort', stickers: [[11, 11, 62, '🏠', 16]], make: () => [
+      baseCorner(0, 0), tri(12.5, 14, 0, 'z'),
+      cushFolded(-5.5, -5.5, 33), tri(-5.5, 3.5, 39.5, 'x'),
+      hoop(52, 10, 0), pad(52, 10, 11), puck(24, 50, 0), puck(54, 46, 0) ] },
+  { name: 'Hot Lava Course', theme: 'climb', stickers: [[8, 87, 22, '🏁', 20], [50, 50, 6, '🌋', 18]], make: () => [
+      tri(0, 0, 0, 'y'), puck(30, 16.5, 0), puck(56, 16.5, 0), pad(86, 16.5, 0),
+      baseFlat(69.5, 38, 0, 'y'),
+      hoopUp(52, 87.5, 0), tri(30, 71, 0, 'y'), cushFolded(-8, 71, 0) ] },
+  { name: 'Airplane', theme: 'vehicle', stickers: [[100, 16.5, 30, '☁️', 20]], make: () => [
+      baseFlat(0, 0, 0, 'x'), cushFlat(20, -16.5, 5.5, 'y'),
+      puck(36.5, -10.875, 0), puck(36.5, 43.875, 0),
+      hoop(36.5, 16.5, 8.75), tri(0, 0, 5.5, 'y'), tri(66, 0, 0, 'y'),
+      pad(100, 16.5, 0) ] },
+  { name: 'Royal Throne', theme: 'fort', stickers: [[16.5, 16.5, 30, '👑', 18]], make: () => [
+      baseCorner(0, 0), ottoman(16.5, 16.5, 0),
+      tri(0, 33, 0, 'x'), tri(33, 0, 0, 'y'),
+      cushFlat(48, 0, 0, 'x') ] },
+  { name: 'Big Jump', theme: 'climb', stickers: [[62, 16.5, 30, '💥', 20]], make: () => [
+      ottoman(16.5, 16.5, 0),
+      baseFlat(36, 0, 0, 'x'), cushFlat(36, 0, 5.5, 'x'),
+      tri(102, 0, 0, 'y'), tri(52, -15, 0, 'x') ] },
+];
+
+/* ---------- color ---------- */
+const hex2rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const rgb2hex = c => '#' + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+function palette(nug, chk) {
+  const n = hex2rgb(nug), c = hex2rgb(chk), W = [255, 255, 255], K = [20, 24, 48];
+  return { base: n, cush: mix(n, W, 0.22), tri: mix(n, K, 0.14), hoop: c, pad: mix(c, W, 0.28), puck: mix(c, K, 0.16) };
+}
+
+/* ---------- draw one build ---------- */
+// Back-to-front order: for every pair of tiles that overlap on screen, work out which
+// one sits behind the other's plane, then sort so nothing is painted before what it hides.
+function overlap2d(A, B) {
+  for (const P of [A, B]) for (let i = 0; i < P.length; i++) {
+    const a = P[i], b = P[(i + 1) % P.length], nx = b[1] - a[1], ny = a[0] - b[0];
+    let a0 = 1e9, a1 = -1e9, b0 = 1e9, b1 = -1e9;
+    for (const p of A) { const d = nx * p[0] + ny * p[1]; a0 = Math.min(a0, d); a1 = Math.max(a1, d); }
+    for (const p of B) { const d = nx * p[0] + ny * p[1]; b0 = Math.min(b0, d); b1 = Math.max(b1, d); }
+    const tol = 1e-4 * Math.hypot(nx, ny);
+    if (a1 <= b0 + tol || b1 <= a0 + tol) return false;
+  }
+  return true;
+}
+function sortTiles(tiles) {
+  const E = 1e-4;
+  tiles.forEach(t => {
+    t.depth = t.pts.reduce((s, p) => s + p[0] + p[1] + p[2], 0) / t.pts.length;
+    t.s = t.pts.map(proj);
+    t.d = t.n[0] * t.pts[0][0] + t.n[1] * t.pts[0][1] + t.n[2] * t.pts[0][2];
+    const xs = t.s.map(p => p[0]), ys = t.s.map(p => p[1]);
+    t.bb = [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+    t.after = []; t.wait = 0;
+  });
+  const side = (t, p) => t.n[0] * p[0] + t.n[1] * p[1] + t.n[2] * p[2] - t.d;
+  const behind = (a, b) => a.pts.every(p => side(b, p) <= E) || b.pts.every(p => side(a, p) >= -E);
+  for (let i = 0; i < tiles.length; i++) for (let j = i + 1; j < tiles.length; j++) {
+    const a = tiles[i], b = tiles[j];
+    if (a.bb[2] <= b.bb[0] || b.bb[2] <= a.bb[0] || a.bb[3] <= b.bb[1] || b.bb[3] <= a.bb[1]) continue;
+    const ab = behind(a, b), ba = behind(b, a);
+    if (ab === ba || !overlap2d(a.s, b.s)) continue;
+    if (ab) { a.after.push(b); b.wait++; } else { b.after.push(a); a.wait++; }
+  }
+  const left = [...tiles].sort((a, b) => a.depth - b.depth), out = [];
+  while (left.length) {
+    let k = left.findIndex(t => t.wait === 0);
+    if (k < 0) k = 0;
+    const t = left.splice(k, 1)[0];
+    out.push(t); t.after.forEach(u => u.wait--);
+  }
+  return out;
+}
+
+function drawBuild(build, pal) {
+  const tiles = build.tiles || (build.tiles = sortTiles(build.make().flat()));
+
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, fx0 = 1e9, fy0 = 1e9, fx1 = -1e9, fy1 = -1e9;
+  const grow = (sx, sy) => { x0 = Math.min(x0, sx); x1 = Math.max(x1, sx); y0 = Math.min(y0, sy); y1 = Math.max(y1, sy); };
+  const f = v => v.toFixed(1);
+  let out = '';
+  for (const t of tiles) {
+    const b = Math.max(0.5, Math.min(1.04, 0.58 + 0.5 * (t.n[0] * LIGHT[0] + t.n[1] * LIGHT[1] + t.n[2] * LIGHT[2])));
+    const col = pal[t.role], fill = rgb2hex(b <= 1 ? col.map(v => v * b) : mix(col, [255, 255, 255], (b - 1) * 2));
+    const d = t.pts.map((p, i) => { const s = proj(p); grow(s[0], s[1]); fx0 = Math.min(fx0, p[0]); fx1 = Math.max(fx1, p[0]); fy0 = Math.min(fy0, p[1]); fy1 = Math.max(fy1, p[1]); return (i ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join('') + 'Z';
+    out += `<path d="${d}" fill="${fill}" stroke="${fill}"/>`;
+    if (t.edges.length) {
+      const e = t.edges.map(([p, q]) => { const a = proj(p), c = proj(q); return `M${f(a[0])} ${f(a[1])}L${f(c[0])} ${f(c[1])}`; }).join('');
+      out += `<path d="${e}" class="ln" stroke="${rgb2hex(mix(col, [20, 24, 48], 0.6))}"/>`;
+    }
+  }
+  const m = 9, rug = [[fx0 - m, fy0 - m, 0], [fx1 + m, fy0 - m, 0], [fx1 + m, fy1 + m, 0], [fx0 - m, fy1 + m, 0]].map(proj);
+  let stick = '';
+  for (const [x, y, z, ch, size] of build.stickers || []) {
+    const s = proj([x, y, z]); grow(s[0] - size * 0.7, s[1] - size); grow(s[0] + size * 0.7, s[1] + size * 0.3);
+    // emoji go in as HTML: emoji inside SVG <text> makes Chrome's PDF export fail
+    stick += `<foreignObject x="${f(s[0] - size)}" y="${f(s[1] - size * 1.2)}" width="${size * 2}" height="${size * 1.5}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${size}px;line-height:1.3;text-align:center">${ch}</div></foreignObject>`;
+  }
+  const p = 5;
+  return `<svg viewBox="${f(x0 - p)} ${f(y0 - p)} ${f(x1 - x0 + 2 * p)} ${f(y1 - y0 + 2 * p)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${build.name}">
+    <style>path{stroke-width:.8px;stroke-linejoin:round;vector-effect:non-scaling-stroke}.ln{fill:none;stroke-width:1.5px;stroke-linecap:butt}</style>
+    <polygon points="${rug.map(s => f(s[0]) + ',' + f(s[1])).join(' ')}" fill="#fff" stroke="#fff" stroke-width="10" stroke-linejoin="round" opacity=".85"/>
+    ${out}${stick}</svg>`;
+}
+
+/* ---------- page assembly ---------- */
+const $ = id => document.getElementById(id);
+const store = { get: k => { try { return localStorage.getItem('cc-' + k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem('cc-' + k, v); } catch {} } };
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function render() {
+  const kid = $('kid').value.trim(), pal = palette($('nug').value, $('chk').value);
+  const title = i => i === 0 ? (kid ? `${esc(kid)}’s Couch Builds` : 'My Couch Builds') : 'More Couch Builds!';
+  const card = (b, i) => `<section class="card ${b.theme}"><div class="num">${i + 1}</div><div class="star">★</div>
+      <div class="pic">${drawBuild(b, pal)}</div><div class="name">${b.name}</div></section>`;
+  $('pages').innerHTML = [0, 1].map(pg => `<article class="page">
+      <header><span class="em">${pg ? '🚀' : '🛋️'}</span><h2>${title(pg)}</h2><span class="em">${pg ? '🚀' : '⭐'}</span></header>
+      <div class="grid">${BUILDS.slice(pg * 6, pg * 6 + 6).map((b, i) => card(b, pg * 6 + i)).join('')}</div>
+      <footer><span class="key"><span><i style="background:var(--vehicle)"></i>Things that go</span><span><i style="background:var(--fort)"></i>Forts</span><span><i style="background:var(--climb)"></i>Climb &amp; slide</span><span>★ Color the star when you build it!</span></span>
+      <span>1 Nugget + 1 Chunk · grown-up nearby for climbs and jumps</span></footer></article>`).join('');
+}
+function fit() { $('pages').style.zoom = Math.min(1, (window.innerWidth - 32) / 816); }
+
+$('kid').value = store.get('kid') || '';
+$('nug').value = store.get('nug') || '#3f86d6';
+$('chk').value = store.get('chk') || '#f4b63a';
+for (const id of ['kid', 'nug', 'chk']) $(id).addEventListener('input', () => { store.set(id, $(id).value); render(); });
+$('print').addEventListener('click', () => window.print());
+window.addEventListener('resize', fit);
+fit(); render();
+</script>
+</body>
+</html>
