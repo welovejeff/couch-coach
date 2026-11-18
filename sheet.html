@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Printable sheet · Couch Coach</title>
+<link rel="stylesheet" href="css/sheet.css">
+</head>
+<body>
+
+<div class="bar">
+  <h1>🛋️ Couch Coach</h1>
+  <a href="index.html">← All builds</a>
+  <label>Builder's name <input type="text" id="kid" placeholder="e.g. Max" maxlength="14"></label>
+  <label>Couch color <input type="color" id="nug"></label>
+  <label>Round add-on color <input type="color" id="chk"></label>
+  <button id="print">🖨️ Print / Save PDF</button>
+  <p class="tip">In the print window: paper <b>US Letter</b>, <b>Two-sided</b> on (flip on long edge), scale 100%, background graphics on. To save a file instead, pick <b>Save as PDF</b>.</p>
+</div>
+
+<main class="pages" id="pages"></main>
+
+<script type="module">
+  import { initSheet } from './js/sheet.js';
+  initSheet();
+</script>
+</body>
+</html>

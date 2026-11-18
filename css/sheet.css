@@ -1,0 +1,82 @@
+:root {
+  --ink: #1b2440;
+  --go: #2f7de1; --go-bg: #e4f0ff;
+  --fort: #8a4fd3; --fort-bg: #f1e7ff;
+  --climb: #ef7d1a; --climb-bg: #ffeeda;
+  --round: "Arial Rounded MT Bold", ui-rounded, "SF Pro Rounded", "Chalkboard SE", "Comic Sans MS", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: #dfe4ec; color: var(--ink); font-family: var(--round); }
+
+/* ---------- toolbar (screen only) ---------- */
+.bar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center;
+  padding: 12px 18px; background: #fff; border-bottom: 2px solid #c9d1de;
+  font-family: system-ui, sans-serif; font-size: 14px;
+}
+.bar h1 { font-family: var(--round); font-size: 20px; margin: 0 8px 0 0; }
+.bar a { color: var(--go); font-weight: 600; }
+.bar label { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.bar input[type=text], .bar select { font: inherit; padding: 6px 10px; border: 2px solid #c9d1de; border-radius: 8px; }
+.bar input[type=text] { width: 150px; }
+.bar input[type=color] { width: 38px; height: 32px; padding: 0; border: 2px solid #c9d1de; border-radius: 8px; background: none; }
+.bar button {
+  font-family: var(--round); font-size: 17px; color: #fff; background: #12a150;
+  border: 0; border-radius: 12px; padding: 10px 22px; cursor: pointer; margin-left: auto;
+}
+.bar button:hover { background: #0e8a44; }
+.bar [hidden] { display: none; }
+.tip { flex-basis: 100%; margin: 0; color: #55607a; font-size: 13px; }
+
+/* ---------- pages ---------- */
+.pages { padding: 24px 16px 60px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.page {
+  width: 8.5in; height: 11in; background: #fff; padding: 0.35in;
+  display: flex; flex-direction: column; gap: 0.14in;
+  box-shadow: 0 6px 24px rgba(20, 30, 60, .25); overflow: hidden;
+}
+.page header { display: flex; align-items: center; justify-content: center; gap: 0.2in; height: 0.72in; flex: none; }
+.page header h2 { margin: 0; font-size: 34pt; line-height: 1; letter-spacing: .5px; text-align: center; white-space: nowrap; }
+.page header .em { font-size: 30pt; }
+.grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); gap: 0.16in; }
+.card {
+  position: relative; min-height: 0; min-width: 0; display: flex; flex-direction: column;
+  border: 4px solid var(--c); background: var(--bg); border-radius: 0.24in; overflow: hidden;
+}
+.card.go    { --c: var(--go);    --bg: var(--go-bg); }
+.card.fort  { --c: var(--fort);  --bg: var(--fort-bg); }
+.card.climb { --c: var(--climb); --bg: var(--climb-bg); }
+.card .pic { flex: 1; min-height: 0; padding: 0.1in 0.3in 0.02in; }
+.card svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.card .name {
+  flex: none; background: var(--c); color: #fff; font-size: 21pt; line-height: 1;
+  padding: 0.085in 0.1in 0.1in; text-align: center; white-space: nowrap;
+}
+.card .num {
+  position: absolute; top: 0.07in; left: 0.07in; width: 0.5in; height: 0.5in; border-radius: 50%;
+  background: var(--c); color: #fff; font-size: 22pt; display: grid; place-items: center; line-height: 1;
+}
+.card .star {
+  position: absolute; top: 0.07in; right: 0.07in; width: 0.5in; height: 0.5in; border-radius: 50%;
+  border: 3px dashed var(--c); background: #fff; color: var(--c); font-size: 20pt; display: grid; place-items: center; line-height: 1;
+}
+.card .untested {
+  position: absolute; left: 0.1in; bottom: 0.52in; font-family: system-ui, sans-serif; font-size: 7pt;
+  color: #55607a; background: rgba(255, 255, 255, .8); border-radius: 0.05in; padding: 0 0.04in;
+}
+.page footer { flex: none; height: 0.2in; display: flex; justify-content: space-between; align-items: center;
+  font-family: system-ui, sans-serif; font-size: 7.5pt; color: #55607a; white-space: nowrap; }
+.key { display: flex; gap: 0.13in; align-items: center; }
+.key i { display: inline-block; width: 0.13in; height: 0.13in; border-radius: 50%; margin-right: 0.05in; vertical-align: -1px; }
+
+@page { size: letter portrait; margin: 0; }
+@media print {
+  body { background: #fff; }
+  .bar { display: none; }
+  .pages { padding: 0; gap: 0; display: block; zoom: 1 !important; }
+  .page { box-shadow: none; break-after: page; }
+  .page:last-child { break-after: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
