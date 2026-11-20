@@ -1,82 +1,189 @@
-:root {
-  --ink: #1b2440;
-  --go: #2f7de1; --go-bg: #e4f0ff;
-  --fort: #8a4fd3; --fort-bg: #f1e7ff;
-  --climb: #ef7d1a; --climb-bg: #ffeeda;
-  --round: "Arial Rounded MT Bold", ui-rounded, "SF Pro Rounded", "Chalkboard SE", "Comic Sans MS", system-ui, sans-serif;
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; }
-body { background: #dfe4ec; color: var(--ink); font-family: var(--round); }
+/* The printable sheet page. Tokens, buttons, chips and panels come from brand.css.
+   The paper (.page) is laid out at its real printed size in inches and points, then shrunk on
+   screen with zoom. Its width, height and the @page size are set by js/sheet.js from the paper choice. */
 
-/* ---------- toolbar (screen only) ---------- */
-.bar {
-  position: sticky; top: 0; z-index: 5;
-  display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center;
-  padding: 12px 18px; background: #fff; border-bottom: 2px solid #c9d1de;
-  font-family: system-ui, sans-serif; font-size: 14px;
-}
-.bar h1 { font-family: var(--round); font-size: 20px; margin: 0 8px 0 0; }
-.bar a { color: var(--go); font-weight: 600; }
-.bar label { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.bar input[type=text], .bar select { font: inherit; padding: 6px 10px; border: 2px solid #c9d1de; border-radius: 8px; }
-.bar input[type=text] { width: 150px; }
-.bar input[type=color] { width: 38px; height: 32px; padding: 0; border: 2px solid #c9d1de; border-radius: 8px; background: none; }
-.bar button {
-  font-family: var(--round); font-size: 17px; color: #fff; background: #12a150;
-  border: 0; border-radius: 12px; padding: 10px 22px; cursor: pointer; margin-left: auto;
-}
-.bar button:hover { background: #0e8a44; }
-.bar [hidden] { display: none; }
-.tip { flex-basis: 100%; margin: 0; color: #55607a; font-size: 13px; }
+body.sheet-page { padding-bottom: 84px; overflow-x: hidden; }
+body.sheet-page.asking { padding-bottom: 0; }
 
-/* ---------- pages ---------- */
-.pages { padding: 24px 16px 60px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.intro { margin: 14px 0 16px; }
+.intro h1 { font-size: 28px; }
+.intro p { color: var(--stone); margin-top: 4px; }
+
+/* ---------- the one question, and the "use this sheet?" offer ---------- */
+.ask, .offer { margin-bottom: 16px; }
+.ask h2, .offer h2 { font-size: 22px; }
+.ask p, .offer p { margin: 6px 0 14px; max-width: 60ch; }
+.offer { border: 2px solid var(--ink); }
+.offer .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- layout: panels scroll with the page; on desktop they sit beside the paper ---------- */
+.layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.panel h2 { font-size: 20px; margin-bottom: 12px; }
+.panel h3 { font-size: 16px; margin: 0 0 7px; }
+.lab { display: block; font-weight: 700; margin-bottom: 6px; }
+.lab span { font-weight: 400; color: var(--stone); }
+.settings input[type=text] { width: 100%; max-width: 320px; }
+.help { margin-top: 6px; }
+.field { margin-bottom: 16px; }
+.chip small { font-weight: 400; font-size: 13px; opacity: .8; }
+
+.preview { min-width: 0; }
+.pv-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 10px; }
+.pv-head b { display: block; font-family: var(--display); font-weight: 600; font-size: 18px; }
+.pv-head .acts { display: flex; gap: 8px; }
+.desk { background: var(--seam); border-radius: 22px; padding: 12px; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+.slot { min-width: 0; }
+.side { font-size: 13px; font-weight: 700; color: var(--ink); margin: 0 0 6px; }
+.side span { font-weight: 400; color: var(--stone); }
+
+.checks { list-style: none; margin: 0; padding: 0; border: 1px solid var(--seam); border-radius: 14px; background: #fff; }
+.checks li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 12px; font-size: 14.5px; }
+.checks li + li { border-top: 1px solid var(--seam); }
+.checks b { text-align: right; }
+.printrow { display: grid; gap: 8px; margin-top: 14px; }
+.tip { margin-top: 6px; font-size: 14.5px; }
+.tip summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; width: fit-content; text-decoration: underline; text-underline-offset: 2px; }
+.tip p { margin: 0 0 8px; color: var(--stone); }
+.sendrow { display: grid; gap: 8px; margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--seam); }
+.sendrow .btn { justify-self: start; }
+
+/* ---------- one-line bar on a phone: summary and Print ---------- */
+.printbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--paper); border-top: 1px solid var(--seam); padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+}
+.printbar div { min-width: 0; font-size: 13px; line-height: 1.3; color: var(--stone); }
+.printbar b { display: block; font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--ink); }
+.printbar b, .printbar span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.printbar .btn { flex: none; padding: 0 26px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 40; width: max-content; max-width: calc(100vw - 32px);
+  background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 22px; font-size: 14.5px; text-align: center;
+}
+
+/* ---------- the paper ---------- */
 .page {
-  width: 8.5in; height: 11in; background: #fff; padding: 0.35in;
-  display: flex; flex-direction: column; gap: 0.14in;
-  box-shadow: 0 6px 24px rgba(20, 30, 60, .25); overflow: hidden;
+  background: #fff; color: var(--ink); padding: 0.35in; display: flex; flex-direction: column; gap: 0.12in; overflow: hidden;
+  box-shadow: 0 10px 30px -14px rgba(43, 37, 33, .45), 0 0 0 1px var(--seam);
 }
-.page header { display: flex; align-items: center; justify-content: center; gap: 0.2in; height: 0.72in; flex: none; }
-.page header h2 { margin: 0; font-size: 34pt; line-height: 1; letter-spacing: .5px; text-align: center; white-space: nowrap; }
-.page header .em { font-size: 30pt; }
-.grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); gap: 0.16in; }
-.card {
-  position: relative; min-height: 0; min-width: 0; display: flex; flex-direction: column;
-  border: 4px solid var(--c); background: var(--bg); border-radius: 0.24in; overflow: hidden;
-}
-.card.go    { --c: var(--go);    --bg: var(--go-bg); }
-.card.fort  { --c: var(--fort);  --bg: var(--fort-bg); }
-.card.climb { --c: var(--climb); --bg: var(--climb-bg); }
-.card .pic { flex: 1; min-height: 0; padding: 0.1in 0.3in 0.02in; }
-.card svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.card .name {
-  flex: none; background: var(--c); color: #fff; font-size: 21pt; line-height: 1;
-  padding: 0.085in 0.1in 0.1in; text-align: center; white-space: nowrap;
-}
-.card .num {
-  position: absolute; top: 0.07in; left: 0.07in; width: 0.5in; height: 0.5in; border-radius: 50%;
-  background: var(--c); color: #fff; font-size: 22pt; display: grid; place-items: center; line-height: 1;
-}
-.card .star {
-  position: absolute; top: 0.07in; right: 0.07in; width: 0.5in; height: 0.5in; border-radius: 50%;
-  border: 3px dashed var(--c); background: #fff; color: var(--c); font-size: 20pt; display: grid; place-items: center; line-height: 1;
-}
-.card .untested {
-  position: absolute; left: 0.1in; bottom: 0.52in; font-family: system-ui, sans-serif; font-size: 7pt;
-  color: #55607a; background: rgba(255, 255, 255, .8); border-radius: 0.05in; padding: 0 0.04in;
-}
-.page footer { flex: none; height: 0.2in; display: flex; justify-content: space-between; align-items: center;
-  font-family: system-ui, sans-serif; font-size: 7.5pt; color: #55607a; white-space: nowrap; }
-.key { display: flex; gap: 0.13in; align-items: center; }
-.key i { display: inline-block; width: 0.13in; height: 0.13in; border-radius: 50%; margin-right: 0.05in; vertical-align: -1px; }
+.page header { flex: none; height: 0.64in; display: flex; align-items: center; justify-content: center; gap: 0.16in; overflow: hidden; }
+.page header .cc-mark { width: 0.62in; flex: none; }
+.page header h2 { font-family: var(--display); font-weight: 600; font-size: 32pt; line-height: 1; white-space: nowrap; }
+.grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 0.16in; }
 
-@page { size: letter portrait; margin: 0; }
+.pcard {
+  position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: stretch; padding: 0; margin: 0;
+  appearance: none; font: inherit; color: var(--ink); text-align: center;
+  border: 4px solid var(--c); background: var(--bg); border-radius: 0.26in; overflow: hidden;
+}
+/* The badge numeral is white on the theme color: about 3.7:1 on Amber, more on Pond and Clay, which is
+   enough at 25pt bold (tests/sheet.test.js checks 3:1). */
+.pcard.go { --c: var(--go); --cd: var(--go-deep); --bg: var(--go-tint); }
+.pcard.fort { --c: var(--fort); --cd: var(--fort-deep); --bg: var(--fort-tint); }
+.pcard.climb { --c: var(--climb); --cd: var(--climb-deep); --bg: var(--climb-tint); }
+.pcard .pic { display: block; flex: 1; min-height: 0; padding: 0.14in 0.62in 0.05in; }
+.pcard .pic svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pcard .num {
+  position: absolute; top: 0.08in; left: 0.08in; width: 0.56in; height: 0.56in; border-radius: 50%; display: grid; place-items: center;
+  background: var(--c); color: #fff; font-family: var(--display); font-weight: 600; font-size: 25pt; line-height: 1;
+}
+.pcard .star { position: absolute; top: 0.03in; right: 0.03in; width: 0.74in; height: 0.74in; color: var(--c); }
+.pcard .star svg { width: 100%; height: 100%; display: block; }
+.pcard .foot { flex: none; display: block; background: #fff; border-top: 4px solid var(--c); padding: 0.06in 0.08in 0.07in; }
+.pcard .name { display: block; font-family: var(--display); font-weight: 600; font-size: 21pt; line-height: 1.05; white-space: nowrap; }
+.pcard .ut { display: block; font-family: var(--text); font-size: 9pt; line-height: 1.25; color: var(--stone); margin-top: 0.01in; }
+
+.per4 .pcard .name { font-size: 26pt; }
+.per4 .pcard .ut { font-size: 10pt; }
+.per4 .pcard .foot { padding: 0.09in 0.08in 0.1in; }
+.per4 .pcard .num { width: 0.7in; height: 0.7in; font-size: 31pt; }
+.per4 .pcard .star { width: 0.95in; height: 0.95in; }
+.per4 .pcard .pic { padding: 0.4in 0.42in 0.1in; }
+
+/* Less ink: white cards, colored outlines only. */
+.ink-less .pcard { background: #fff; }
+.ink-less .pcard .num { background: #fff; color: var(--cd); border: 4px solid var(--c); }
+/* Color-in: everything in Ink, drawings as outlines. */
+.ink-line { --m-slab: var(--ink); --m-wedge: var(--ink); --m-hoop: var(--ink); }
+.ink-line .pcard { --c: var(--ink); --cd: var(--ink); background: #fff; border-width: 3px; }
+.ink-line .pcard .foot { border-top-width: 3px; }
+.ink-line .pcard .num { background: #fff; color: var(--ink); border: 3px solid var(--ink); }
+.ink-line .key .cc-ic { color: var(--ink); }
+
+.page footer {
+  flex: none; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.02in 0.2in;
+  font-family: var(--text); font-size: 9pt; line-height: 1.3; color: var(--stone);
+}
+.page footer .key { display: flex; gap: 0.16in; align-items: center; flex: 1 1 60%; color: var(--ink); font-weight: 600; }
+.page footer .key span { display: inline-flex; align-items: center; gap: 0.05in; white-space: nowrap; }
+.page footer .cc-ic { width: 0.15in; height: 0.15in; }
+.page footer .pg { white-space: nowrap; }
+.page footer .hint { flex: 1 1 50%; }
+.page footer .for { white-space: nowrap; }
+
+/* screen-only marks on the paper; sizes are divided by the zoom so they stay readable */
+.pcard:hover { box-shadow: 0 0 0 calc(2px / var(--z, 1)) var(--edge); }
+.pcard:focus-visible, .pcard.sel { outline: calc(4px / var(--z, 1)) solid var(--ink); outline-offset: calc(3px / var(--z, 1)); }
+.pcard .kept {
+  position: absolute; left: 50%; top: 0.1in; transform: translateX(-50%); white-space: nowrap;
+  font-family: var(--text); font-weight: 700; font-size: calc(13px / var(--z, 1)); line-height: 1;
+  background: var(--ink); color: var(--paper); border-radius: 99in; padding: calc(5px / var(--z, 1)) calc(10px / var(--z, 1));
+}
+.pcard .kept::before { content: "✓ "; }
+.pcard.flash { animation: flash .8s; }
+@keyframes flash { from { box-shadow: 0 0 0 0.2in rgba(43, 37, 33, .5); } to { box-shadow: 0 0 0 0 rgba(43, 37, 33, 0); } }
+
+/* ---------- card editor: a bottom sheet on a phone, centered on desktop ---------- */
+.editor {
+  border: 0; margin: auto 0 0; width: 100%; max-width: 100%; max-height: 82vh; overflow-y: auto;
+  background: var(--paper); color: var(--ink); border-radius: 22px 22px 0 0; padding: 14px 16px calc(18px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 30px rgba(43, 37, 33, .25);
+}
+.editor::backdrop { background: rgba(43, 37, 33, .45); }
+.editor .eh { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.editor .eh h2 { font-size: 20px; min-width: 0; }
+.editor .ea { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.editor .ea .btn { padding: 0 6px; font-size: 15px; white-space: normal; }
+.editor .ea .btn[aria-pressed=true] { background: var(--ink); color: var(--paper); }
+.editor .ea .btn[aria-pressed=true]::before { content: "✓"; }
+.editor a { font-weight: 600; }
+.editor h3 { font-size: 17px; margin: 18px 0 10px; }
+.picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; margin-top: 12px; }
+.pick {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; padding: 6px 6px 9px; text-align: left;
+  background: #fff; border: 1.5px solid var(--edge); border-radius: 18px; box-shadow: var(--slab);
+}
+.pick.go { --bg: var(--go-tint); } .pick.fort { --bg: var(--fort-tint); } .pick.climb { --bg: var(--climb-tint); }
+.pick .pic { display: block; width: 100%; aspect-ratio: 1 / .78; background: var(--bg); border-radius: 13px; padding: 8px 6px 4px; }
+.pick .pic svg { width: 100%; height: 100%; display: block; }
+.pick .nm { font-family: var(--display); font-weight: 600; font-size: 15.5px; line-height: 1.15; padding: 4px 3px 0; }
+.pick .theme-label { padding: 0 3px; }
+.pick .untested { font-size: 12.5px; line-height: 1.3; color: var(--stone); padding: 0 3px; }
+.pick:hover { border-color: var(--ink); }
+
+@media (min-width: 980px) {
+  body.sheet-page { padding-bottom: 0; }
+  .layout { grid-template-columns: 370px minmax(0, 1fr); align-items: start; }
+  .settings { grid-column: 1; grid-row: 1; }
+  .printp { grid-column: 1; grid-row: 2; }
+  .preview { grid-column: 2; grid-row: 1 / span 3; }
+  .desk { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .desk.one { grid-template-columns: minmax(0, 520px); justify-content: center; }
+  .printbar { display: none; }
+  .toast { bottom: 28px; }
+  .editor { width: 660px; margin: auto; border-radius: 22px; max-height: 86vh; padding-bottom: 18px; }
+}
+/* keep the paper in view beside the long settings column when the window is tall enough to hold it */
+@media (min-width: 980px) and (min-height: 760px) { .preview { position: sticky; top: calc(var(--bar-h) + 12px); } }
+
 @media print {
-  body { background: #fff; }
-  .bar { display: none; }
-  .pages { padding: 0; gap: 0; display: block; zoom: 1 !important; }
-  .page { box-shadow: none; break-after: page; }
-  .page:last-child { break-after: auto; }
+  body.sheet-page { background: #fff; padding: 0; overflow: visible; }
+  .intro, .ask, .offer, .settings, .printp, .pv-head, .side, .printbar, .toast, .editor, .pcard .kept { display: none !important; }
+  .wrap { max-width: none; padding: 0; }
+  .layout, .desk, .preview { display: block; position: static; padding: 0; background: none; border-radius: 0; }
+  .page { zoom: 1 !important; box-shadow: none; break-after: page; break-inside: avoid; }
+  .slot:last-child .page { break-after: auto; }
+  .pcard, .pcard.sel { outline: 0; box-shadow: none; animation: none; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

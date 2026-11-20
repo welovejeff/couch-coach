@@ -1,5 +1,5 @@
 // Flat isometric SVG renderer: turns a build's solids into shaded, depth-sorted tiles.
-import { solidsOf } from './pieces.js';
+import { sceneOf } from './pieces.js';
 import { esc } from './html.js';
 
 const COS = Math.cos(Math.PI / 6), SIN = 0.5, TILE = 7;
@@ -23,7 +23,7 @@ function clipToCell(poly, x0, y0, x1, y1) {
 }
 
 // One solid to its camera-facing tiles.
-export function tilesOf({ profile, hole, axis, o, len, role, smooth }) {
+export function tilesOf({ profile, hole, axis, o, len, role, smooth, piece }) {
   const map = (t, u, v) => axis === 'x' ? [o[0] + t, o[1] + u, o[2] + v] : axis === 'y' ? [o[0] + u, o[1] + t, o[2] + v] : [o[0] + u, o[1] + v, o[2] + t];
   const dir = (t, u, v) => axis === 'x' ? [t, u, v] : axis === 'y' ? [u, t, v] : [u, v, t];
   const seen = n => n[0] + n[1] + n[2] > 1e-6;
@@ -54,7 +54,7 @@ export function tilesOf({ profile, hole, axis, o, len, role, smooth }) {
         if (j === st - 1) edges.push([P(s, st), P(s + 1, st)]);
         if (s === 0 && edgeA) edges.push([P(0, j), P(0, j + 1)]);
         if (s === su - 1 && edgeB) edges.push([P(su, j), P(su, j + 1)]);
-        tiles.push({ pts: [P(s, j), P(s + 1, j), P(s + 1, j + 1), P(s, j + 1)], n: norms[i], edges, role });
+        tiles.push({ pts: [P(s, j), P(s + 1, j), P(s + 1, j + 1), P(s, j + 1)], n: norms[i], edges, role, piece });
       }
     }
   }
@@ -72,7 +72,7 @@ export function tilesOf({ profile, hole, axis, o, len, role, smooth }) {
       for (let i = 0; i < profile.length; i++) {
         const j = (i + 1) % profile.length;
         const A = map(t, ...profile[i]), B = map(t, ...profile[j]), C = map(t, ...hole[j]), D = map(t, ...hole[i]);
-        tiles.push({ pts: [A, B, C, D], n, edges: [[A, B], [C, D]], role });
+        tiles.push({ pts: [A, B, C, D], n, edges: [[A, B], [C, D]], role, piece });
       }
     } else {
       const us = profile.map(p => p[0]), vs = profile.map(p => p[1]);
@@ -83,7 +83,7 @@ export function tilesOf({ profile, hole, axis, o, len, role, smooth }) {
         if (cell.length < 3) continue;
         const edges = [];
         cell.forEach((p, k) => { const q = cell[(k + 1) % cell.length]; if (onRim(p, q)) edges.push([map(t, ...p), map(t, ...q)]); });
-        tiles.push({ pts: cell.map(p => map(t, ...p)), n, edges, role });
+        tiles.push({ pts: cell.map(p => map(t, ...p)), n, edges, role, piece });
       }
     }
   }
@@ -148,6 +148,7 @@ export function palette({ nug, nug2, chk }) {
     base: n, cush: mix(n, W, 0.22), tri: mix(n, K, 0.14),
     base2: n2, cush2: mix(n2, W, 0.22), tri2: mix(n2, K, 0.14),
     hoop: c, pad: mix(c, W, 0.28), puck: mix(c, K, 0.16),
+    prop: [222, 211, 194],   // the sofa or wall a build leans on
   };
 }
 export const roleHex = (pal, role) => rgb2hex(pal[role]);
@@ -155,24 +156,34 @@ export const roleHex = (pal, role) => rgb2hex(pal[role]);
 /* ---------- draw one build ---------- */
 const cache = new WeakMap();
 export function sortedTiles(build) {
-  if (!cache.has(build)) cache.set(build, sortTiles(solidsOf(build).flatMap(tilesOf)));
+  if (!cache.has(build)) cache.set(build, sortTiles(sceneOf(build).flatMap(tilesOf)));
   return cache.get(build);
 }
 
-export function drawBuild(build, pal) {
-  const { tiles } = sortedTiles(build);
+// Options:
+//   through  draw only the first n placed pieces; the frame stays that of the whole build so nothing jumps
+//   fade     with `through`, wash out every piece before the newest one
+//   line     black-and-white line drawing for colouring in
+//   rug      false leaves out the pale floor patch
+const INK = [43, 37, 33], FADE = [255, 251, 244];
+export function drawBuild(build, pal, { through, fade = false, line = false, rug: withRug = true } = {}) {
+  const { tiles } = sortedTiles(build), count = build.pieces.flat().length;
+  const upTo = through == null ? count : Math.max(0, Math.min(count, through)), whole = upTo === count;
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, fx0 = 1e9, fy0 = 1e9, fx1 = -1e9, fy1 = -1e9;
   const grow = (sx, sy) => { x0 = Math.min(x0, sx); x1 = Math.max(x1, sx); y0 = Math.min(y0, sy); y1 = Math.max(y1, sy); };
   const f = v => v.toFixed(1);
   let out = '';
   for (const t of tiles) {
+    const pts = t.pts.map(p => { const s = proj(p); grow(s[0], s[1]); fx0 = Math.min(fx0, p[0]); fx1 = Math.max(fx1, p[0]); fy0 = Math.min(fy0, p[1]); fy1 = Math.max(fy1, p[1]); return s; });
+    if (t.piece >= upTo) continue;
+    const old = fade && !whole && t.piece >= 0 && t.piece < upTo - 1, wash = c => old ? mix(c, FADE, 0.7) : c;
     const b = Math.max(0.5, Math.min(1.04, 0.58 + 0.5 * (t.n[0] * LIGHT[0] + t.n[1] * LIGHT[1] + t.n[2] * LIGHT[2])));
-    const col = pal[t.role], fill = rgb2hex(b <= 1 ? col.map(v => v * b) : mix(col, W, (b - 1) * 2));
-    const d = t.pts.map((p, i) => { const s = proj(p); grow(s[0], s[1]); fx0 = Math.min(fx0, p[0]); fx1 = Math.max(fx1, p[0]); fy0 = Math.min(fy0, p[1]); fy1 = Math.max(fy1, p[1]); return (i ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join('') + 'Z';
+    const col = pal[t.role], fill = line ? '#ffffff' : rgb2hex(wash(b <= 1 ? col.map(v => v * b) : mix(col, W, (b - 1) * 2)));
+    const d = pts.map((s, i) => (i ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1])).join('') + 'Z';
     out += `<path d="${d}" fill="${fill}" stroke="${fill}"/>`;
     if (t.edges.length) {
       const e = t.edges.map(([p, q]) => { const a = proj(p), c = proj(q); return `M${f(a[0])} ${f(a[1])}L${f(c[0])} ${f(c[1])}`; }).join('');
-      out += `<path d="${e}" class="ln" stroke="${rgb2hex(mix(col, K, 0.6))}"/>`;
+      out += `<path d="${e}" class="ln" stroke="${rgb2hex(line ? INK : wash(mix(col, K, 0.6)))}"/>`;
     }
   }
   const m = 9, rug = [[fx0 - m, fy0 - m, 0], [fx1 + m, fy0 - m, 0], [fx1 + m, fy1 + m, 0], [fx0 - m, fy1 + m, 0]].map(proj);
@@ -180,11 +191,19 @@ export function drawBuild(build, pal) {
   for (const [x, y, z, ch, size] of build.stickers || []) {
     const s = proj([x, y, z]); grow(s[0] - size * 0.7, s[1] - size); grow(s[0] + size * 0.7, s[1] + size * 0.3);
     // emoji go in as HTML: emoji inside SVG <text> makes Chrome's PDF export fail
-    stick += `<foreignObject x="${f(s[0] - size)}" y="${f(s[1] - size * 1.2)}" width="${size * 2}" height="${size * 1.5}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${size}px;line-height:1.3;text-align:center">${ch}</div></foreignObject>`;
+    if (whole) stick += `<foreignObject x="${f(s[0] - size)}" y="${f(s[1] - size * 1.2)}" width="${size * 2}" height="${size * 1.5}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${size}px;line-height:1.3;text-align:center${line ? ';filter:grayscale(1)' : ''}">${ch}</div></foreignObject>`;
   }
   const p = 5;
-  return `<svg viewBox="${f(x0 - p)} ${f(y0 - p)} ${f(x1 - x0 + 2 * p)} ${f(y1 - y0 + 2 * p)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(build.name)}">
-    <style>path{stroke-width:.8px;stroke-linejoin:round;vector-effect:non-scaling-stroke}.ln{fill:none;stroke-width:1.5px;stroke-linecap:butt}</style>
-    <polygon points="${rug.map(s => f(s[0]) + ',' + f(s[1])).join(' ')}" fill="#fff" stroke="#fff" stroke-width="10" stroke-linejoin="round" opacity=".85"/>
+  // the path rules are scoped to the drawing so they cannot restyle other SVGs on the page
+  return `<svg class="cc-d" viewBox="${f(x0 - p)} ${f(y0 - p)} ${f(x1 - x0 + 2 * p)} ${f(y1 - y0 + 2 * p)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(build.name)}">
+    <style>.cc-d path{stroke-width:.8px;stroke-linejoin:round;vector-effect:non-scaling-stroke}.cc-d .ln{fill:none;stroke-width:1.5px;stroke-linecap:butt}</style>
+    ${withRug && !line ? `<polygon points="${rug.map(s => f(s[0]) + ',' + f(s[1])).join(' ')}" fill="#fff" stroke="#fff" stroke-width="10" stroke-linejoin="round" opacity=".85"/>` : ''}
     ${out}${stick}</svg>`;
+}
+
+// One piece type on its own, for parts lists: pass any placed piece (or several) from pieces.js.
+const loose = new Map();
+export function drawPieces(key, pieces, pal, opts) {
+  if (!loose.has(key)) loose.set(key, { name: key, stickers: [], pieces });
+  return drawBuild(loose.get(key), pal, { rug: false, ...opts });
 }

@@ -2,13 +2,14 @@
 // a grown-up would put them down, which the 3D step-through follows.
 import {
   base, cushion, box, lean, baseFlat, baseFolded, baseCorner, baseTent, cushFlat, cushFolded,
-  tri, puck, pad, hoop, hoopUp, wheel, ottoman, second,
+  tri, puck, pad, hoop, hoopUp, wheel, ottoman, second, how, sofa, wall,
 } from './pieces.js';
 
 // Builds the owner has tried with a real child. Every other build is labelled as not yet kid-tested.
 const TESTED = new Set([]);
 
-const build = (id, name, theme, setup, pieces, stickers = []) => ({ id, name, theme, setup, tested: TESTED.has(id), pieces, stickers });
+// `prop` is the sofa or wall a build leans on, when it needs one.
+const build = (id, name, theme, setup, pieces, stickers = [], prop = null) => ({ id, name, theme, setup, tested: TESTED.has(id), pieces, stickers, prop });
 
 export const BUILDS = [
   /* ---------- one play couch + round add-on ---------- */
@@ -134,6 +135,33 @@ export const BUILDS = [
     baseFolded(0, 0, 0), cushFlat(36, 0, 0, 'x'),
     tri(102, 0, 0, 'y'), tri(52, -15, 0, 'x'),
   ], [[66, 16.5, 22, '💥', 20]]),
+  build('crawl-tunnel', 'Crawl Tunnel', 'fort', 'couch', [
+    baseTent(0, 0),
+    cushion(lean('y', 0, 0, 18, 27.66, 33, 3.25, 1), lean('y', 36, 0, 18, 27.66, 33, 3.25, -1)),
+    tri(33, -18, 0, 'x'), tri(33, 39, 0, 'x'),
+  ], [[76, 18, 14, '🐛', 16]]),
+  build('snack-shop', 'Snack Shop', 'fort', 'couch', [
+    cushion(box(0, -3.25, 0, 33, 3.25, 33), box(-3.25, 0, 0, 3.25, 33, 33)),
+    baseFolded(36, 0, 0),
+    tri(36, 0, 11, 'y'), tri(74, 0, 0, 'y'),
+  ], [[60, 16, 26, '🍦', 16]]),
+
+  /* ---------- one play couch, leaning on the sofa or a wall ---------- */
+  build('toy-car-ramp', 'Toy Car Ramp', 'go', 'couch', [
+    how(cushion(lean('x', 0, 17, 63.8, 0, 0, 3.25, 1)), 'prop {n} from the front of the sofa seat down to the floor'),
+    baseTent(66, -1.5),
+    tri(33, -15, 0, 'x'), tri(33, 33, 0, 'x'),
+  ], [[30, 16, 18, '🚗', 16]], sofa()),
+  build('wall-den', 'Wall Den', 'fort', 'couch', [
+    cushFlat(0, 0, 0, 'y'),
+    how(base(lean('x', 24, 3.25, 0, 25.85, 0, 5.5, -1), lean('x', 24, 3.25, 0, 25.85, 33, 5.5, -1)), 'lean {n} on its long edge against the wall, with its foot on the cushion'),
+    tri(0, -15, 0, 'x'), tri(27, 66, 0, 'z'),
+  ], [[34, 74, 40, '🔦', 16]], wall()),
+  build('sofa-slide', 'Sofa Slide', 'climb', 'couch', [
+    how(base(box(-33, 0, 17, 33, 33, 5.5), lean('x', 0, 17, 28.28, 0, 0, 5.5, 1)), 'lay half of {n} on the sofa seat and let the rest slope down to the floor'),
+    cushFlat(28.3, 0, 0, 'x'),
+    tri(0, -15, 0, 'x'), tri(0, 33, 0, 'x'),
+  ], [[100, 16, 10, '💨', 16]], sofa()),
 
   /* ---------- two play couches ---------- */
   build('big-rig', 'Big Rig', 'go', 'two-couch', [

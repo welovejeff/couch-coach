@@ -3,24 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Printable sheet · Couch Coach</title>
+<title>Print a sheet · Couch Coach</title>
+<meta name="description" content="A printable sheet of play couch builds your child can point at, in your couch colors.">
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/brand.css">
 <link rel="stylesheet" href="css/sheet.css">
 </head>
-<body>
+<body class="sheet-page">
+<div class="wrap">
+  <header id="top"></header>
+  <div id="setup"></div>
 
-<div class="bar">
-  <h1>🛋️ Couch Coach</h1>
-  <a href="index.html">← All builds</a>
-  <label>Builder's name <input type="text" id="kid" placeholder="e.g. Max" maxlength="14"></label>
-  <label>Set-up <select id="setup"></select></label>
-  <label>Couch color <input type="color" id="nug"></label>
-  <label id="nug2-row" hidden>Second couch color <input type="color" id="nug2"></label>
-  <label id="chk-row">Round add-on color <input type="color" id="chk"></label>
-  <button id="print">🖨️ Print / Save PDF</button>
-  <p class="tip">In the print window: paper <b>US Letter</b>, <b>Two-sided</b> on (flip on long edge), scale 100%, background graphics on. To save a file instead, pick <b>Save as PDF</b>.</p>
+  <div class="intro">
+    <h1>Print a sheet</h1>
+    <p>A page of builds your child can point at. They color the star when one is built.</p>
+  </div>
+
+  <section class="panel ask" id="ask" hidden></section>
+  <section class="panel offer" id="offer" hidden></section>
+
+  <main class="layout" id="layout" hidden>
+    <section class="panel settings" aria-labelledby="h-theirs">
+      <h2 id="h-theirs">Make it theirs</h2>
+      <p class="lab">Child's name <span>(optional)</span></p>
+      <div id="kid"></div>
+      <p class="small help">Printed in the title. It stays on this device.</p>
+    </section>
+
+    <section class="preview" aria-labelledby="pvCount">
+      <div class="pv-head">
+        <p><b id="pvCount"></b><span class="small">Tap a card on the paper to swap, keep or move it.</span></p>
+        <div class="acts">
+          <button class="btn" type="button" id="shuffle">Shuffle</button>
+          <button class="btn quiet" type="button" id="reset">Start over</button>
+        </div>
+      </div>
+      <div class="desk" id="desk"></div>
+    </section>
+
+    <section class="panel printp" aria-labelledby="h-print">
+      <h2 id="h-print">Paper and print</h2>
+      <div id="options"></div>
+      <h3>In the print window, check these</h3>
+      <ul class="checks" id="checks"></ul>
+      <div class="printrow">
+        <button class="btn primary big" type="button" id="print">Print</button>
+        <p class="small" id="pdfLine">To save a file instead, press Print and choose “Save as PDF” as the printer. On an iPhone, pinch the preview open, then tap Share.</p>
+      </div>
+      <details class="tip" id="tipDuplex"><summary>My printer can't print two-sided</summary>
+        <p>Print page 1 only. Put the sheet back in the tray with the blank side ready, then print page 2 only. Or choose “One side” above and print a single page.</p></details>
+      <details class="tip"><summary>Make it last</summary>
+        <p>Card stock or a plastic sleeve lasts longer than plain paper. Use a dry-wipe pen on a sleeve and the stars can be wiped and colored again.</p></details>
+      <div class="sendrow">
+        <button class="btn" type="button" id="send">Send to my computer</button>
+        <p class="small">No printer near this device? This makes a link that opens the same sheet somewhere else. It carries your set-up, colors and builds, never the name.</p>
+      </div>
+    </section>
+  </main>
 </div>
 
-<main class="pages" id="pages"></main>
+<div class="printbar" id="printbar" hidden>
+  <div><b id="barTitle"></b><span id="barSub"></span></div>
+  <button class="btn primary" type="button" id="print2">Print</button>
+</div>
+<dialog class="editor" id="editor" aria-labelledby="edTitle"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script type="module">
   import { initSheet } from './js/sheet.js';

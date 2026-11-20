@@ -4,30 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Couch Coach: build ideas for your play couch</title>
-<meta name="description" content="Build ideas for a play couch and round add-on: cars, forts, slides and more, in 3D and as a printable sheet.">
-<link rel="stylesheet" href="css/site.css">
+<meta name="description" content="Build ideas for a play couch and its round add-on: cars, forts and slides, shown going together piece by piece, with a printable sheet.">
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/brand.css">
+<link rel="stylesheet" href="css/gallery.css">
+<link rel="stylesheet" href="css/tracker.css">
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <h1>🛋️ Couch Coach</h1>
-    <a class="to-sheet" href="sheet.html">Printable sheet →</a>
+<div class="wrap" id="page">
+  <header id="top"></header>
+  <div class="intro">
+    <h1 id="headline">Build ideas for your play couch</h1>
+    <p class="sub" id="sub">Cars, forts and slides. Free. Tap one to see it go together piece by piece.</p>
+    <p class="small" id="fits"></p>
   </div>
-  <p class="pitch">Build ideas for your play couch and round add-on. Tap one to see it in 3D. Fits the Nugget and Chunk; not affiliated with their maker.</p>
-
-  <fieldset class="chips" id="owned"><legend>What do you own?</legend></fieldset>
-  <fieldset class="chips" id="themes"><legend>Theme</legend></fieldset>
-  <details class="colors">
-    <summary>Couch colors</summary>
-    <div class="row">
-      <label>Couch <input type="color" id="nug"></label>
-      <label id="nug2-row" hidden>Second couch <input type="color" id="nug2"></label>
-      <label>Round add-on <input type="color" id="chk"></label>
+  <div id="setup"></div>
+  <div id="seen"></div>
+  <div class="filter">
+    <div class="filter-in">
+      <div class="chips" id="themes" role="radiogroup" aria-label="Theme"></div>
+      <div class="status"><span id="count" aria-live="polite"></span><button class="linkish" type="button" id="change">Change set-up</button></div>
     </div>
-  </details>
-
-  <p class="count" id="count" aria-live="polite"></p>
-  <main class="gallery" id="grid"></main>
+  </div>
+  <main id="list"></main>
+  <p class="explain" id="explain"></p>
 </div>
 <script type="module">
   import { initGallery } from './js/gallery.js';

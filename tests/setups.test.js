@@ -55,3 +55,28 @@ test('an untested build carries the label and a tested one does not', () => {
   assert.equal(untestedLabel(mk('a', 'couch')), 'Not yet kid-tested');
   assert.equal(untestedLabel({ ...mk('a', 'couch'), tested: true }), '');
 });
+
+test('two couches with the round add-on is something a family can own, and it fits every build', async () => {
+  const { OWNED_IDS, SETUP_IDS, missing, needsLabel } = await import('../js/setups.js');
+  assert.deepEqual(OWNED_IDS, [...SETUP_IDS, 'two-couch-addon']);
+  assert.deepEqual(ids(canMake(lib, 'two-couch-addon')), ['a', 'b', 'c']);
+  assert.deepEqual(missing('couch-addon', 'two-couch-addon'), []);
+  assert.equal(needsLabel('couch-addon', 'couch'), 'Needs round add-on');
+  assert.equal(needsLabel('two-couch', 'couch-addon'), 'Needs 2 couches');
+  assert.equal(needsLabel('two-couch', 'two-couch'), '');
+  assert.equal(needsLabel('two-couch', ''), '');
+});
+
+test('a build cannot be written for two couches with the round add-on', () => {
+  assert.match(checkBuild(mk('w', 'two-couch-addon'))[0], /unknown set-up/);
+});
+
+test('each owned set-up has a drawing made of exactly the pieces it holds', async () => {
+  const { OWNED_IDS, setupPicture } = await import('../js/setups.js');
+  for (const id of OWNED_IDS) {
+    const used = {};
+    for (const p of setupPicture(id).pieces.flat()) used[p.type] = (used[p.type] || 0) + 1;
+    assert.deepEqual({ base: 0, cushion: 0, triangle: 0, pad: 0, hoop: 0, puck: 0, ...used }, inventory(id), id);
+    assert.equal(setupPicture(id), setupPicture(id));
+  }
+});

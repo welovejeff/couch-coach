@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What you own: set-up mock-up · Couch Coach design sprint</title>
+<style>
+  :root {
+    --ink: #1c2230; --muted: #5b6474; --line: #d5dae2; --soft: #eef0f4; --paper: #f6f7f9; --card: #fff;
+    --go: #2f7de1; --fort: #8a4fd3; --climb: #ef7d1a; --ok: #1d7a46; --ok-bg: #e7f4ec; --warn-bg: #fff6e0; --warn: #7a5600;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--paper); color: var(--ink); font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; overflow-x: hidden; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  h1, h2, h3, p { margin: 0; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 16px; }
+
+  /* ---------- sprint notes (not part of the product) ---------- */
+  .why { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+  .why h1 { font-size: 17px; margin-bottom: 2px; }
+  .why .sub { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .why ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  .why li b { font-weight: 650; }
+  @media (min-width: 820px) { .why ol { grid-template-columns: 1fr 1fr; gap: 8px 36px; } }
+  .demo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+  .demo button { min-height: 36px; padding: 6px 12px; border: 1px dashed var(--muted); background: none; border-radius: 8px; }
+
+  /* ---------- the product ---------- */
+  .site { background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 16px 0; }
+  .head .logo { font-size: 20px; font-weight: 750; }
+  .fits { padding: 2px 16px 10px; color: var(--muted); font-size: 13px; }
+  .tabs { display: flex; gap: 4px; padding: 0 12px; border-bottom: 1px solid var(--line); }
+  .tabs button { border: 0; background: none; padding: 10px 10px 9px; min-height: 44px; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; }
+  .tabs button[aria-selected=true] { color: var(--ink); border-bottom-color: var(--ink); }
+  .body { padding: 14px 16px 24px; }
+
+  /* set-up bar: the collapsed state, on every page */
+  #setup.closed { position: sticky; top: 0; z-index: 4; }
+  .bar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--card); border-bottom: 1px solid var(--line); }
+  .bar .mini { width: 64px; height: 44px; flex: none; }
+  .bar .mini svg, .tile .pic svg, .card .pic svg, .stage svg, .scard .pic svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .bar .txt { flex: 1; min-width: 0; line-height: 1.25; }
+  .bar .txt small { display: block; color: var(--muted); font-size: 12px; }
+  .bar .txt b { display: block; font-weight: 650; }
+  .bar .dots { display: inline-flex; gap: 3px; vertical-align: -2px; margin-left: 4px; }
+  .bar .dots i, .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,.25); }
+  .btn { min-height: 44px; padding: 8px 14px; border: 1.5px solid var(--ink); background: var(--card); border-radius: 10px; font-weight: 650; white-space: nowrap; }
+  .btn.solid { background: var(--ink); color: #fff; }
+  .btn.quiet { border-color: var(--line); font-weight: 600; }
+  .linkish { border: 0; background: none; padding: 10px 0; min-height: 44px; text-decoration: underline; color: var(--ink); font-weight: 600; }
+
+  /* set-up editor: the expanded state */
+  .setup { border-bottom: 1px solid var(--line); background: var(--soft); padding: 16px; }
+  .setup h2 { font-size: 19px; }
+  .setup .lede { color: var(--muted); margin: 2px 0 12px; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (min-width: 760px) { .tiles { grid-template-columns: repeat(4, 1fr); } }
+  .tile { position: relative; display: flex; flex-direction: column; text-align: left; padding: 10px; background: var(--card); border: 2px solid var(--line); border-radius: 12px; min-width: 0; }
+  .tile .pic { height: 92px; margin-bottom: 8px; }
+  .tile b { font-weight: 650; line-height: 1.2; }
+  .tile small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .tile[aria-pressed=true] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+  .tile[aria-pressed=true]::after { content: "✓"; position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 13px; display: grid; place-items: center; }
+  .tile:focus-visible, .btn:focus-visible, .sw:focus-visible, .card:focus-visible, .chip:focus-visible { outline: 3px solid var(--go); outline-offset: 2px; }
+  details.else { margin-top: 10px; }
+  details.else summary { cursor: pointer; font-weight: 600; padding: 10px 0; min-height: 44px; }
+  .else .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { min-height: 40px; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 20px; background: var(--card); font-weight: 600; font-size: 14px; }
+  .chip[aria-pressed=true] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .chip small { font-weight: 500; opacity: .75; }
+  .notice { margin-top: 10px; padding: 10px 12px; background: var(--warn-bg); color: var(--warn); border-radius: 10px; font-size: 14px; }
+  .notice b { color: var(--ink); }
+
+  .more { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .row { margin-bottom: 14px; }
+  .row .lab { display: flex; align-items: baseline; gap: 8px; font-weight: 650; margin-bottom: 6px; }
+  .row .lab small { font-weight: 400; color: var(--muted); }
+  .sws { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .sw { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 0 1.5px var(--line); padding: 0; }
+  .sw[aria-pressed=true] { box-shadow: 0 0 0 3px var(--ink); }
+  .other { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border: 1.5px solid var(--line); border-radius: 20px; background: var(--card); font-weight: 600; font-size: 14px; }
+  .other input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+  .name input, .sheet-name input { width: 100%; max-width: 280px; min-height: 44px; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); font-size: 16px; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; }
+  .private { color: var(--muted); font-size: 12.5px; margin-top: 8px; }
+
+  /* gallery */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .grp { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 10px; }
+  .grp h3 { font-size: 16px; }
+  .grp span { color: var(--muted); font-size: 13px; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+  @media (min-width: 620px) { .grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; } }
+  .card { position: relative; display: flex; flex-direction: column; text-align: left; padding: 0; background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; min-width: 0; }
+  .card .pic { height: 118px; padding: 22px 12px 4px; background: var(--paper); }
+  .card .meta { padding: 8px 10px 10px; border-top: 3px solid var(--c); }
+  .card.go, .scard.go { --c: var(--go); } .card.fort, .scard.fort { --c: var(--fort); } .card.climb, .scard.climb { --c: var(--climb); }
+  .card .nm { display: block; font-weight: 650; line-height: 1.2; }
+  .card .th { display: block; color: var(--muted); font-size: 12px; }
+  .untested { font-size: 10.5px; color: var(--muted); background: rgba(255,255,255,.9); border: 1px solid var(--line); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
+  .card .untested { position: absolute; left: 6px; top: 6px; }
+  .card .needs { display: block; margin-top: 4px; font-size: 12px; font-weight: 600; color: var(--warn); }
+  .card.cant .pic { opacity: .55; filter: saturate(.6); }
+  .locked { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding: 12px 14px; border: 1.5px dashed var(--line); border-radius: 12px; margin-bottom: 12px; }
+  .locked p { flex: 1 1 220px; }
+  .locked small { display: block; color: var(--muted); }
+  .empty { color: var(--muted); padding: 20px 0; }
+
+  /* build page */
+  .bhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 10px; }
+  .bhead h2 { font-size: 22px; }
+  .bcols { display: grid; gap: 14px; }
+  @media (min-width: 820px) { .bcols { grid-template-columns: 1.4fr 1fr; align-items: start; } }
+  .stage { position: relative; height: 300px; padding: 20px; background: var(--paper); border: 1.5px solid var(--line); border-radius: 12px; }
+  .stage .cap { position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: var(--muted); }
+  .verdict { padding: 10px 12px; border-radius: 10px; font-weight: 600; margin-bottom: 10px; }
+  .verdict.ok { background: var(--ok-bg); color: var(--ok); }
+  .verdict.no { background: var(--warn-bg); color: var(--warn); }
+  .verdict.unk { background: var(--soft); }
+  .verdict small { display: block; font-weight: 400; color: var(--ink); margin-top: 2px; }
+  .parts { list-style: none; margin: 0 0 10px; padding: 0; border: 1.5px solid var(--line); border-radius: 12px; }
+  .parts li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-top: 1px solid var(--line); }
+  .parts li:first-child { border-top: 0; }
+  .parts .dot { width: 16px; height: 16px; margin-top: 3px; flex: none; }
+  .parts b { display: block; font-weight: 650; }
+  .parts small { color: var(--muted); }
+  .parts .st { margin-left: auto; font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+  .parts .st.y { color: var(--ok); } .parts .st.n { color: var(--warn); }
+
+  /* sheet */
+  .sheet-top { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 16px; margin-bottom: 12px; }
+  .sheet-name label { display: block; font-weight: 650; margin-bottom: 4px; }
+  .paper { max-width: 520px; background: #fff; border: 1px solid var(--line); box-shadow: 0 4px 16px rgba(20,30,60,.12); padding: 16px; }
+  .paper h3 { text-align: center; font-size: 22px; margin-bottom: 10px; overflow-wrap: anywhere; }
+  .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .scard { position: relative; border: 2px solid var(--c); border-radius: 10px; overflow: hidden; min-width: 0; }
+  .scard .pic { height: 96px; padding: 8px 14px 2px; }
+  .scard .pic svg { overflow: hidden; }
+  .scard .nm { background: var(--c); color: #fff; text-align: center; font-weight: 700; font-size: 13px; padding: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .scard .num, .scard .star { position: absolute; top: 4px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  .scard .num { left: 4px; background: var(--c); color: #fff; }
+  .scard .star { right: 4px; border: 1.5px dashed var(--c); color: var(--c); background: #fff; }
+  .scard .untested { position: absolute; left: 4px; bottom: 26px; font-size: 8.5px; }
+  .paper footer { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 10.5px; color: var(--muted); }
+  .ask { padding: 14px; border: 1.5px dashed var(--line); border-radius: 12px; max-width: 520px; }
+  .ask p { margin-bottom: 10px; }
+  .ask .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hint { color: var(--muted); font-size: 13px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="why" aria-label="Design notes">
+    <h1>What changed and why</h1>
+    <p class="sub">Design sprint track: what-you-own set-up. Styling is neutral on purpose; a separate track owns the brand. Everything below the notes is live: pick, recolour, switch pages.</p>
+    <ol>
+      <li><b>Ask with pictures, not words.</b> Today the question is four text chips. Here it is four drawings of the actual pieces, in your colours, each with how many builds it opens. One tap answers it.</li>
+      <li><b>Ask on the page, never as a gate.</b> The gallery is still the home page and shows all 36 builds until you answer. "Show everything" stays one tap away.</li>
+      <li><b>One set-up bar on every page.</b> Gallery, build page and sheet each had their own controls (chips, a hidden colour drawer, a dropdown). Now one bar shows your couch and opens the same editor everywhere.</li>
+      <li><b>Colours you can match by eye.</b> Named swatches replace the system colour wheel; "Other colour" keeps the wheel. The second couch says "Same as first" until you change it. Rows appear only for pieces you own.</li>
+      <li><b>Builds you can't make are parked, not deleted.</b> A row says "12 more need a round add-on" and opens on tap, so nobody wonders where the castle from the video went.</li>
+      <li><b>The build page says whether you can make it.</b> A parent landing from a shared link sees "You have every piece" or exactly what is missing, with a pieces list.</li>
+      <li><b>2 couches + round add-on is now an answer.</b> Today that family has no chip that fits them. Here it opens all 36 builds.</li>
+      <li><b>"Something else" gets an honest answer.</b> Three couches, another brand, add-on only: say what is not covered yet and show the closest match instead of a dead end.</li>
+      <li><b>The child's name is asked where it is used.</b> Optional in the editor, and again on the sheet. The sheet no longer guesses a set-up; it asks.</li>
+    </ol>
+  </section>
+
+  <div class="demo">
+    <span>Mock-up control (not part of the site):</span>
+    <button id="reset" type="button">Start again as a first-time visitor</button>
+  </div>
+
+  <div class="site">
+    <div class="head">
+      <span class="logo">Couch Coach</span>
+    </div>
+    <p class="fits">Build ideas for your play couch. Fits the Nugget and Chunk; not affiliated with their maker.</p>
+
+    <div id="setup"></div>
+
+    <div class="tabs" role="tablist" id="tabs">
+      <button role="tab" data-tab="gallery">Builds</button>
+      <button role="tab" data-tab="build">One build</button>
+      <button role="tab" data-tab="sheet">Printable sheet</button>
+    </div>
+    <div class="body" id="body"></div>
+  </div>
+</div>
+
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { drawBuild, palette } from '../../js/flat.js';
+import { baseFlat, cushFlat, tri, ottoman, second, piecesOf, PIECE_NAMES } from '../../js/pieces.js';
+import { THEMES, untestedLabel } from '../../js/setups.js';
+
+/* ---------- what a family can own (adds the fourth combination the site lacks today) ---------- */
+const OWN = {
+  'couch':           { label: '1 play couch', short: '1 couch', couches: 1, addon: false },
+  'couch-addon':     { label: '1 play couch + round add-on', short: 'Couch + round add-on', couches: 1, addon: true },
+  'two-couch':       { label: '2 play couches', short: '2 couches', couches: 2, addon: false },
+  'two-couch-addon': { label: '2 play couches + round add-on', short: '2 couches + round add-on', couches: 2, addon: true },
+};
+const OWN_IDS = Object.keys(OWN);
+const fits = (build, ownId) => { const need = OWN[build.setup], have = OWN[ownId]; return need.couches <= have.couches && (!need.addon || have.addon); };
+const missing = (build, ownId) => {
+  const need = OWN[build.setup], have = OWN[ownId], m = [];
+  if (need.couches > have.couches) m.push('a second couch');
+  if (need.addon && !have.addon) m.push('a round add-on');
+  return m;
+};
+const countFor = ownId => BUILDS.filter(b => fits(b, ownId)).length;
+
+// Things the site does not cover yet, and the closest set-up to fall back on.
+const ELSE = {
+  'three':  { label: '3 or more couches', closest: 'two-couch', say: 'No builds use a third couch yet. Showing the 2-couch builds, which you can make with one couch left over.' },
+  'addons': { label: '2 round add-ons', closest: 'couch-addon', say: 'No builds use a second round add-on yet. Showing builds for one couch and one round add-on.' },
+  'only':   { label: 'Only the round add-on', closest: '', say: 'No builds use the round add-on by itself yet. Showing everything so you can see what a couch would add.' },
+  'brand':  { label: 'A different play couch', closest: 'couch', say: 'These builds are sized for a couch made of a folding base, a folding cushion and two triangle pillows. If yours has those four pieces the 1-couch builds should work, though sizes may be a little off.' },
+};
+
+const SWATCHES = [['Blue', '#3f86d6'], ['Navy', '#2b3f6b'], ['Teal', '#2f9c95'], ['Green', '#5a9e58'], ['Yellow', '#f4b63a'], ['Orange', '#e8833a'],
+  ['Red', '#d2504a'], ['Pink', '#e79ab5'], ['Purple', '#8a6fc9'], ['Grey', '#9aa3ad'], ['Cream', '#e9dcc3'], ['Charcoal', '#4a4f5a']];
+const nameOf = hex => (SWATCHES.find(s => s[1] === hex) || ['Custom'])[0];
+
+/* ---------- drawings of the set-ups themselves, made from the real pieces ---------- */
+const couch = (x, y) => [baseFlat(x, y, 0, 'x'), cushFlat(x, y, 5.5, 'x'), tri(x, y, 8.75, 'y'), tri(x + 51, y, 8.75, 'y')];
+const SETUP_PICS = {
+  'couch':           { name: OWN['couch'].label, stickers: [], pieces: [couch(0, 0)] },
+  'couch-addon':     { name: OWN['couch-addon'].label, stickers: [], pieces: [couch(0, 0), ottoman(92, 16.5, 0)] },
+  'two-couch':       { name: OWN['two-couch'].label, stickers: [], pieces: [couch(0, 0), second(couch(0, 46))] },
+  'two-couch-addon': { name: OWN['two-couch-addon'].label, stickers: [], pieces: [couch(0, 0), second(couch(0, 46)), ottoman(92, 39.5, 0)] },
+};
+
+/* ---------- state (kept in memory so the mock-up always starts as a first visit) ---------- */
+const fresh = () => ({ setup: '', answered: false, editing: true, other: '', nug: '#3f86d6', nug2: '', chk: '#f4b63a', kid: '', theme: '', showCant: false, tab: 'gallery', sel: 'castle' });
+let S = fresh();
+const pal = () => palette({ nug: S.nug, nug2: S.nug2, chk: S.chk });
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const label = b => untestedLabel(b) ? `<span class="untested">${untestedLabel(b)}</span>` : '';
+
+/* ---------- set-up: editor (open) or bar (closed) ---------- */
+function swatchRow(key, title, note) {
+  const cur = key === 'nug2' ? S.nug2 : S[key], custom = cur && !SWATCHES.some(s => s[1] === cur);
+  return `<div class="row"><div class="lab">${title}<small>${note}</small></div><div class="sws">
+    ${key === 'nug2' ? `<button type="button" class="chip" data-color="nug2" data-hex="" aria-pressed="${!S.nug2}">Same as first</button>` : ''}
+    ${SWATCHES.map(([n, h]) => `<button type="button" class="sw" style="background:${h}" title="${n}" aria-label="${n}" data-color="${key}" data-hex="${h}" aria-pressed="${cur === h}"></button>`).join('')}
+    <label class="other"${custom ? ' style="border-color:var(--ink)"' : ''}>${custom ? `<i class="dot" style="background:${cur};margin-right:6px"></i>` : ''}Other colour<input type="color" data-pick="${key}" value="${cur || S.nug}" aria-label="${title}: other colour"></label>
+  </div></div>`;
+}
+
+function renderSetup() {
+  const el = $('setup');
+  el.classList.toggle('closed', !S.editing);
+  if (!S.editing) {
+    const o = OWN[S.setup];
+    el.innerHTML = o
+      ? `<div class="bar"><div class="mini">${drawBuild(SETUP_PICS[S.setup], pal())}</div>
+          <div class="txt"><small>Your set-up</small><b>${o.short}<span class="dots"><i style="background:${S.nug}"></i>${o.couches === 2 ? `<i style="background:${S.nug2 || S.nug}"></i>` : ''}${o.addon ? `<i style="background:${S.chk}"></i>` : ''}</span></b></div>
+          <button class="btn quiet" type="button" data-act="edit">Change</button></div>`
+      : `<div class="bar"><div class="txt"><small>Showing all ${BUILDS.length} builds</small><b>Which couch do you have?</b></div>
+          <button class="btn" type="button" data-act="edit">Choose</button></div>`;
+    return;
+  }
+  const o = OWN[S.setup], n = o ? countFor(S.setup) : BUILDS.length;
+  el.innerHTML = `<div class="setup">
+    <h2>${S.answered ? 'Your set-up' : 'Which one is at your house?'}</h2>
+    <p class="lede">Tap the one that looks like yours and the builds below change to match.</p>
+    <div class="tiles">${OWN_IDS.map(id => `<button type="button" class="tile" data-own="${id}" aria-pressed="${S.setup === id}">
+      <div class="pic">${drawBuild(SETUP_PICS[id], pal())}</div><b>${OWN[id].short}</b><small>${countFor(id)} builds</small></button>`).join('')}</div>
+    <details class="else"${S.other ? ' open' : ''}><summary>I have something else</summary>
+      <div class="opts">${Object.entries(ELSE).map(([k, v]) => `<button type="button" class="chip" data-else="${k}" aria-pressed="${S.other === k}">${v.label}</button>`).join('')}</div>
+    </details>
+    ${S.other ? `<p class="notice"><b>Not covered yet.</b> ${ELSE[S.other].say}</p>` : ''}
+    ${o ? `<div class="more">
+      ${swatchRow('nug', o.couches === 2 ? 'First couch colour' : 'Couch colour', 'closest match is fine')}
+      ${o.couches === 2 ? swatchRow('nug2', 'Second couch colour', '') : ''}
+      ${o.addon ? swatchRow('chk', 'Round add-on colour', '') : ''}
+      <div class="row name"><div class="lab"><label for="kid">Builder's name</label><small>optional, goes on the printed sheet</small></div>
+        <input id="kid" type="text" maxlength="14" placeholder="e.g. Max" value="${esc(S.kid)}" autocomplete="off"></div>
+    </div>` : ''}
+    <div class="actions">
+      ${o ? `<button class="btn solid" type="button" data-act="done">Show my ${n} builds</button>` : ''}
+      <button class="linkish" type="button" data-act="skip">${o ? 'Clear and show everything' : 'Skip, show everything'}</button>
+    </div>
+    <p class="private">Saved in this browser only. Nothing is sent anywhere.</p>
+  </div>`;
+}
+
+/* ---------- pages ---------- */
+const lazy = new IntersectionObserver(es => { for (const e of es) if (e.isIntersecting) { lazy.unobserve(e.target); e.target.innerHTML = drawBuild(BUILDS.find(b => b.id === e.target.dataset.pic), pal()); } }, { rootMargin: '300px' });
+
+const card = (b, needs) => `<button type="button" class="card ${b.theme}${needs ? ' cant' : ''}" data-open="${b.id}">
+  <div class="pic" data-pic="${b.id}"></div>${label(b)}
+  <div class="meta"><span class="nm">${esc(b.name)}</span><span class="th">${THEMES[b.theme]}</span>${needs ? `<span class="needs">Needs ${needs}</span>` : ''}</div></button>`;
+
+function gallery() {
+  const inTheme = BUILDS.filter(b => !S.theme || b.theme === S.theme);
+  const chips = `<div class="filters">${[['', 'All'], ...Object.entries(THEMES)].map(([k, v]) => `<button type="button" class="chip" data-theme="${k}" aria-pressed="${S.theme === k}">${v}</button>`).join('')}</div>`;
+  if (!OWN[S.setup]) return chips + `<div class="grp"><h3>All builds</h3><span>${inTheme.length}</span></div><div class="grid">${inTheme.map(b => card(b)).join('')}</div>`;
+  const can = inTheme.filter(b => fits(b, S.setup)), cant = inTheme.filter(b => !fits(b, S.setup));
+  const reasons = [...new Set(cant.map(b => missing(b, S.setup).join(' and ')))];
+  return chips + `<div class="grp"><h3>You can build these now</h3><span>${can.length}</span></div>
+    ${can.length ? `<div class="grid">${can.map(b => card(b)).join('')}</div>` : `<p class="empty">Nothing in this theme for your set-up yet. Try another theme.</p>`}
+    ${cant.length ? `<div class="locked"><p><b>${cant.length} more ${cant.length === 1 ? 'build needs' : 'builds need'} ${reasons.join(' or ')}</b><small>Kept out of the way because you can't make them with what you have.</small></p>
+      <button class="btn quiet" type="button" data-act="cant">${S.showCant ? 'Hide them' : 'Show them anyway'}</button></div>
+      ${S.showCant ? `<div class="grid">${cant.map(b => card(b, missing(b, S.setup).join(' and '))).join('')}</div>` : ''}` : ''}`;
+}
+
+function buildPage() {
+  const b = BUILDS.find(x => x.id === S.sel), need = OWN[b.setup], have = OWN[S.setup];
+  const count = (type, c) => piecesOf(b).filter(p => p.type === type && p.couch === c).length;
+  const list = (types, c) => types.map(t => [count(t, c), PIECE_NAMES[t]]).filter(x => x[0]).map(([n, nm]) => n > 1 ? `${n} × ${nm}` : nm).join(', ');
+  const groups = [
+    ['Play couch', S.nug, list(['base', 'cushion', 'triangle'], 1), true],
+    ['Second play couch', S.nug2 || S.nug, list(['base', 'cushion', 'triangle'], 2), have ? have.couches === 2 : null],
+    ['Round add-on', S.chk, list(['hoop', 'pad', 'puck'], 1), have ? have.addon : null],
+  ].filter(g => g[2]);
+  const miss = have ? missing(b, S.setup) : [];
+  const verdict = !have ? `<div class="verdict unk">Made for: ${need.label}<small><button class="linkish" style="padding:0;min-height:0" type="button" data-act="edit">Tell us what you have</button> to check you have the pieces.</small></div>`
+    : miss.length ? `<div class="verdict no">You need ${miss.join(' and ')} for this one<small>Your set-up is ${have.label.toLowerCase()}.</small></div>`
+    : `<div class="verdict ok">✓ You have every piece for this</div>`;
+  return `<button class="linkish" type="button" data-tabgo="gallery">← All builds</button>
+    <div class="bhead"><h2>${esc(b.name)}</h2>${label(b)}</div>
+    <div class="bcols">
+      <div class="stage">${drawBuild(b, pal())}<span class="cap">Stand-in for the 3D view, drawn in your colours</span></div>
+      <div>${verdict}
+        <ul class="parts">${groups.map(([nm, hex, items, ok]) => `<li><i class="dot" style="background:${hex}"></i><span><b>${nm}</b><small>${items}</small></span>
+          ${ok === null || nm === 'Play couch' && !have ? '' : `<span class="st ${ok ? 'y' : 'n'}">${ok ? '✓ You have it' : 'Not in your set-up'}</span>`}</li>`).join('')}</ul>
+        ${miss.length ? `<button class="btn" type="button" data-tabgo="gallery">See the ${countFor(S.setup)} builds you can make</button>` : ''}
+        <p class="hint">Colours wrong? Use Change in the bar above. It is the same control on every page.</p>
+      </div>
+    </div>`;
+}
+
+// Twelve for the sheet: the builds made for exactly this set-up; the largest set-up takes four from each.
+function sheetBuilds(ownId) {
+  if (ownId !== 'two-couch-addon') return BUILDS.filter(b => b.setup === ownId).slice(0, 12);
+  return ['two-couch', 'couch-addon', 'couch'].flatMap(s => BUILDS.filter(b => b.setup === s).slice(0, 4));
+}
+function sheetPage() {
+  if (!OWN[S.setup]) return `<div class="ask"><p><b>Which couch is this sheet for?</b><br>The sheet prints 12 builds your child can point at, so it needs to know what you have.</p>
+    <div class="opts">${OWN_IDS.map(id => `<button type="button" class="chip" data-own="${id}" data-quick="1">${OWN[id].short}</button>`).join('')}</div></div>`;
+  const list = sheetBuilds(S.setup).slice(0, 6), kid = S.kid.trim();
+  return `<div class="sheet-top"><div class="sheet-name"><label for="kid2">Builder's name <small style="font-weight:400;color:var(--muted)">optional</small></label>
+      <input id="kid2" type="text" maxlength="14" placeholder="e.g. Max" value="${esc(S.kid)}" autocomplete="off"></div>
+      <button class="btn solid" type="button">Print or save PDF</button></div>
+    <div class="paper"><h3 id="stitle">${kid ? esc(kid) + '’s Couch Builds' : 'My Couch Builds'}</h3>
+      <div class="sgrid">${list.map((b, i) => `<div class="scard ${b.theme}"><span class="num">${i + 1}</span><span class="star">★</span><div class="pic">${drawBuild(b, pal())}</div>${label(b)}<div class="nm">${esc(b.name)}</div></div>`).join('')}</div>
+      <footer><span>Page 1 of 2 · colour the star when you build it</span><span>${OWN[S.setup].label} · grown-up nearby</span></footer></div>
+    <p class="hint">Every build on the sheet is one you can make with ${OWN[S.setup].label.toLowerCase()}, in your colours.</p>`;
+}
+
+function renderBody() {
+  lazy.disconnect();
+  document.querySelectorAll('#tabs button').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === S.tab));
+  $('body').innerHTML = S.tab === 'gallery' ? gallery() : S.tab === 'build' ? buildPage() : sheetPage();
+  $('body').querySelectorAll('[data-pic]').forEach(p => lazy.observe(p));
+}
+const render = () => { renderSetup(); renderBody(); };
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const d = t.dataset;
+  if (t.id === 'reset') { S = fresh(); render(); return; }
+  if (d.tab || d.tabgo) { S.tab = d.tab || d.tabgo; renderBody(); return; }
+  if (d.own) { S.setup = d.own; S.other = ''; S.answered = true; S.showCant = false; if (d.quick) S.editing = false; render(); return; }
+  if (d.else) { const x = ELSE[d.else]; S.other = d.else; S.setup = x.closest; S.answered = true; render(); return; }
+  if (d.color) { S[d.color] = d.hex; render(); return; }
+  if (d.theme !== undefined) { S.theme = d.theme; renderBody(); return; }
+  if (d.open) { S.sel = d.open; S.tab = 'build'; renderBody(); $('tabs').scrollIntoView({ block: 'start' }); return; }
+  if (d.act === 'edit') { S.editing = true; renderSetup(); $('setup').scrollIntoView({ block: 'start' }); return; }
+  if (d.act === 'done') { S.editing = false; render(); return; }
+  if (d.act === 'skip') { S.setup = ''; S.other = ''; S.answered = true; S.editing = false; render(); return; }
+  if (d.act === 'cant') { S.showCant = !S.showCant; renderBody(); return; }
+});
+let queued = 0;
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.pick) { S[t.dataset.pick] = t.value; queued ||= requestAnimationFrame(() => { queued = 0; renderBody(); document.querySelectorAll('.tile').forEach(el => { el.querySelector('.pic').innerHTML = drawBuild(SETUP_PICS[el.dataset.own], pal()); }); }); return; }
+  if (t.id === 'kid' || t.id === 'kid2') { S.kid = t.value; const h = $('stitle'); if (h) h.textContent = S.kid.trim() ? S.kid.trim() + '’s Couch Builds' : 'My Couch Builds'; }
+});
+document.addEventListener('change', e => { if (e.target.dataset.pick) renderSetup(); });
+
+// For screenshots and review links: ?own=couch-addon&tab=build&b=big-castle&open=1&cant=1
+const q = new URLSearchParams(location.search);
+if (OWN[q.get('own')]) { S.setup = q.get('own'); S.answered = true; S.editing = q.get('open') === '1'; }
+if (ELSE[q.get('else')]) { S.other = q.get('else'); S.setup = ELSE[S.other].closest; S.answered = true; }
+if (q.get('tab')) S.tab = q.get('tab');
+if (BUILDS.some(b => b.id === q.get('b'))) S.sel = q.get('b');
+if (q.get('cant') === '1') S.showCant = true;
+if (q.get('nug2')) S.nug2 = '#' + q.get('nug2');
+render();
+</script>
+</body>
+</html>

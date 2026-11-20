@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couch Coach brand route: Bold and playful</title>
+<style>
+:root {
+  --ink: #16193B; --paper: #FFF8E7; --white: #FFFFFF; --muted: #4A4F6E;
+  --red: #D92B1F; --blue: #1F55D6; --green: #0A7D43; --yellow: #FFC61A;
+  --red-tint: #FFE4E0; --blue-tint: #DFE8FF; --green-tint: #DCF3E5;
+  --red-lite: #FF6B5E; --blue-lite: #7FA6FF;
+  --display: "Fredoka", "Arial Rounded MT Bold", ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
+  --text: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --wm-main: var(--ink); --wm-u: var(--blue); --wm-a: var(--red);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 16px; line-height: 1.45; overflow-x: hidden; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; margin: 0; line-height: 1.02; }
+p { margin: 0; }
+svg { display: block; }
+.board { max-width: 1120px; margin: 0 auto; padding: 20px 16px 72px; }
+.board > header { padding: 12px 0 28px; }
+.eyebrow { font-family: var(--display); font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.board > header h1 { font-size: clamp(38px, 8vw, 76px); margin: 6px 0 10px; }
+.board > header p { max-width: 62ch; font-size: 17px; }
+section { margin-top: 56px; }
+section > h2 { font-size: clamp(28px, 5vw, 40px); display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+section > h2 .n { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--yellow); display: grid; place-items: center; font-size: 24px; }
+.lede { max-width: 66ch; margin-bottom: 20px; color: var(--muted); }
+.panel { background: var(--white); border: 3px solid var(--ink); border-radius: 22px; box-shadow: 5px 5px 0 var(--ink); padding: 20px; }
+.dark { background: var(--ink); color: var(--paper); --wm-main: var(--paper); --wm-u: var(--blue-lite); --wm-a: var(--red-lite); }
+.grid2 { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 820px) { .grid2 { grid-template-columns: 1fr 1fr; } }
+.cap { font-size: 13px; color: var(--muted); margin-top: 10px; }
+.dark .cap { color: #C9CCE4; }
+
+/* logo */
+.lockup { display: flex; align-items: center; gap: 4%; }
+.lockup .mark { flex: none; width: 34%; max-width: 190px; }
+.lockup .word { flex: 1; min-width: 0; max-width: 330px; }
+.sizes { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 22px; }
+.sizes figure { margin: 0; display: grid; justify-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.dark .sizes figure { color: #C9CCE4; }
+.tile { border-radius: 22%; background: var(--ink); display: grid; place-items: center; border: 2px solid var(--ink); }
+.tile svg { width: 78%; height: 78%; }
+.hdr-lock { display: flex; align-items: center; gap: 8px; }
+
+/* colour */
+.swatches { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.sw { border: 3px solid var(--ink); border-radius: 16px; overflow: hidden; background: var(--white); }
+.sw i { display: block; height: 76px; border-bottom: 3px solid var(--ink); }
+.sw div { padding: 8px 10px 10px; font-size: 13px; line-height: 1.3; }
+.sw b { display: block; font-family: var(--display); font-size: 16px; }
+.sw code { font-size: 12.5px; }
+.sub { font-family: var(--display); font-size: 20px; margin: 28px 0 10px; }
+.themes { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.theme { border: 3px solid var(--ink); border-radius: 16px; overflow: hidden; }
+.theme .band { display: flex; align-items: center; gap: 8px; padding: 10px 12px; color: #fff; font-family: var(--display); font-size: 20px; }
+.theme .band svg { width: 22px; height: 22px; flex: none; }
+.theme .body { padding: 10px 12px; font-size: 13.5px; }
+.pairs { width: 100%; border-collapse: collapse; font-size: 14px; }
+.pairs td { padding: 6px 8px 6px 0; vertical-align: middle; border-top: 1px solid #D8D2C0; }
+.pairs .chip { display: inline-block; padding: 6px 12px; border-radius: 10px; font-weight: 600; border: 1px solid rgba(22,25,59,.25); white-space: nowrap; }
+.pairs .r { font-family: var(--display); font-size: 17px; white-space: nowrap; }
+.pairs .ok { font-size: 12px; color: var(--green); font-weight: 700; }
+.tablewrap { overflow-x: auto; }
+
+/* type */
+.spec { border-top: 2px dashed #C9C2AC; padding: 14px 0; }
+.spec:first-child { border-top: 0; padding-top: 0; }
+.spec small { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-family: var(--text); font-weight: 400; letter-spacing: 0; }
+.d48 { font-family: var(--display); font-weight: 700; font-size: clamp(34px, 9vw, 48px); line-height: .98; }
+.d28 { font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1.05; }
+.d18 { font-family: var(--display); font-weight: 700; font-size: 18px; line-height: 1.1; }
+.t17 { font-size: 17px; } .t15 { font-size: 15px; } .t12 { font-size: 12px; font-weight: 700; }
+
+/* copy */
+.copy { display: grid; gap: 0; }
+.copy > div { display: grid; grid-template-columns: 1fr; gap: 2px; padding: 12px 0; border-top: 2px dashed #C9C2AC; }
+.copy > div:first-child { border-top: 0; }
+.copy dt, .copy .k { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; }
+.copy .v { font-size: 17px; }
+.copy .v.big { font-family: var(--display); font-size: 28px; line-height: 1.05; }
+.copy .v em { font-style: normal; color: var(--muted); font-size: 14px; }
+@media (min-width: 720px) { .copy > div { grid-template-columns: 200px 1fr; gap: 16px; align-items: baseline; } }
+.voice { font-family: var(--display); font-size: clamp(22px, 4vw, 30px); line-height: 1.15; max-width: 30em; margin-bottom: 18px; }
+
+/* ---------- applied: phone ---------- */
+.applied { display: grid; gap: 28px; grid-template-columns: 1fr; align-items: start; }
+@media (min-width: 900px) { .applied { grid-template-columns: 390px 1fr; } }
+.phone { width: 100%; max-width: 390px; margin: 0 auto; border: 3px solid var(--ink); border-radius: 30px; overflow: hidden; background: var(--paper); box-shadow: 6px 6px 0 var(--ink); }
+.ph-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px 10px; }
+.ph-top .hdr-lock .m { width: 40px; height: 40px; }
+.ph-top .hdr-lock .w { width: 96px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border: 3px solid var(--ink); border-radius: 999px; background: var(--yellow); color: var(--ink); font-family: var(--display); font-weight: 700; font-size: 15px; text-decoration: none; box-shadow: 3px 3px 0 var(--ink); white-space: nowrap; }
+.hero { margin: 4px 14px 0; padding: 18px 16px 16px; background: var(--yellow); border: 3px solid var(--ink); border-radius: 22px; box-shadow: 4px 4px 0 var(--ink); position: relative; overflow: hidden; }
+.hero h3 { font-size: 39px; line-height: .95; letter-spacing: -.01em; position: relative; }
+.hero p { margin-top: 10px; font-size: 15px; line-height: 1.35; position: relative; max-width: 28ch; }
+.hero .fits { margin-top: 8px; font-size: 12.5px; max-width: none; padding-right: 64px; }
+.hero .deco { position: absolute; right: -24px; bottom: -28px; width: 96px; height: 96px; }
+.filters { padding: 16px 14px 4px; }
+.filters h4 { font-family: var(--display); font-size: 17px; margin: 0 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.chip2 { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 3px solid var(--ink); border-radius: 999px; background: var(--white); font-weight: 700; font-size: 14px; }
+.chip2 svg { width: 16px; height: 16px; flex: none; }
+.chip2.on { background: var(--ink); color: var(--white); }
+.more { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; font-size: 14px; padding: 2px 0 10px; }
+.more > span { white-space: nowrap; }
+.more .dots { display: inline-flex; gap: 4px; vertical-align: -3px; margin-right: 6px; }
+.more .dots i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); }
+.more a { color: var(--ink); font-weight: 700; }
+.count { font-family: var(--display); font-size: 15px; white-space: nowrap; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 4px 14px 22px; }
+.card { position: relative; display: flex; flex-direction: column; min-width: 0; aspect-ratio: 1 / 1.08; border: 3px solid var(--ink); border-radius: 18px; overflow: hidden; background: var(--bg); box-shadow: 4px 4px 0 var(--ink); color: inherit; text-decoration: none; }
+.card.go { --c: var(--red); --bg: var(--red-tint); }
+.card.fort { --c: var(--blue); --bg: var(--blue-tint); }
+.card.climb { --c: var(--green); --bg: var(--green-tint); }
+.card .pic { flex: 1; min-height: 0; padding: 26px 10px 4px; }
+.card .pic svg { width: 100%; height: 100%; overflow: visible; }
+.card .name { flex: none; min-height: 38px; display: flex; align-items: center; justify-content: center; background: var(--c); color: #fff; border-top: 3px solid var(--ink); font-family: var(--display); font-weight: 700; font-size: 16.5px; line-height: 1.05; padding: 7px 6px 8px; text-align: center; text-wrap: balance; }
+.card .pic { position: relative; }
+.card .shape { position: absolute; right: 6px; bottom: 6px; width: 26px; height: 26px; border-radius: 50%; background: var(--c); color: #fff; border: 2px solid var(--ink); display: grid; place-items: center; }
+.card .shape svg { width: 13px; height: 13px; }
+.untested { position: absolute; left: 7px; top: 7px; display: inline-flex; align-items: center; gap: 4px; background: var(--white); color: var(--ink); border: 2px dashed var(--ink); border-radius: 999px; padding: 1px 8px 2px; font-size: 11px; font-weight: 700; line-height: 1.4; }
+
+/* ---------- applied: sheet ---------- */
+.sheet { background: #fff; border: 1px solid #BDB6A2; box-shadow: 0 8px 26px rgba(22,25,59,.22); padding: 22px 20px 16px; max-width: 520px; margin: 0 auto; color: var(--ink); }
+.sheet .title { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.sheet .title svg { width: 46px; height: 46px; flex: none; }
+.sheet .title h3 { font-size: clamp(30px, 7vw, 44px); line-height: 1; }
+.scard { position: relative; margin: 16px auto 0; max-width: 400px; aspect-ratio: 3.75 / 3.1; display: flex; flex-direction: column; border: 5px solid var(--c); border-radius: 26px; overflow: hidden; background: #fff; }
+.scard.go { --c: var(--red); } .scard.fort { --c: var(--blue); } .scard.climb { --c: var(--green); }
+.scard .pic { flex: 1; min-height: 0; padding: 14px 44px 4px; }
+.scard .pic svg { width: 100%; height: 100%; overflow: visible; }
+.scard .name { flex: none; background: var(--c); color: #fff; font-family: var(--display); font-weight: 700; font-size: clamp(26px, 6.4vw, 36px); line-height: 1; padding: 9px 8px 11px; text-align: center; }
+.scard .num { position: absolute; top: 9px; left: 9px; width: 50px; height: 50px; border-radius: 50%; background: var(--c); color: #fff; font-family: var(--display); font-weight: 700; font-size: 28px; display: grid; place-items: center; }
+.scard .star { position: absolute; top: 8px; right: 10px; width: 50px; height: 50px; }
+.scard .ut { position: absolute; left: 12px; bottom: 62px; font-size: 10.5px; font-weight: 700; color: var(--ink); background: #fff; border: 1.5px dashed var(--ink); border-radius: 999px; padding: 0 7px 1px; }
+.sheet footer { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; font-size: 12px; font-weight: 600; }
+.sheet footer .key { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.sheet footer .key span { display: inline-flex; align-items: center; gap: 4px; }
+.sheet footer svg { width: 12px; height: 12px; }
+.note { font-size: 14px; color: var(--muted); margin-top: 16px; max-width: 520px; margin-left: auto; margin-right: auto; }
+.stepbar { display: flex; align-items: center; gap: 10px; margin: 20px auto 0; max-width: 520px; }
+.stepbar button { flex: none; width: 48px; height: 48px; border: 3px solid var(--ink); border-radius: 50%; background: var(--white); font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.stepbar button.next { background: var(--yellow); }
+.stepbar p { flex: 1; font-family: var(--display); font-weight: 700; font-size: 18px; line-height: 1.15; }
+.stepbar p small { display: block; font-family: var(--text); font-weight: 600; font-size: 12.5px; color: var(--muted); }
+
+.nots { display: grid; gap: 12px; }
+.nots p { font-family: var(--display); font-size: clamp(19px, 3.4vw, 24px); line-height: 1.2; padding: 14px 16px; border: 3px solid var(--ink); border-radius: 16px; background: var(--white); }
+.nots b { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- shared artwork -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- The mark: a coach's whistle built from three foam pieces. Slab = mouthpiece, hoop = body, triangle pillow = the wedge on top. -->
+    <symbol id="mark" viewBox="-3 -3 70 70">
+      <g transform="rotate(-12 32 32)">
+        <rect x="19" y="18" width="43" height="16" rx="4.5" fill="#1F55D6"/>
+        <path d="M32 19 L54 19 L32 6 Z" fill="#D92B1F" stroke="#D92B1F" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="23" cy="40" r="14" fill="none" stroke="#FFC61A" stroke-width="12.5"/>
+      </g>
+    </symbol>
+    <!-- Wordmark: COUCH over COACH on a five-column grid, so the one letter that differs lines up. -->
+    <symbol id="word" viewBox="0 0 176 92">
+      <g font-family="Fredoka, 'Arial Rounded MT Bold', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif" font-weight="700" font-size="44" text-anchor="middle" style="fill:var(--wm-main)">
+        <text x="18" y="40">C</text><text x="53" y="40">O</text><text x="88" y="40" style="fill:var(--wm-u)">U</text><text x="123" y="40">C</text><text x="158" y="40">H</text>
+        <text x="18" y="84">C</text><text x="53" y="84">O</text><text x="88" y="84" style="fill:var(--wm-a)">A</text><text x="123" y="84">C</text><text x="158" y="84">H</text>
+      </g>
+    </symbol>
+    <symbol id="s-go" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="4.5"/></symbol>
+    <symbol id="s-fort" viewBox="0 0 16 16"><rect x="1.5" y="3.5" width="13" height="9" rx="2.2" fill="currentColor"/></symbol>
+    <symbol id="s-climb" viewBox="0 0 16 16"><path d="M2.5 13.5 L13.5 13.5 L2.5 3 Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="star" viewBox="0 0 50 50"><path d="M25 5 L30.9 18.3 L45 19.9 L34.4 29.5 L37.4 43.6 L25 36.4 L12.6 43.6 L15.6 29.5 L5 19.9 L19.1 18.3 Z" fill="#fff" stroke="#16193B" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="1 0"/></symbol>
+  </defs>
+</svg>
+
+<div class="board">
+  <header>
+    <p class="eyebrow">Couch Coach · brand route</p>
+    <h1>Bold and playful</h1>
+    <p>Three foam shapes, three loud colours, and copy that sounds like a grown-up who is fun on the floor. Loud enough that a four-year-old shouts "FIRE TRUCK", tidy enough that a parent believes the instructions.</p>
+  </header>
+
+  <!-- 1 LOGO -->
+  <section id="logo">
+    <h2><span class="n">1</span>Logo</h2>
+    <p class="lede">The idea: a coach's whistle built from the three foam pieces. Slab for the mouthpiece, hoop for the body, triangle pillow on top. The wordmark stacks COUCH over COACH so the one letter that changes lines up, blue U over red A.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="lockup">
+          <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="Couch Coach mark"><use href="#mark"/></svg>
+          <svg class="word" viewBox="0 0 176 92" role="img" aria-label="Couch Coach"><use href="#word"/></svg>
+        </div>
+        <p class="cap">On light. Paper or white behind it; ink letters.</p>
+      </div>
+      <div class="panel dark">
+        <div class="lockup">
+          <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><use href="#mark"/></svg>
+          <svg class="word" viewBox="0 0 176 92" aria-hidden="true"><use href="#word"/></svg>
+        </div>
+        <p class="cap">On dark. The mark keeps its colours; the two accent letters lighten so they stay readable.</p>
+      </div>
+      <div class="panel">
+        <div class="sizes">
+          <figure><svg width="16" height="16" viewBox="0 0 64 64"><use href="#mark"/></svg>16</figure>
+          <figure><svg width="32" height="32" viewBox="0 0 64 64"><use href="#mark"/></svg>32</figure>
+          <figure><svg width="48" height="48" viewBox="0 0 64 64"><use href="#mark"/></svg>48</figure>
+          <figure><span class="tile" style="width:64px;height:64px"><svg viewBox="0 0 64 64"><use href="#mark"/></svg></span>app icon</figure>
+          <figure><span class="hdr-lock"><svg width="40" height="40" viewBox="0 0 64 64"><use href="#mark"/></svg><svg width="92" viewBox="0 0 176 92"><use href="#word"/></svg></span>site header</figure>
+        </div>
+        <p class="cap">Small sizes. The mark alone is the favicon; no outline, no detail to lose.</p>
+      </div>
+      <div class="panel dark">
+        <div class="sizes">
+          <figure><svg width="16" height="16" viewBox="0 0 64 64"><use href="#mark"/></svg>16</figure>
+          <figure><svg width="32" height="32" viewBox="0 0 64 64"><use href="#mark"/></svg>32</figure>
+          <figure><svg width="48" height="48" viewBox="0 0 64 64"><use href="#mark"/></svg>48</figure>
+          <figure><span class="hdr-lock"><svg width="40" height="40" viewBox="0 0 64 64"><use href="#mark"/></svg><svg width="92" viewBox="0 0 176 92"><use href="#word"/></svg></span>site header</figure>
+        </div>
+        <p class="cap">The wordmark here is live text in the fallback face. For launch it gets drawn once as outlines so it looks the same on every phone.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 COLOUR -->
+  <section id="colour">
+    <h2><span class="n">2</span>Colour</h2>
+    <p class="lede">Four crayon-box colours plus ink and warm paper. Everything gets an ink outline and a hard ink shadow, so the page looks like stickers on a table.</p>
+    <div class="swatches" id="swatches"></div>
+
+    <h3 class="sub">The three build themes</h3>
+    <div class="themes">
+      <div class="theme"><div class="band" style="background:var(--red)"><svg><use href="#s-go"/></svg>Things that go</div><div class="body" style="background:var(--red-tint)">Zoom Red <code>#D92B1F</code> band, tint <code>#FFE4E0</code> behind the drawing. Shape: the hoop, because wheels.</div></div>
+      <div class="theme"><div class="band" style="background:var(--blue)"><svg><use href="#s-fort"/></svg>Forts</div><div class="body" style="background:var(--blue-tint)">Fort Blue <code>#1F55D6</code> band, tint <code>#DFE8FF</code>. Shape: the slab, because walls.</div></div>
+      <div class="theme"><div class="band" style="background:var(--green)"><svg><use href="#s-climb"/></svg>Climb &amp; slide</div><div class="body" style="background:var(--green-tint)">Climb Green <code>#0A7D43</code> band, tint <code>#DCF3E5</code>. Shape: the triangle pillow, because ramps.</div></div>
+    </div>
+    <p class="cap">Each theme has a shape as well as a colour, so a card never depends on colour alone.</p>
+
+    <h3 class="sub">Default colours in the drawings</h3>
+    <div class="grid2">
+      <div class="panel"><div id="defaults" style="max-width:300px;margin:0 auto"></div>
+        <p class="cap">Play couch: Fort Blue <code>#1F55D6</code>. Round add-on: Sunshine <code>#FFC61A</code>. A second couch starts the same blue until the parent picks its own colour. Parents can still change all of them; these are only the starting point.</p></div>
+      <div class="panel"><div class="tablewrap"><table class="pairs" id="pairs"></table></div>
+        <p class="cap">Ratios are worked out in this page from the hex values (WCAG 2 formula). Body text needs 4.5:1.</p></div>
+    </div>
+  </section>
+
+  <!-- 3 TYPE -->
+  <section id="type">
+    <h2><span class="n">3</span>Type</h2>
+    <p class="lede">Display: Fredoka Bold (SIL Open Font License), one self-hosted file later. Shown here in the fallback actually used: Arial Rounded MT Bold on Apple devices, then the system rounded or system UI face. Text: the phone's own system font, so there is nothing to download.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="spec"><small>Display 48 / 0.98 · home headline</small><div class="d48">What are we building today?</div></div>
+        <div class="spec"><small>Display 28 · build names on the build page and the sheet</small><div class="d28">Pirate Ship · Big Slide · Secret Hideout</div></div>
+        <div class="spec"><small>Display 18 · card names, buttons, filter headings</small><div class="d18">Choo-Choo Train &nbsp; Print the pointing sheet</div></div>
+      </div>
+      <div class="panel">
+        <div class="spec"><small>Text 17 / 1.45 · pitch</small><p class="t17">36 builds for your play couch and round add-on. Tap one to see it in 3D, one piece at a time.</p></div>
+        <div class="spec"><small>Text 15 · body and filter chips (700 weight on chips)</small><p class="t15">Pick what you own and we only show builds you can make. Your couch colors are saved on this phone.</p></div>
+        <div class="spec"><small>Text 12 bold · labels, never smaller than 11</small><p class="t12">Not yet kid-tested &nbsp;·&nbsp; 1 play couch + round add-on</p></div>
+        <div class="spec"><small>Rules</small><p class="t15">Display face for anything a kid might shout. System face for anything a parent has to read. Sentence case everywhere except the logo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 VOICE -->
+  <section id="voice">
+    <h2><span class="n">4</span>Voice and copy</h2>
+    <p class="voice">We talk like the grown-up who gets down on the floor: short, loud where it is fun, and straight about what we have and have not tried. Jokes go in headlines and never in instructions or safety notes.</p>
+    <div class="panel copy">
+      <div><span class="k">Home headline</span><span class="v big">What are we building today?</span></div>
+      <div><span class="k">One-line pitch</span><span class="v">36 builds for your play couch and round add-on: cars, forts and slides. Tap one to see it in 3D, one piece at a time.<br><em>Fits the Nugget and Chunk. Not made by or affiliated with their maker.</em></span></div>
+      <div><span class="k">Filter: what you own</span><span class="v"><b>What's in your living room?</b><br>Show everything · 1 play couch · 1 play couch + round add-on · 2 play couches</span></div>
+      <div><span class="k">Filter: theme</span><span class="v"><b>What kind of day is it?</b><br>All · Things that go · Forts · Climb &amp; slide</span></div>
+      <div><span class="k">Colour control</span><span class="v">Match my couch <em>(opens: Couch · Second couch · Round add-on)</em></span></div>
+      <div><span class="k">Count line</span><span class="v">12 builds you can make</span></div>
+      <div><span class="k">Untested label</span><span class="v">Not yet kid-tested<br><em>Kept word for word on cards and the sheet. On the build page it gets one more sentence: "We drew it. No small person has jumped on it yet."</em></span></div>
+      <div><span class="k">Build page step caption</span><span class="v">Step 3 of 8: add a triangle pillow<br><em>Whole build shown: "All 8 pieces. Ta-da!"</em></span></div>
+      <div><span class="k">Empty state</span><span class="v">Nothing fits that combo yet. Try another theme, or show everything.</span></div>
+      <div><span class="k">Build not found</span><span class="v">That build wandered off. Back to all the builds.</span></div>
+      <div><span class="k">Print button</span><span class="v">Print the pointing sheet<br><em>Shortened to "Print sheet" in the phone header. On the sheet page itself: "Print it" with "or save as PDF" beside it.</em></span></div>
+      <div><span class="k">Sheet title</span><span class="v big">Maya, pick one!</span><span class="k"></span><span class="v"><em>No name entered: "Pick one!" Page two: "Pick another!"</em></span></div>
+      <div><span class="k">Sheet footer</span><span class="v">Color the star when you build it · 1 play couch + round add-on · Grown-up nearby, always.</span></div>
+    </div>
+  </section>
+
+  <!-- 5 APPLIED -->
+  <section id="applied">
+    <h2><span class="n">5</span>Applied</h2>
+    <p class="lede">The gallery home page at phone width, and one card from the printed sheet. Drawings are the site's real builds, recoloured to this palette.</p>
+    <div class="applied">
+      <div class="phone" aria-label="Gallery home page mock-up at phone width">
+        <div class="ph-top">
+          <span class="hdr-lock"><svg class="m" viewBox="0 0 64 64" aria-hidden="true"><use href="#mark"/></svg><svg class="w" viewBox="0 0 176 92" role="img" aria-label="Couch Coach"><use href="#word"/></svg></span>
+          <a class="btn" href="#applied">Print sheet</a>
+        </div>
+        <div class="hero">
+          <svg class="deco" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="20" fill="none" stroke="#fff" stroke-width="16" opacity=".55"/></svg>
+          <h3>What are we building today?</h3>
+          <p>36 builds for your play couch and round add-on. Tap one to see it in 3D, one piece at a time.</p>
+          <p class="fits">Fits the Nugget and Chunk. Not affiliated with their maker.</p>
+        </div>
+        <div class="filters">
+          <h4>What's in your living room?</h4>
+          <div class="chips">
+            <span class="chip2">Show everything</span><span class="chip2">1 play couch</span><span class="chip2 on">1 play couch + round add-on</span><span class="chip2">2 play couches</span>
+          </div>
+          <h4>What kind of day is it?</h4>
+          <div class="chips">
+            <span class="chip2 on">All</span>
+            <span class="chip2"><svg style="color:var(--red)"><use href="#s-go"/></svg>Things that go</span>
+            <span class="chip2"><svg style="color:var(--blue)"><use href="#s-fort"/></svg>Forts</span>
+            <span class="chip2"><svg style="color:var(--green)"><use href="#s-climb"/></svg>Climb &amp; slide</span>
+          </div>
+          <div class="more">
+            <span><span class="dots"><i style="background:var(--blue)"></i><i style="background:var(--yellow)"></i></span><a href="#applied">Match my couch</a></span>
+            <span class="count">12 builds you can make</span>
+          </div>
+        </div>
+        <div class="cards" id="cards"></div>
+      </div>
+
+      <div>
+        <div class="sheet" aria-label="Printed sheet mock-up: title, one card, footer">
+          <div class="title"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#mark"/></svg><h3>Maya, pick one!</h3></div>
+          <div id="sheetcard"></div>
+          <footer>
+            <span class="key">
+              <span><svg style="color:var(--red)"><use href="#s-go"/></svg>Things that go</span>
+              <span><svg style="color:var(--blue)"><use href="#s-fort"/></svg>Forts</span>
+              <span><svg style="color:var(--green)"><use href="#s-climb"/></svg>Climb &amp; slide</span>
+            </span>
+            <span>Color the star when you build it · 1 play couch + round add-on · Grown-up nearby, always.</span>
+          </footer>
+        </div>
+        <p class="note">On paper the card stays white inside with a thick theme border, so a home printer is not asked to flood a page with colour. The number is for "I want number 4"; the star is for colouring in afterwards.</p>
+        <div class="stepbar" aria-label="Build page step control mock-up">
+          <button type="button" aria-label="Previous step">&larr;</button>
+          <p>Step 3 of 8: add a triangle pillow<small>Not yet kid-tested. We drew it. No small person has jumped on it yet.</small></p>
+          <button type="button" class="next" aria-label="Next step">&rarr;</button>
+        </div>
+        <p class="note">The build page step control in this brand: big round buttons for a thumb, caption in the display face.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 NOT -->
+  <section id="not">
+    <h2><span class="n">6</span>What this route is not</h2>
+    <div class="nots">
+      <p><b>Not quiet.</b> No beige, no pastels, no thin lines. If it would suit a linen catalogue, it is the other route.</p>
+      <p><b>Not a cartoon.</b> No mascot, no faces on the furniture, no wobbly hand-drawn letters. The foam shapes are the characters.</p>
+      <p><b>Not jokey about the facts.</b> Piece counts, steps and "Not yet kid-tested" are said plainly, every time.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+// Swatches and contrast pairs, worked out from the hex values so the board cannot drift from the CSS.
+const SW = [
+  ['Ink', '#16193B', 'Text, outlines, hard shadows, selected chips'],
+  ['Paper', '#FFF8E7', 'Page background'],
+  ['White', '#FFFFFF', 'Cards, chips, the printed sheet'],
+  ['Sunshine', '#FFC61A', 'Brand colour: hero block, main buttons, round add-on in drawings'],
+  ['Zoom Red', '#D92B1F', 'Things that go; the A in the wordmark'],
+  ['Fort Blue', '#1F55D6', 'Forts; the play couch in drawings; the U in the wordmark'],
+  ['Climb Green', '#0A7D43', 'Climb & slide'],
+  ['Slate', '#4A4F6E', 'Secondary text'],
+  ['Red tint', '#FFE4E0', 'Behind drawings on red cards'],
+  ['Blue tint', '#DFE8FF', 'Behind drawings on blue cards'],
+  ['Green tint', '#DCF3E5', 'Behind drawings on green cards'],
+  ['Light red / light blue', '#FF6B5E', 'Wordmark accents on dark only (with #7FA6FF)'],
+];
+document.getElementById('swatches').innerHTML = SW.map(([n, h, u]) => `<div class="sw"><i style="background:${h}"></i><div><b>${n}</b><code>${h}</code><br>${u}</div></div>`).join('');
+const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+const PAIRS = [
+  ['#16193B', '#FFF8E7', 'Ink on Paper', 'body text'],
+  ['#16193B', '#FFFFFF', 'Ink on White', 'cards, chips, sheet'],
+  ['#4A4F6E', '#FFF8E7', 'Slate on Paper', 'secondary text'],
+  ['#16193B', '#FFC61A', 'Ink on Sunshine', 'hero, main button'],
+  ['#FFFFFF', '#D92B1F', 'White on Zoom Red', 'card names'],
+  ['#FFFFFF', '#1F55D6', 'White on Fort Blue', 'card names'],
+  ['#FFFFFF', '#0A7D43', 'White on Climb Green', 'card names'],
+  ['#FFFFFF', '#16193B', 'White on Ink', 'selected chip'],
+  ['#16193B', '#FFE4E0', 'Ink on Red tint', 'label on card'],
+  ['#FFF8E7', '#16193B', 'Paper on Ink', 'dark panels'],
+];
+document.getElementById('pairs').innerHTML = PAIRS.map(([f, b, n, u]) => { const r = ratio(f, b); return `<tr><td><span class="chip" style="color:${f};background:${b}">${n}</span></td><td>${u}</td><td class="r">${r.toFixed(1)}:1</td><td class="ok">${r >= 4.5 ? 'passes' : 'large text only'}</td></tr>`; }).join('');
+</script>
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { drawBuild, palette } from '../../js/flat.js';
+const pal = palette({ nug: '#1F55D6', nug2: '', chk: '#FFC61A' });
+const by = id => BUILDS.find(b => b.id === id);
+const SHAPE = { go: 's-go', fort: 's-fort', climb: 's-climb' };
+const label = b => b.tested ? '' : 'Not yet kid-tested';
+document.getElementById('cards').innerHTML = ['race-car', 'castle', 'big-slide', 'pirate-ship', 'secret-hideout', 'choo-choo-train'].map(by).map(b =>
+  `<a class="card ${b.theme}" href="../../build.html?b=${b.id}"><div class="pic">${drawBuild(b, pal)}<span class="shape"><svg aria-hidden="true"><use href="#${SHAPE[b.theme]}"/></svg></span></div>${label(b) ? `<span class="untested">${label(b)}</span>` : ''}<div class="name">${b.name}</div></a>`).join('');
+const s = by('race-car');
+document.getElementById('sheetcard').innerHTML = `<div class="scard ${s.theme}"><div class="num">1</div><svg class="star" viewBox="0 0 50 50" aria-hidden="true"><use href="#star"/></svg><div class="pic">${drawBuild(s, pal)}</div>${label(s) ? `<span class="ut">${label(s)}</span>` : ''}<div class="name">${s.name}</div></div>`;
+document.getElementById('defaults').innerHTML = drawBuild(by('mountain-climb'), pal);
+</script>
+</body>
+</html>

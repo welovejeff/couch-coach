@@ -2,33 +2,91 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Build · Couch Coach</title>
-<link rel="stylesheet" href="css/site.css">
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/brand.css">
+<link rel="stylesheet" href="css/build.css">
+<!-- three.js is only fetched when the visitor taps "Spin in 3D" -->
 <script type="importmap">{ "imports": { "three": "./vendor/three/three.module.js" } }</script>
 </head>
-<body>
+<body class="build-page">
 <div class="wrap">
-  <div class="top">
-    <h1><a href="index.html">🛋️ Couch Coach</a></h1>
-    <a class="to-sheet" href="sheet.html">Printable sheet →</a>
-  </div>
-  <div class="build-head">
-    <a href="index.html">← All builds</a>
-    <h2 id="name"></h2>
-    <span class="untested" id="label"></span>
-  </div>
-  <div class="stage" id="stage">
-    <canvas id="view" aria-label="3D view of the build"></canvas>
-    <p class="note" id="loading">Loading 3D view…</p>
-  </div>
-  <div class="steps" id="steps">
-    <button id="back" type="button" aria-label="Previous step">←</button>
-    <span class="caption" id="caption" aria-live="polite"></span>
-    <button id="next" type="button" aria-label="Next step">→</button>
-    <button id="all" class="all" type="button">Show all</button>
-  </div>
-  <p class="hint" id="hint">Drag to spin. Pinch or scroll to zoom. Use the arrows to add one piece at a time.</p>
+  <header id="top"></header>
+  <div id="setup"></div>
+
+  <main id="missing" class="missing" hidden>
+    <h1>Build not found</h1>
+    <p>That build is not in the library. <a href="index.html">See all builds</a></p>
+  </main>
+
+  <main id="page" hidden>
+    <a class="back-link" href="index.html">← All builds</a>
+    <header class="b-head">
+      <h1 id="name"></h1>
+      <ul class="b-meta" id="meta"></ul>
+      <div class="b-tested" id="tested">
+        <button type="button" class="chip" id="testedBtn" aria-expanded="false" aria-controls="testedWhy"></button>
+        <p id="testedWhy" hidden></p>
+      </div>
+    </header>
+
+    <div class="print-hero" id="printHero" aria-hidden="true"></div>
+
+    <div class="b-layout">
+      <figure class="stage" id="stage">
+        <div class="stage-pic" id="draw"></div>
+        <div class="stage-3d" id="three" hidden></div>
+        <div class="stage-view" role="group" aria-label="View">
+          <button type="button" id="vFlat" aria-pressed="true">Picture</button>
+          <button type="button" id="v3d" aria-pressed="false">Spin in 3D</button>
+        </div>
+        <figcaption class="stage-msg" id="msg" role="status" hidden></figcaption>
+      </figure>
+
+      <section class="panel stepcard" aria-label="Steps">
+        <div class="prog" id="prog"></div>
+        <div aria-live="polite">
+          <p class="kicker" id="kicker"></p>
+          <p class="say" id="say"></p>
+          <p class="piece" id="piece"></p>
+        </div>
+      </section>
+
+      <div class="stepbar" id="bar">
+        <button type="button" class="btn back" id="back" aria-label="Back one step">←</button>
+        <button type="button" class="btn primary big next" id="next"></button>
+      </div>
+
+      <section class="panel parts" aria-labelledby="partsH">
+        <h2 id="partsH"></h2>
+        <div class="verdict" id="verdict"></div>
+        <ul id="parts"></ul>
+        <p class="small left" id="left" hidden></p>
+      </section>
+
+      <section class="panel all" aria-labelledby="allH">
+        <h2 id="allH"></h2>
+        <ol id="all"></ol>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn quiet" id="print">Print this build</button>
+        <button type="button" class="btn quiet" id="addSheet" hidden>Add to sheet</button>
+        <button type="button" class="btn quiet" id="share">Send to someone</button>
+        <button type="button" class="btn quiet" id="awake" aria-pressed="false" hidden>Keep screen on</button>
+        <p class="small act-note" id="actNote" role="status" hidden></p>
+      </div>
+
+      <section class="similar" id="similar" aria-labelledby="simH" tabindex="-1">
+        <h2 id="simH">Build next with the same pieces</h2>
+        <p class="sim-note" id="simP"></p>
+        <div class="next-cards" id="cards"></div>
+        <nav class="pager" aria-label="Other builds"><a id="prevB"></a><a id="nextB"></a></nav>
+      </section>
+    </div>
+    <p class="print-foot">Couch Coach. Check it stands firm before anyone climbs on, and stay close the first time.</p>
+  </main>
 </div>
 <script type="module">
   import { initBuildPage } from './js/build-page.js';

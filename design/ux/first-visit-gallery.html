@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock-up: first visit and gallery</title>
+<style>
+  :root {
+    --ink: #1c1f26; --muted: #5b6270; --line: #d6dae1; --paper: #f5f6f8; --card: #fff;
+    --go: #2f7de1; --go-bg: #e9f2ff;
+    --fort: #8a4fd3; --fort-bg: #f3ecff;
+    --climb: #ef7d1a; --climb-bg: #fff1e0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #e9ebef; color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.35; }
+  [hidden] { display: none !important; }
+  button { font: inherit; color: inherit; }
+  a { color: inherit; }
+
+  /* ---------- design note (not part of the page) ---------- */
+  .note { background: #fffbe6; border-bottom: 2px dashed #b9a544; padding: 10px 16px 12px; font-size: 13.5px; }
+  .note-in { max-width: 1180px; margin: 0 auto; }
+  .note summary { cursor: pointer; font-weight: 700; font-size: 15px; }
+  .note ol { margin: 8px 0 8px; padding-left: 20px; display: grid; gap: 5px; }
+  .note .tools { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin-top: 8px; }
+  .note .tools button, .note .tools a {
+    border: 1.5px solid #8b7d2c; background: #fff; border-radius: 8px; padding: 6px 10px; min-height: 36px;
+    font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
+  }
+  .note .tools button[aria-pressed=true] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .note .tools span { font-weight: 700; }
+
+  /* ---------- the page being proposed ---------- */
+  .device { container: page / inline-size; background: var(--paper); margin: 0 auto; min-height: 100vh; }
+  .device.phone { max-width: 390px; box-shadow: 0 0 0 1px var(--line), 0 8px 30px rgba(0, 0, 0, .12); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px 56px; }
+
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+  .brand { font-weight: 800; font-size: 16px; letter-spacing: .01em; }
+  .to-sheet { font-weight: 600; font-size: 13.5px; white-space: nowrap; padding: 10px 0; }
+  h1 { font-size: 21px; line-height: 1.15; margin: 2px 0 2px; letter-spacing: -.01em; }
+  .sub { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; }
+
+  /* what do you own */
+  .own { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .own-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+  .own-head b { font-size: 14px; }
+  .own-head button { border: 0; background: none; padding: 4px 0; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer; color: var(--muted); }
+  .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; max-width: 560px; }
+  .tile { position: relative; cursor: pointer; min-width: 0; }
+  .tile input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .tile .box {
+    display: flex; flex-direction: column; align-items: center; height: 100%;
+    border: 2px solid var(--line); border-radius: 12px; background: var(--card); padding: 4px 3px 5px;
+  }
+  .tile .art { width: 100%; height: 44px; }
+  .tile .art svg { width: 100%; height: 100%; display: block; }
+  .tile .lab { font-size: 11.5px; font-weight: 700; line-height: 1.15; text-align: center; margin-top: 2px; }
+  .tile input:checked + .box { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); background: #fff; }
+  .tile input:checked + .box .lab::before { content: "✓ "; }
+  .tile input:focus-visible + .box { outline: 3px solid var(--go); outline-offset: 2px; }
+  .fits { margin: 5px 0 0; font-size: 11.5px; color: var(--muted); }
+
+  .colors { margin-top: 8px; padding: 10px 12px; background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; max-width: 560px; display: grid; gap: 8px; }
+  .colors .row { display: flex; align-items: center; gap: 8px; }
+  .colors .row > span { flex: none; width: 82px; font-size: 12.5px; font-weight: 600; }
+  .sw { display: flex; flex-wrap: wrap; gap: 5px; }
+  .sw button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1.5px var(--line); cursor: pointer; padding: 0; }
+  .sw button[aria-pressed=true] { box-shadow: 0 0 0 2.5px var(--ink); }
+  .sw input { width: 30px; height: 30px; padding: 0; border: 0; background: none; cursor: pointer; }
+
+  /* sticky filter bar */
+  .bar { position: sticky; top: 0; z-index: 5; background: var(--paper); margin: 10px -16px 0; padding: 8px 16px 8px; border-bottom: 1px solid transparent; }
+  .bar.stuck { border-bottom-color: var(--line); }
+  .chips { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; border: 0; margin: 0; padding: 2px 0; min-width: 0; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chips label { position: relative; flex: none; cursor: pointer; }
+  .chips input { position: absolute; opacity: 0; inset: 0; margin: 0; }
+  .chips span { display: inline-flex; align-items: center; gap: 5px; min-height: 36px; padding: 0 9px; border: 1.5px solid var(--line); border-radius: 18px; background: var(--card); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+  .chips input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .chips input:focus-visible + span { outline: 3px solid var(--go); outline-offset: 2px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c, var(--muted)); flex: none; }
+  .go { --c: var(--go); --bg: var(--go-bg); } .fort { --c: var(--fort); --bg: var(--fort-bg); } .climb { --c: var(--climb); --bg: var(--climb-bg); }
+  .status { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 5px; font-size: 12.5px; color: var(--muted); }
+  .status b { color: var(--ink); }
+  .status button { border: 0; background: none; padding: 0; font-size: 12.5px; font-weight: 600; text-decoration: underline; cursor: pointer; white-space: nowrap; }
+  .bar:not(.stuck) .status button { visibility: hidden; }
+
+  /* featured: the build from the video */
+  .seen { display: grid; grid-template-columns: 42% 1fr; gap: 12px; align-items: center; margin-top: 10px; padding: 10px; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; text-decoration: none; }
+  .seen .pic { border-radius: 10px; }
+  .seen .eyebrow { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .seen .name { font-size: 20px; font-weight: 800; line-height: 1.1; margin: 2px 0 4px; }
+  .seen .cta { display: inline-block; margin-top: 8px; background: var(--ink); color: #fff; font-weight: 700; font-size: 13.5px; border-radius: 10px; padding: 9px 12px; }
+
+  /* sections and cards */
+  .sec-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; margin: 18px 0 8px; }
+  .sec-head h2 { font-size: 16px; margin: 0; }
+  .sec-head span { font-size: 12.5px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .sec-head + .grid { margin-top: 0; }
+  .card { display: flex; flex-direction: column; min-width: 0; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; overflow: hidden; text-decoration: none; }
+  .card:hover, .card:focus-visible { border-color: var(--ink); outline: none; }
+  .pic { position: relative; aspect-ratio: 4 / 3; background: var(--bg); flex: none; }
+  .pic svg { position: absolute; left: 10px; top: 8px; width: calc(100% - 20px); height: calc(100% - 16px); display: block; }
+  .body { padding: 8px 10px 9px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .name { font-size: 15.5px; font-weight: 800; line-height: 1.15; }
+  .meta { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+  .tag { align-self: flex-start; font-size: 11.5px; font-weight: 700; border: 1.5px solid var(--line); border-radius: 6px; padding: 1px 6px; background: #f7f8fa; }
+  .tag.needs { border-color: var(--ink); background: var(--ink); color: #fff; }
+  .untested { font-size: 11.5px; color: var(--muted); margin-top: auto; padding-top: 3px; }
+  .untested::before { content: "◦ "; }
+
+  details.more { margin-top: 18px; border: 1.5px dashed var(--line); border-radius: 14px; padding: 0 12px; background: transparent; }
+  details.more summary { cursor: pointer; padding: 13px 0; font-weight: 700; font-size: 14px; }
+  details.more summary small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+  details.more .grid { margin: 0 0 12px; }
+  .explain { margin: 22px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); max-width: 60ch; }
+
+  @container page (min-width: 480px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @container page (min-width: 700px) {
+    .wrap { padding: 0 24px 64px; }
+    .bar { margin: 14px -24px 0; padding: 10px 24px; }
+    .top { min-height: 56px; }
+    .brand { font-size: 18px; }
+    h1 { font-size: 32px; margin-top: 6px; }
+    .sub { font-size: 15px; margin-bottom: 16px; }
+    .tile .art { height: 64px; }
+    .tile .lab { font-size: 13px; }
+    .tiles { gap: 10px; }
+    .fits { font-size: 12.5px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .chips { gap: 6px; }
+    .chips span { font-size: 13.5px; padding: 0 12px; }
+    .name { font-size: 17px; }
+    .body { padding: 10px 12px 12px; }
+    .seen { grid-template-columns: 260px 1fr; max-width: 640px; padding: 14px; gap: 18px; }
+    .seen .name { font-size: 26px; }
+    .sec-head h2 { font-size: 19px; }
+    .sec-head { margin-top: 26px; }
+    .bar-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .status { margin: 0; gap: 14px; font-size: 13.5px; }
+    .status button { font-size: 13.5px; }
+  }
+</style>
+</head>
+<body>
+
+<details class="note" open>
+  <summary class="note-in">What changed and why (design note, not part of the page)</summary>
+  <div class="note-in">
+    <ol>
+      <li><b>The headline says what this is and how much there is.</b> "36 build ideas for your play couch" replaces a logo plus a grey sentence. The product-fit line sits under the picker, where the question "does this fit mine?" comes up.</li>
+      <li><b>"What do you own?" is four pictures, not four text chips.</b> A parent taps the picture that looks like their living room. It adds a fourth choice the site lacks today: 2 couches + round add-on (that family can make all 36, but today no chip lets them say so).</li>
+      <li><b>Before you answer, you still see all 36,</b> grouped by what each needs, smallest set-up first. Nobody is stopped by a question, and the first pictures on screen are builds everyone can make.</li>
+      <li><b>After you answer, builds you cannot make do not vanish.</b> They fold into one line at the bottom ("12 more need a second play couch"). Builds that use everything you own come first.</li>
+      <li><b>Every card carries a small set-up tag</b> ("1 couch", "1 couch + add-on", "2 couches") next to the theme. The card now answers "can I make this?" without opening it.</li>
+      <li><b>"Not yet kid-tested" stays on every card,</b> moved from a stamp over the picture to a line under the name, and explained once at the bottom of the page.</li>
+      <li><b>Theme filter sticks to the top while you scroll,</b> with a count of what is showing and a "Change set-up" link. Today the filters scroll away after the first row.</li>
+      <li><b>Couch colours are swatches, one tap each,</b> behind a "Match my colours" link beside the picker. The pictures, including the four picker pictures, recolour at once.</li>
+      <li><b>A video link can name its build.</b> Adding <code>?seen=race-car</code> to the address puts that build first, labelled "From the video".</li>
+    </ol>
+    <div class="tools">
+      <span>Try it:</span>
+      <button id="t-phone" aria-pressed="false">Phone width (390)</button>
+      <button id="t-full" aria-pressed="true">Full width</button>
+      <a href="?seen=race-car">Arrive from a Race Car video</a>
+      <a href="?">Arrive with no build named</a>
+      <a href="../../index.html">Current page</a>
+    </div>
+  </div>
+</details>
+
+<div class="device" id="device">
+<div class="wrap">
+  <div class="top">
+    <span class="brand">Couch Coach</span>
+    <a class="to-sheet" href="../../sheet.html">Printable sheet →</a>
+  </div>
+  <h1><span id="total">36</span> build ideas for your play couch</h1>
+  <p class="sub">Cars, forts and slides. Free. Tap one to see it in 3D, piece by piece.</p>
+
+  <fieldset class="own" id="own">
+    <div class="own-head">
+      <b id="own-q">What do you own?</b>
+      <button type="button" id="col-toggle" aria-expanded="false" aria-controls="colors">Match my colours</button>
+    </div>
+    <div class="tiles" id="tiles" role="radiogroup" aria-labelledby="own-q"></div>
+    <div class="colors" id="colors" hidden></div>
+    <p class="fits">Fits the Nugget couch and its round Chunk add-on. Not affiliated with their maker.</p>
+  </fieldset>
+
+  <div id="seen"></div>
+
+  <div class="bar" id="bar">
+    <div class="bar-in">
+      <fieldset class="chips" id="themes" aria-label="Theme"></fieldset>
+      <div class="status"><span id="count" aria-live="polite"></span><button type="button" id="change">Change set-up</button></div>
+    </div>
+  </div>
+
+  <main id="list"></main>
+  <p class="explain"><b>Not yet kid-tested</b> means nobody has tried that build with a real child yet. It was drawn from the pieces' sizes. Stay close the first time, most of all on anything to climb or jump from.</p>
+</div>
+</div>
+
+<script type="module">
+  import { BUILDS } from '../../js/builds.js';
+  import { SETUPS, THEMES, untestedLabel } from '../../js/setups.js';
+  import { drawBuild, palette } from '../../js/flat.js';
+  import { baseFlat, cushFlat, tri, ottoman, second } from '../../js/pieces.js';
+
+  const $ = id => document.getElementById(id);
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // What a family can own. The fourth choice is new: the site today has no way to say it.
+  const couchPieces = () => [baseFlat(0, 0, 0, 'x'), cushFlat(0, 0, 5.5, 'x'), tri(0, 0, 8.75, 'x'), tri(33, 0, 8.75, 'x')];
+  const couchTwo = () => second(baseFlat(0, 46, 0, 'x'), cushFlat(0, 46, 5.5, 'x'), tri(0, 46, 8.75, 'x'), tri(33, 46, 8.75, 'x'));
+  const OWN = {
+    'couch':       { couches: 1, addon: false, label: '1 couch',           long: '1 play couch',                  art: () => couchPieces() },
+    'couch-addon': { couches: 1, addon: true,  label: '1 couch + add-on',  long: '1 play couch + round add-on',   art: () => [...couchPieces(), ottoman(90, 16.5, 0)] },
+    'two-couch':   { couches: 2, addon: false, label: '2 couches',         long: '2 play couches',                art: () => [...couchPieces(), couchTwo()] },
+    'two-addon':   { couches: 2, addon: true,  label: '2 couches + add-on', long: '2 play couches + round add-on', art: () => [...couchPieces(), couchTwo(), ottoman(90, 39.5, 0)] },
+  };
+  const ART = Object.fromEntries(Object.entries(OWN).map(([id, o]) => [id, { name: o.long, pieces: o.art(), stickers: [] }]));
+  const TAG = { 'couch': '1 couch', 'couch-addon': '1 couch + add-on', 'two-couch': '2 couches' };
+  const NEEDS = { 'couch-addon': ['need the round add-on', 'Needs round add-on'], 'two-couch': ['need a second play couch', 'Needs 2 couches'] };
+  const SECTION_ORDER = ['couch', 'couch-addon', 'two-couch'];
+  const SECTION_NOTE = { 'couch': 'Everyone can make these', 'couch-addon': 'Uses the round pieces too', 'two-couch': 'For two couches side by side' };
+
+  const fits = (build, ownId) => { const need = SETUPS[build.setup], have = OWN[ownId]; return need.couches <= have.couches && (!need.addon || have.addon); };
+  const weight = b => SETUPS[b.setup].couches * 2 + (SETUPS[b.setup].addon ? 1 : 0);
+
+  const SWATCHES = [['Blue', '#3f86d6'], ['Navy', '#2f4a7a'], ['Teal', '#2f9c95'], ['Green', '#6a9a5b'], ['Yellow', '#f4b63a'], ['Pink', '#e38fa6'], ['Red', '#c8553d'], ['Grey', '#8d95a3'], ['Sand', '#cdb892']];
+  const seenId = new URLSearchParams(location.search).get('seen');
+  const state = { own: '', theme: '', nug: '#3f86d6', nug2: '', chk: '#f4b63a' };
+  const pal = () => palette({ nug: state.nug, nug2: state.nug2, chk: state.chk });
+
+  /* ---------- drawing: each picture is drawn when it scrolls near the screen ---------- */
+  const drawWhenSeen = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      drawWhenSeen.unobserve(e.target);
+      const b = BUILDS.find(x => x.id === e.target.dataset.id);
+      e.target.innerHTML = drawBuild(b, pal());
+    }
+  }, { rootMargin: '300px' });
+
+  const card = (b, needs) => `<a class="card ${b.theme}" href="../../build.html?b=${encodeURIComponent(b.id)}">
+      <div class="pic" data-id="${b.id}"></div>
+      <div class="body">
+        <div class="name">${esc(b.name)}</div>
+        <div class="meta"><i class="dot"></i>${esc(THEMES[b.theme])}</div>
+        <span class="tag${needs ? ' needs' : ''}">${needs ? NEEDS[b.setup][1] : TAG[b.setup]}</span>
+        ${untestedLabel(b) ? `<div class="untested">${untestedLabel(b)}</div>` : ''}
+      </div></a>`;
+  // Mix the themes so the wall alternates instead of running four of one kind in a row.
+  const mixed = list => {
+    if (state.theme) return list;
+    const by = Object.keys(THEMES).map(t => list.filter(b => b.theme === t)), out = [];
+    for (let i = 0; out.length < list.length; i++) for (const g of by) if (g[i]) out.push(g[i]);
+    return out;
+  };
+  const grid = (list, needs) => `<div class="grid">${list.map(b => card(b, needs)).join('')}</div>`;
+  const plural = (n, w = 'build') => `${n} ${w}${n === 1 ? '' : 's'}`;
+
+  function renderTiles() {
+    $('tiles').innerHTML = Object.entries(OWN).map(([id, o]) =>
+      `<label class="tile"><input type="radio" name="own" value="${id}"${state.own === id ? ' checked' : ''}>
+        <span class="box"><span class="art">${drawBuild(ART[id], pal())}</span><span class="lab">${o.label}</span></span></label>`).join('');
+  }
+
+  function renderColors() {
+    const row = (key, text) => `<div class="row"><span>${text}</span><div class="sw">${SWATCHES.map(([n, h]) =>
+      `<button type="button" data-k="${key}" data-h="${h}" style="background:${h}" aria-label="${text}: ${n}" aria-pressed="${(state[key] || state.nug) === h}"></button>`).join('')}
+      <input type="color" data-k="${key}" value="${state[key] || state.nug}" aria-label="${text}: any colour"></div></div>`;
+    $('colors').innerHTML = row('nug', 'Couch') + (OWN[state.own]?.couches === 2 ? row('nug2', 'Second couch') : '') + row('chk', 'Round add-on');
+  }
+
+  function renderSeen() {
+    const b = BUILDS.find(x => x.id === seenId);
+    if (!b) { $('seen').innerHTML = ''; return; }
+    const cant = state.own && !fits(b, state.own);
+    $('seen').innerHTML = `<a class="seen ${b.theme}" href="../../build.html?b=${encodeURIComponent(b.id)}">
+      <div class="pic" data-id="${b.id}"></div>
+      <div><div class="eyebrow">From the video</div><div class="name">${esc(b.name)}</div>
+        <span class="tag${cant ? ' needs' : ''}">${cant ? NEEDS[b.setup][1] : TAG[b.setup]}</span>
+        <div class="untested">${untestedLabel(b)}</div>
+        <span class="cta">See how to build it →</span></div></a>`;
+  }
+
+  function renderList() {
+    const inTheme = BUILDS.filter(b => !state.theme || b.theme === state.theme);
+    let html = '';
+    if (!state.own) {
+      for (const s of SECTION_ORDER) {
+        const list = mixed(inTheme.filter(b => b.setup === s));
+        if (list.length) html += `<div class="sec-head"><h2>${SETUPS[s].label}</h2><span>${plural(list.length)}. ${SECTION_NOTE[s]}.</span></div>${grid(list)}`;
+      }
+      $('count').innerHTML = `<b>${plural(inTheme.length)}</b>, all set-ups`;
+    } else {
+      const can = SECTION_ORDER.map(s => mixed(inTheme.filter(b => b.setup === s && fits(b, state.own)))).sort((a, b) => (b[0] ? weight(b[0]) : 0) - (a[0] ? weight(a[0]) : 0)).flat();
+      html += grid(can);
+      for (const s of SECTION_ORDER) {
+        const list = inTheme.filter(b => b.setup === s && !fits(b, state.own));
+        if (list.length) html += `<details class="more"><summary>${plural(list.length, 'more build')} ${list.length === 1 ? NEEDS[s][0].replace('need', 'needs') : NEEDS[s][0]}<small>Tap to look anyway</small></summary>${grid(list, true)}</details>`;
+      }
+      $('count').innerHTML = `<b>${plural(can.length)}</b> you can make with ${OWN[state.own].label}`;
+    }
+    drawWhenSeen.disconnect();
+    $('list').innerHTML = html;
+    document.querySelectorAll('.pic[data-id]').forEach(p => { if (!p.firstChild) drawWhenSeen.observe(p); });
+  }
+
+  function renderAll() {
+    renderTiles(); renderColors(); renderSeen(); renderList();
+    $('own-q').textContent = state.own ? 'You own' : 'What do you own?';
+  }
+
+  /* ---------- events ---------- */
+  $('themes').innerHTML = [['', 'All'], ...Object.entries(THEMES)].map(([v, t]) =>
+    `<label class="${v}"><input type="radio" name="theme" value="${v}"${v === '' ? ' checked' : ''}><span>${v ? '<i class="dot"></i>' : ''}${esc(t)}</span></label>`).join('');
+  $('themes').addEventListener('change', e => { state.theme = e.target.value; renderList(); });
+
+  $('tiles').addEventListener('change', e => { state.own = e.target.value; renderAll(); });
+  // tapping the chosen picture again clears the choice
+  $('tiles').addEventListener('click', e => {
+    const input = e.target.closest('input');
+    if (input && input.value === state.own && input.dataset.was === '1') { state.own = ''; renderAll(); return; }
+    $('tiles').querySelectorAll('input').forEach(i => { i.dataset.was = i.checked ? '1' : ''; });
+  });
+
+  $('col-toggle').addEventListener('click', () => {
+    const open = $('colors').hidden;
+    $('colors').hidden = !open;
+    $('col-toggle').setAttribute('aria-expanded', open);
+    $('col-toggle').textContent = open ? 'Done' : 'Match my colours';
+  });
+  let queued = 0;
+  const setColor = (k, h) => { state[k] = h; queued ||= requestAnimationFrame(() => { queued = 0; renderTiles(); renderSeen(); renderList(); }); };
+  $('colors').addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (b) { setColor(b.dataset.k, b.dataset.h); renderColors(); } });
+  $('colors').addEventListener('input', e => { if (e.target.type === 'color') setColor(e.target.dataset.k, e.target.value); });
+
+  $('change').addEventListener('click', () => $('own').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+  const watchStuck = () => $('bar').classList.toggle('stuck', $('bar').getBoundingClientRect().top <= 0);
+  addEventListener('scroll', watchStuck, { passive: true });
+
+  const setWidth = phone => {
+    $('device').classList.toggle('phone', phone);
+    $('t-phone').setAttribute('aria-pressed', phone); $('t-full').setAttribute('aria-pressed', !phone);
+  };
+  $('t-phone').addEventListener('click', () => setWidth(true));
+  $('t-full').addEventListener('click', () => setWidth(false));
+  const q = new URLSearchParams(location.search);
+  if (q.get('w') === 'phone') setWidth(true);
+  if (OWN[q.get('own')]) state.own = q.get('own');
+
+  $('total').textContent = BUILDS.length;
+  renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,1017 @@
+{
+ "ux": [
+  {
+   "area": "First visit and gallery",
+   "file": "design/ux/first-visit-gallery.html",
+   "summary": "Today the gallery opens with a logo, a grey sentence and about 180px of text chips before any picture, lists builds in authoring order (the 12 add-on builds first), gives cards no hint of which set-up they need, and removes builds you cannot make without a trace. The mock-up leads with a plain headline, turns \"What do you own?\" into four picture tiles, shows all 36 grouped by set-up until the visitor answers, tags every card with its set-up, and keeps the theme filter stuck to the top while scrolling. Both open questions get a recommendation: show all 36 before a choice is made (grouped, smallest set-up first), and yes, cards carry a small set-up tag.",
+   "opportunities": [
+    {
+     "title": "Show all 36 before the visitor says what they own, grouped by set-up, smallest first",
+     "problem": "With nothing chosen the wall is one flat list in library order, so the first 12 cards all need the round add-on. A one-couch family sees builds they cannot make first and has no way to tell.",
+     "proposal": "Recommendation for the open question: keep showing everything (no gate, no wizard), but in three headed sections: 1 play couch (\"Everyone can make these\"), 1 play couch + round add-on, 2 play couches. Each heading carries a count.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Small set-up tag on every card",
+     "problem": "A card shows only a name, a theme colour and the kid-tested stamp. Nothing on the card says what you need to make it; the only way to know is to set the filter.",
+     "proposal": "Recommendation for the open question: yes. A short text tag under the theme line: \"1 couch\", \"1 couch + add-on\", \"2 couches\". It stays on after filtering, so an add-on owner can see which builds leave the round pieces free. In the \"more builds\" section it switches to a filled \"Needs round add-on\" or \"Needs 2 couches\".",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Picture tiles for \"What do you own?\", with a fourth choice",
+     "problem": "The picker is four text chips that wrap to two rows at phone width and must be read. \"Show everything\" is pre-selected and looks like an answer. A family with two couches and the add-on has no option, and the best match (2 play couches) hides 12 builds they can make.",
+     "proposal": "Four tappable tiles in one row, each a real drawing of the pieces in the visitor's colours: 1 couch, 1 couch + add-on, 2 couches, 2 couches + add-on. Nothing is selected at first; tapping the chosen tile again clears it. The products line (\"Fits the Nugget couch and its round Chunk add-on. Not affiliated with their maker.\") sits directly under the tiles.",
+     "impact": "high",
+     "effort": "medium",
+     "in_mockup": true
+    },
+    {
+     "title": "Builds you cannot make fold away instead of vanishing",
+     "problem": "Picking a set-up drops the count from 36 to 12 or 24 with no explanation. The visitor cannot tell whether the site is thin or what the other pieces would unlock.",
+     "proposal": "After the builds you can make, one collapsed line per missing piece: \"12 more builds need the round add-on\", \"12 more builds need a second play couch\". Tap to look. The count line reads \"12 builds you can make with 1 couch\".",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Order: builds that use everything you own first, themes mixed",
+     "problem": "Order is authoring order, and within a set-up the library runs four of one theme in a row, so a filtered wall shows blocks of one colour and one kind of build.",
+     "proposal": "After a set-up is chosen, list builds that use the most of what the family owns first, then the simpler ones. Within each group alternate the three themes so every row mixes a vehicle, a fort and a climber.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Headline that says what the site is",
+     "problem": "The first line is an emoji and the name; what the site offers is in a 14px grey sentence that also carries the trademark line. A parent arriving from a video has to read small text to learn what this is.",
+     "proposal": "Headline: \"36 build ideas for your play couch\" (count taken from the library). One sub-line: \"Cars, forts and slides. Free. Tap one to see it in 3D, piece by piece.\" The name becomes a small wordmark slot in the top bar for the brand track to fill.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Theme filter sticks while scrolling, with a live count",
+     "problem": "Filters scroll away after the first row of cards. Twenty cards down, changing theme or checking the set-up means scrolling back to the top one-handed.",
+     "proposal": "The theme chips (each with its theme colour dot, which teaches the colour code used on cards) stick to the top. Under them a count line and, once stuck, a \"Change set-up\" link that scrolls back to the picker.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Kid-tested label moved off the picture and explained once",
+     "problem": "\"Not yet kid-tested\" is stamped over the top-left of all 36 pictures at 10.5px and sometimes collides with the sticker emoji. Nothing says what it means.",
+     "proposal": "Keep the label on every card, as a line under the set-up tag. Add one plain explanation at the foot of the gallery: nobody has tried that build with a real child yet; stay close the first time.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "\"From the video\" card when the link names a build",
+     "problem": "Someone who watched a Race Car video lands on a wall of 36 and has to hunt for the build they came for.",
+     "proposal": "A link such as index.html?seen=race-car puts that build first in a wide card labelled \"From the video\" with a \"See how to build it\" button. Without the parameter the page is unchanged. Costs nothing to run; each video caption just uses its own link.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Colour swatches instead of the browser colour picker",
+     "problem": "Colours hide behind a \"Couch colors\" disclosure and open the system colour picker, which is fiddly one-handed. Most parents will never find that the drawings can match their own couch.",
+     "proposal": "A \"Match my colours\" link beside the picker opens rows of nine one-tap swatches (couch, second couch when two are owned, round add-on) plus a custom colour. Picker tiles and cards recolour at once.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Piece count or \"quick build\" marker on cards",
+     "problem": "A parent with five minutes cannot tell a 4-piece build from an 8-piece one without opening each.",
+     "proposal": "Show the number of pieces on the card (the library already knows it) and offer a \"Quickest first\" sort. Left out of the mock-up to keep the card to four lines; worth testing once cards have settled.",
+     "impact": "low",
+     "effort": "small",
+     "in_mockup": false
+    },
+    {
+     "title": "Remember the last-opened build when coming back",
+     "problem": "After opening a build and tapping back, the visitor returns to the gallery with no marker of where they were.",
+     "proposal": "Keep scroll position and theme filter across the trip to the build page (session storage), and mark the card just viewed.",
+     "impact": "low",
+     "effort": "small",
+     "in_mockup": false
+    }
+   ],
+   "references": [
+    "Mobbin was available; two iOS searches were run.",
+    "NYT Cooking, saved recipes (https://mobbin.com/screens/304d5760-05ce-487a-8604-4c4f3e45fc1b): a single row of filter chips directly above a count line (\"7 recipes\") and a two-column card grid. Borrowed the chip row plus count line above the grid.",
+    "Noom, recipes (https://mobbin.com/screens/99817269-341f-4d2d-bf05-17162018a65b): two-column cards with one small attribute badge on the photo and one meta line under the name. Borrowed the idea of one short tag per card for the deciding fact (here, the set-up).",
+    "Amazon Shopping, Fresh recipes (https://mobbin.com/screens/9bbe66e4-2647-4d28-b58f-bc8340acb826): cards with a two-fact meta line (\"25m \u00b7 15 ingredients\"). Informed the theme line plus set-up tag, and the piece-count idea left out of the mock-up.",
+    "Replika, activities (https://mobbin.com/screens/a0c5ebc2-ddfa-4349-8597-1f0538ae84d3): one long list broken into headed groups of two-column tiles. Borrowed headed sections to keep a long wall readable before any filter is set.",
+    "Lifesum and Recime recipe screens were also returned; nothing specific taken from them."
+   ],
+   "cross_area_notes": [
+    "Set-ups: the mock-up adds a fourth owned choice, 2 couches + round add-on. The site's SETUPS has three, and the sheet page picks 12 builds by set-up, so the sheet and prefs tracks need to decide what that fourth choice shows on the sheet.",
+    "The mock-up keeps choices in memory only, so it does not write to the real site's saved prefs. The real page should keep saving set-up and colours through js/prefs.js.",
+    "Card tag wording used here: \"1 couch\", \"1 couch + add-on\", \"2 couches\", and \"Needs round add-on\" / \"Needs 2 couches\". The build page and sheet should use the same words.",
+    "The \"From the video\" card relies on a ?seen=<build id> link. The build page track may prefer video links to go straight to build.html?b=<id>; pick one rule for video captions.",
+    "Brand track: the top bar has a plain text wordmark slot and the headline is system type. Theme colours appear as a dot in chips and card meta and as a pale tint behind each picture, not as heavy card borders and name bars.",
+    "Kid-tested label sits as a text line in the card body rather than over the picture; the explanation sentence at the foot of the gallery could be reused on the build page and sheet.",
+    "Colour swatches use nine generic colours with plain names (Blue, Navy, Teal and so on), not the maker's colour names."
+   ],
+   "render_checked": true,
+   "caveats": "Checked by headless Chrome screenshots at 1200px and at the page's own 390px preview mode inside a 500px window, in three states: nothing chosen, a set-up chosen, and a named video build. Clicks (tile taps, theme chips, swatches, tap-again-to-clear, the sticky bar's stuck state) were not exercised in a live browser; the chosen-set-up screenshots went through the same render path via a ?own= parameter. The layout uses CSS container queries so the phone preview toggle works, which needs a browser from 2023 or later; the real page can use ordinary media queries. Ordering \"uses everything you own first\" is a judgement call, not tested with parents."
+  },
+  {
+   "area": "Build page and 3D view",
+   "file": "design/ux/build-page-3d.html",
+   "summary": "Today the build page shows nothing but \"Loading 3D view\u2026\" until about 2 MB of three.js arrives, labels steps only by piece name (\"Step 3 of 8: Triangle pillow\"), has no parts list, and its only way onward is back to the gallery. If WebGL fails, the step-through is removed altogether. The mock-up shows the flat picture at once with 3D as an opt-in button (it loads the site's real viewer), steps that say what to do in a sentence with earlier pieces faded, a full-width Next button pinned to the bottom of the phone, a parts list that ticks off, a one-page print of the build, and \"build next with the same pieces\" at the end.",
+   "opportunities": [
+    {
+     "title": "Picture first, 3D on request",
+     "problem": "build-page.js awaits createViewer before anything is drawn, so a parent on mobile data sees an empty box and \"Loading 3D view\u2026\" while vendor/three (three.module.js 659 KB + three.core.js 1.47 MB, uncompressed) downloads. In the catch branch (no WebGL) the steps bar is hidden, so the step-through vanishes with the 3D.",
+     "proposal": "Draw the flat SVG immediately from the same build data and run the whole step-through on it. \"Spin in 3D\" is a toggle on the picture that loads viewer3d.js only when tapped, keeps the current step, and falls back to the picture with one plain sentence if 3D fails.",
+     "impact": "high",
+     "effort": "medium",
+     "in_mockup": true
+    },
+    {
+     "title": "Steps that say what to do",
+     "problem": "captionFor returns \"Step 3 of 8: Triangle pillow\". It names the piece but not whether it is flat, folded, stood on end, or what it sits on, which is exactly what a parent needs with a child pulling at them.",
+     "proposal": "One sentence per step: \"Fold the cushion in half and lay it on top of the base.\" plus a small piece drawing and \"Triangle pillow \u00b7 1 of 2\". The new piece is in full colour and drops in; earlier pieces are faded; the frame is fixed to the finished build so the picture never jumps. In the mock-up the sentences are generated by a rule from each piece's geometry (orientation, what is underneath, inside the hoop).",
+     "impact": "high",
+     "effort": "medium",
+     "in_mockup": true
+    },
+    {
+     "title": "One-thumb step bar",
+     "problem": "The current .steps row has four similar buttons mid-page (\u2190, \u2192, Show all), the darkest and most prominent being \"Show all\", not Next. On a phone they sit under a 58vh stage, away from the thumb, and scroll off screen.",
+     "proposal": "A bar pinned to the bottom of the phone: a small Back and a full-width 56px Next (\"Start building\", \"Next piece 3 of 8\", \"Finish\", then \"Pick the next build\"). A tappable progress strip sits above the caption. On desktop the same bar sits under the caption beside a sticky picture. Arrow keys also step.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Parts list, floor space and \"do I own this\" before starting",
+     "problem": "Nothing on the build page says which pieces the build uses, how many, or which set-up it is for. A parent with one couch who lands from a shared link on an add-on build finds out halfway through.",
+     "proposal": "Header line with theme, piece count, set-up and floor space (\"About 10 \u00d7 4.5 ft of floor\", from the build's footprint). A \"You need 8 pieces\" list with a drawing of each piece type, counts, rows that tick off (\"1 of 2 down\"), the current type highlighted, and what is left over. If the saved set-up lacks pieces, a notice says what is short and links to builds they can make.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "3D should not trap scrolling",
+     "problem": ".stage is min(58vh, 560px) with touch-action: none on the canvas, so on a phone most of the first screen spins the model instead of scrolling the page, and the hint text explaining the gestures is below the fold.",
+     "proposal": "Keep the default view a plain picture that scrolls normally. 3D is entered on purpose, capped at 46vh on a phone, shows its gesture hint inside the frame, and one tap on \"Picture\" leaves it.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "All steps at a glance and print this one build",
+     "problem": "The only print path is the 12-card sheet. A parent who wants this build on the fridge, or wants to skim the whole sequence without tapping eight times, cannot.",
+     "proposal": "An \"All 8 steps\" list of small step drawings with their sentences; tapping one jumps there. \"Print this build\" prints one Letter page: name, label, finished picture, parts, and the eight step drawings in a 4 \u00d7 2 grid (flat drawings, in line with the existing print decision).",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Somewhere to go when the build is finished",
+     "problem": "After the last step the page is a dead end: the only links are \"All builds\" and \"Printable sheet\". The parent has the pieces out and a child asking for another one.",
+     "proposal": "A finished state (\"All 8 pieces are down\") whose main button scrolls to \"Build next with the same pieces\": up to four builds that fit the same set-up, same theme first, each with its \"Not yet kid-tested\" label, plus previous and next build links.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "\"Not yet kid-tested\" that explains itself",
+     "problem": "The label is 12px grey text beside the title with no explanation, and it disappears from view once the parent is in the steps.",
+     "proposal": "Keep it as a visible chip under the build name, on every next-build card and on the printout. Tapping it shows one sentence on what it means; the finished state repeats a short \"check it stands firm\" prompt.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Send this build and keep the screen on",
+     "problem": "A parent mid-build has the phone on the floor: the screen dims between steps, and there is no quick way to send the build to a partner.",
+     "proposal": "\"Send to someone\" uses the phone's share sheet (falls back to copying the build link). \"Keep screen on\" uses the browser Wake Lock API where it exists and is hidden where it does not. Both are browser-only, no cost.",
+     "impact": "low",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Hand-checked step wording and step grouping",
+     "problem": "Rule-made sentences are right most of the time but cannot say \"against the wall of the base\" or \"at the front as a bumper\", and identical consecutive steps (two wheels, two triangle pillows) take two taps.",
+     "proposal": "Add an optional per-step note to each build in builds.js that overrides or extends the generated sentence, and consider merging matching pairs into one step (\"Stand both pucks on their rims as wheels\"). The second part changes decision KTD3 (one step per piece), so it needs the owner's call.",
+     "impact": "medium",
+     "effort": "large",
+     "in_mockup": false
+    },
+    {
+     "title": "Remember favourites and builds already made",
+     "problem": "A returning parent has no way to find the build the child liked last week except scanning 36 cards again.",
+     "proposal": "A \"We built this\" / save toggle on the build page stored in the browser alongside the existing cc- preferences, surfaced as a filter in the gallery.",
+     "impact": "low",
+     "effort": "medium",
+     "in_mockup": false
+    }
+   ],
+   "references": [
+    "Mobbin was available; two iOS searches run. Results were only loosely on point, so the notes below say exactly what was taken from each.",
+    "Blue Apron recipe detail (https://mobbin.com/screens/48abb101-7592-404e-8c4b-5464503eb2d5): quantity-then-name ingredient rows above the instructions, with one primary button pinned to the bottom. Borrowed: parts list before the steps, pinned primary action.",
+    "MasterClass recipe (https://mobbin.com/screens/899315b3-1936-4f26-be4c-dd4db54c6d9b): picture on top, Ingredients / Instructions split below. Borrowed: picture stays above, parts and steps are separate sections.",
+    "Neo Financial onboarding plan (https://mobbin.com/screens/ce9e7dd8-3a92-4e1e-a6d7-7784e9100a41): numbered list of all steps with the current one expanded and a full-width Start button at the bottom. Borrowed: \"All 8 steps\" list with the current step highlighted, and the Start building button.",
+    "Ahead (https://mobbin.com/screens/2c8c508a-c352-4472-aa35-6023aaf163e6): thin progress bar at top, one instruction, full-width Continue at the bottom. Borrowed: progress strip plus a single full-width Next.",
+    "Google widget how-to (https://mobbin.com/screens/60e4df5b-0467-4eba-851f-cb6f8a81e39d): illustration above, short instruction text and one button below. Borrowed: picture-over-caption order for each step.",
+    "From general knowledge, not seen on Mobbin in this session: LEGO-style building instructions (new piece in full colour, earlier pieces subdued) and cooking apps that keep the screen awake while cooking."
+   ],
+   "render_checked": true,
+   "caveats": "Checked in headless Chrome at 1280px, 500px and in the 390px phone preview, plus a print-to-PDF of the one-page printout and the 3D toggle with software WebGL; not checked on a real phone or in Safari. Step sentences are generated by a rule in the mock-up from piece geometry. I read the output for 17 of the 36 builds, they read sensibly but are generic (\"on the floor\" rather than where on the floor), and every build needs a read-through before launch. Floor space is the bounding footprint rounded up to half a foot, with no play clearance added. The \"check it stands firm\" and kid-tested explanation sentences are placeholder wording for the copy track. The layout uses CSS container queries so the phone preview toggle works on a desktop screen; production can use ordinary media queries. The mock-up re-implements about 30 lines of the flat renderer to draw partial builds, because flat.js has no draw-up-to-piece option; the real change would add that to flat.js. Preview states: ?b=<id>&step=<n>&own=<set-up>&w=phone&view=3d.",
+   "cross_area_notes": [
+    "Gallery: the build page now reads the saved set-up (cc-setup) to say \"You have every piece\" or what is short, so the gallery's \"What do you own?\" choice matters more and should be asked early and saved. The short-pieces notice links back to the gallery expecting it to open filtered to builds they can make.",
+    "Gallery: the \"build next\" cards use a neutral card with a theme-coloured top edge, name, theme, piece count and the kid-tested label. Whatever card the gallery track settles on should be reused here.",
+    "Sheet: \"Print this build\" is a second print path beside the 12-card sheet. The sheet track should decide whether the build page also offers \"add this build to my sheet\"; card swapping is currently out of scope in the plan, so the mock-up only links to the sheet.",
+    "Brand and copy: wording that needs an owner is the kid-tested explanation, the finished-state safety prompt, the step sentence patterns, and piece names (Base, Cushion, Triangle pillow, Round pad, Hoop, Puck come from js/pieces.js). Theme colour is used only as a small accent (theme dot, current-step bar, card edge).",
+    "Brand: the flat drawings sit on a pale floor patch and faded pieces are mixed 66% toward white; a coloured or dark page background from the brand track would need those two values retuned.",
+    "Engineering: flat.js needs a way to draw a build up to piece n at a fixed frame, and steps.js needs the sentence generator (pure logic, testable in Node like the rest). viewer3d.js already supports showThrough(n) and worked unchanged when loaded on demand."
+   ]
+  },
+  {
+   "area": "Print flow",
+   "file": "design/ux/print-flow.html",
+   "summary": "Today the sheet is reached by one small text link, always shows the same 12 builds for the exact set-up, only fits US Letter two-sided, and puts a sticky toolbar over roughly a quarter of a phone screen. The mock-up makes the paper preview the editor (tap a card to swap, keep or move it; shuffle the rest), lets a parent add builds from the gallery, and adds paper size, sides, picture size and ink choices with a print checklist that follows them. It also gives a phone with no printer a \"Send to my computer\" link, and gives the toddler a bigger empty star to color in.",
+   "opportunities": [
+    {
+     "title": "Tap a card on the paper to swap, keep or move it; shuffle the rest",
+     "problem": "sheet.js always takes the first 12 builds for the set-up (sheetBuilds slices 0-12). A parent whose child only cares about vehicles, or who dislikes one build, cannot change anything. The plan deferred swap, lock and shuffle.",
+     "proposal": "The preview is the editor. Tapping a card opens a bottom sheet (dialog on desktop) with Keep, Move earlier, Move later, a link to the 3D view, and a theme-filtered grid of spare builds to swap in. Shuffle replaces every card that is not kept. Start over returns to the suggested set.",
+     "impact": "high",
+     "effort": "medium",
+     "in_mockup": true
+    },
+    {
+     "title": "Add to sheet from the gallery, with a running count",
+     "problem": "The only route is the \"Printable sheet\" text link in the gallery header. Nothing a parent liked while browsing carries over, and the build page has no route to the sheet that reflects the build being viewed.",
+     "proposal": "Each gallery card (and the build page) gets an \"Add to sheet\" toggle. Added builds are marked kept and replace the last card that is not kept. A tray shows \"12 builds on Max's sheet\" with an Open sheet button.",
+     "impact": "high",
+     "effort": "medium",
+     "in_mockup": true
+    },
+    {
+     "title": "Draw the sheet from every build the family can make",
+     "problem": "sheetBuilds filters on b.setup === setupId, so a family with a couch and round add-on never gets the 12 couch-only builds on a sheet, although the gallery's canMake says they fit. With no set-up stored, the sheet silently assumes couch plus add-on.",
+     "proposal": "Suggest the builds made for exactly the set-up first, then offer all others that fit as swaps (24 for two of the three set-ups). Show \"12 of the 24 builds you can make\" and put \"What do you own?\" as visible chips on the sheet page instead of a select.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Slim phone layout: settings scroll, one-line Print bar stays",
+     "problem": "The .bar toolbar is position: sticky and wraps to about 270px tall at phone width, covering the preview a parent is trying to see. Name, set-up, colors, print button and instructions all compete in one strip.",
+     "proposal": "Two plain panels (\"Make it theirs\", \"Paper and print\") that scroll with the page, and a fixed one-line bar at the bottom with the sheet summary and Print. On desktop the panels sit in a left column beside both pages.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Send to my computer (state in the link)",
+     "problem": "Visitors arrive on a phone from a short video. Many phones are not connected to a printer, and today the sheet's choices live only in that phone's localStorage, so opening the site on a laptop starts again from nothing.",
+     "proposal": "Encode name, set-up, colors, options and the chosen builds in the URL hash. A \"Send to my computer\" button uses the system share sheet, or copies the link. No server and no running cost. The plan listed share links as out of scope, so this needs the owner's yes.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Paper size, one side or two, and a print checklist that follows the choices",
+     "problem": "sheet.css fixes the page at 8.5 x 11in with @page size: letter, so A4 households get clipping or scaling. The instructions are one dense paragraph that assumes two-sided printing, and there is no help for printers that cannot do it.",
+     "proposal": "Chips for US Letter or A4 (guessed from browser language), Two sides or One side, then a five-line checklist (paper size, two-sided, scale, background graphics, pages) that updates with the choices. A fold-out explains manual two-sided printing. Save as PDF is its own button with one line on which option to pick.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Picture size: 6 big or 4 bigger per side",
+     "problem": "Six cards per page gives pictures about 3.7in wide. For a two year old pointing with a whole hand, fewer and larger targets work better, and there is no way to choose.",
+     "proposal": "A \"Picture size\" choice: 6 big (ages 3+) or 4 bigger (under 3). Numbers, star and name scale up with the card.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "A star a child can color in, bigger numbers, name on both sides",
+     "problem": "The star is a filled glyph inside a dashed half-inch circle, so there is nothing left to color although the footer says \"Color the star when you build it\". The back page title drops the child's name.",
+     "proposal": "An empty outlined star about 0.74in wide (0.95in in the 4-up layout), numbers enlarged to match, and \"More of Max's Builds\" on the back. \"Not yet kid-tested\" stays on every card, raised from 7pt to 8pt.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Less-ink and color-in versions",
+     "problem": "Every card has a tinted background and a solid name bar, which uses a lot of color ink, and a black-only printer turns the tints into grey blocks.",
+     "proposal": "An Ink choice: Full color, Less ink (white cards, colored outlines only), Color-in (black line drawings the child colors themselves). The mock-up makes the line drawing by rewriting the SVG fills; the real version should be an option inside flat.js.",
+     "impact": "medium",
+     "effort": "medium",
+     "in_mockup": true
+    },
+    {
+     "title": "Color swatches instead of bare color pickers",
+     "problem": "The native color input opens a full spectrum picker, which is fiddly one-handed on a phone and makes it hard to land on a color that looks like real couch fabric.",
+     "proposal": "Ten tap-size swatches per piece plus an \"Other\" picker. The brand track or owner should choose the swatch list; avoid using the manufacturer's fabric names.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Say where the child's name goes",
+     "problem": "The field is labelled \"Builder's name\" with no hint that it is optional or that it is not sent anywhere. Parents are cautious about typing a child's name into a site they met a minute ago.",
+     "proposal": "Label \"Child's name (optional)\" with the line \"Printed in the title. It stays on this device.\"",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "\"Make it last\" tip",
+     "problem": "A plain paper sheet on a fridge does not survive a toddler for long, and colored-in stars cannot be reused.",
+     "proposal": "A fold-out tip: card stock or a plastic sleeve, and a dry-wipe pen so stars can be wiped and colored again.",
+     "impact": "low",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Link the paper back to the site",
+     "problem": "Once printed, the sheet has no route back to the 3D steps for a build; the parent has to remember the site name and find the build again.",
+     "proposal": "Print a short site address in the footer, and later a small code per sheet that opens the sheet's builds in 3D. Needs a final domain and an in-browser QR drawing routine, so not built here.",
+     "impact": "medium",
+     "effort": "medium",
+     "in_mockup": false
+    },
+    {
+     "title": "One sheet per child",
+     "problem": "prefs.js stores a single name and color set. A family with two children has to retype the name and rebuild the sheet each time.",
+     "proposal": "Let the page keep a few named sheets in the browser (\"Max\", \"Ada\") and switch between them. The link-state format above already describes one sheet, so each saved sheet is one stored string.",
+     "impact": "low",
+     "effort": "medium",
+     "in_mockup": false
+    },
+    {
+     "title": "A ready-made PDF for people who just want the file",
+     "problem": "Save as PDF depends on the browser's print window, which differs across iPhone, Android and desktop and is where most people will give up.",
+     "proposal": "Ship three pre-made default PDFs (one per set-up, default colors) as static files, linked as \"Just download the standard sheet\". No name or custom colors, but zero steps.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": false
+    }
+   ],
+   "references": [
+    "Mobbin was available; two searches run (web print/export, iOS photo-book editing).",
+    "Craft, PDF export (web): settings in a left column with a live paper preview on the right and one Export button; page size as a plain choice. Borrowed the settings-beside-paper desktop layout and the paper size control. https://mobbin.com/screens/4db19b6a-476b-4f67-85c8-c14da1b98baa",
+    "Coda, Export to PDF (web): three short labelled choices (pages, layout, size: Letter) then one action. Borrowed the short labelled option groups in place of a paragraph of instructions. https://mobbin.com/screens/f5c64d21-bf07-4525-a9b9-c76ecc16943b",
+    "Google Photos, Edit book (iOS): the page thumbnails are the editor, with the hint \"Tap any page to edit\" and a single Next button pinned at the bottom. Borrowed tap-the-card-on-the-paper editing and the pinned bottom action bar. https://mobbin.com/screens/130a2606-def5-409d-ba84-58fdf04e567f",
+    "Polarsteps, Travel Books (iOS): option chips above the book preview, edit badges on pages, and a sticky bottom bar with a summary and the main action. Borrowed the summary-plus-action sticky bar. https://mobbin.com/screens/8336db3e-249b-4511-9efd-9ceb3ebf09f1",
+    "Pitch, Export (web): export formats as side-by-side cards with a one-line explanation each. Informed the Full color / Less ink / Color-in choice with short notes. https://mobbin.com/screens/fe97c269-f702-4dfe-8185-55a1f6cbbf6c",
+    "Givingli, collage layout picker (iOS): small layout thumbnails to choose a grid. Informed the 6-up versus 4-up picture size choice (shown as chips here, not thumbnails). https://mobbin.com/screens/0584f3fb-dabe-41c0-93bd-5407bad7d3ac"
+   ],
+   "render_checked": true,
+   "caveats": "Checked by headless Chrome screenshot at 1280px and 500px, and by printing the default state to PDF (2 US Letter pages). The link-restored state (name, A4, one side, 4-up, color-in, kept card) rendered correctly at 500px. Not exercised: the card editor, shuffle, gallery add/remove and the share button are click-driven and headless screenshots cannot click, so they are untested in a browser. A4 printing, and whether Safari honours the injected @page size, are also untested; no real phone was used. The color-in drawing is a string rewrite of the SVG and leaves emoji stickers in color. The mock-up reads the site's saved choices but does not write them back; it keeps its own state in the URL hash. The ten swatch colors and the \"ages 3+ / under 3\" labels are my placeholders, not researched values. The mock-up uses US spelling (\"color\") to match the current sheet's interface text.",
+   "cross_area_notes": [
+    "Gallery track: the print flow needs an \"Add to sheet\" toggle on every gallery card and a sheet tray or count that stays in view. The excerpt at the top of my mock-up is a stand-in for whatever the gallery track designs.",
+    "Build page track: the 3D page should carry the same \"Add to sheet\" button, and the card editor links to build.html for the selected build.",
+    "Brand track: the printed sheet is the most-seen brand surface (it lives on the fridge). It needs the display face, the title wording, a footer mark with the site address, and a decision on header emoji, which I removed for neutrality.",
+    "Brand track: the theme colors need a less-ink and a black-only treatment, and the couch color swatch list needs choosing without using the manufacturer's fabric names.",
+    "Copy track: wording to settle includes \"Child's name (optional)\", \"Keep\" versus \"Lock\", \"Send to my computer\", and the back-page title \"More of Max's Builds\".",
+    "Scope: the plan lists share links and card swapping as out of scope. My top proposals reopen both, so the owner has to decide.",
+    "Code: sheet.js would need the build list to become an ordered, stored selection instead of a filter, and flat.js would need a line-art option. A4 means the page size in sheet.css can no longer be fixed in inches."
+   ]
+  },
+  {
+   "area": "What-you-own set-up",
+   "file": "design/ux/what-you-own.html",
+   "summary": "Today the set-up question is four text chips, colours sit in a collapsed drawer behind the system colour wheel, and each of the three pages has its own controls that disagree: the gallery shows everything you can make, the sheet silently assumes couch plus add-on, and the build page says nothing about what you own. A family with two couches and a round add-on has no answer that fits them. The mock-up replaces this with one picture-based set-up card on the gallery (not a gate) that collapses into a sticky \"Your set-up\" bar shared by gallery, build page and sheet, with named colour swatches, a fourth \"2 couches + round add-on\" option, parked rather than hidden builds, a can-you-make-it verdict on the build page, and a plain \"not covered yet\" path.",
+   "opportunities": [
+    {
+     "title": "Ask with drawings of the pieces, not text chips",
+     "problem": "index.html asks \"What do you own?\" with four text chips (\"Show everything\", \"1 play couch\", \"1 play couch + round add-on\", \"2 play couches\"). Because the site avoids the product names, a parent has to translate \"round add-on\" into the thing in their living room with no picture to help.",
+     "proposal": "Four tappable tiles, each a drawing of the assembled set-up made from the site's own piece helpers (pieces.js) and drawn in the visitor's colours, with a short label and the number of builds it opens (12 / 24 / 24 / 36). One tap answers the question and the gallery below updates immediately.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Ask inline on first visit, never as a gate",
+     "problem": "The plan already rejected a what-do-you-own wizard as the home page, but the current inline control is easy to miss: it defaults to \"Show everything\" and looks like any other filter, so a parent can scroll 36 builds without learning that 12 to 24 of them need pieces they do not have.",
+     "proposal": "On first visit the set-up card sits open above the gallery, with all 36 builds still visible underneath and \"Skip, show everything\" one tap away. Once answered or skipped it collapses to a one-line bar. If skipped, the bar reads \"Showing all 36 builds. Which couch do you have? Choose\".",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "One set-up bar and one editor on every page",
+     "problem": "Set-up and colour controls are built three different ways: chips plus a collapsed <details> on the gallery, a <select> and colour inputs in the sheet toolbar, and nothing at all on build.html, so a parent who notices the wrong colour in 3D has to go back to the gallery to fix it.",
+     "proposal": "A sticky \"Your set-up\" bar (mini drawing of their couch, label, colour dots, Change) on gallery, build page and sheet. Change opens the same editor everywhere. The sheet's own set-up dropdown and colour inputs go away.",
+     "impact": "high",
+     "effort": "medium",
+     "in_mockup": true
+    },
+    {
+     "title": "Named colour swatches, with rows only for pieces you own",
+     "problem": "Colours are native <input type=color> controls inside a collapsed \"Couch colors\" drawer. On a phone that opens the system colour wheel, which is slow one-handed and makes matching a fabric guesswork. The round add-on colour row shows on the gallery even when the visitor said they own only a couch.",
+     "proposal": "Twelve plainly named swatches (Blue, Navy, Teal, Cream...) at 40px, plus \"Other colour\" which keeps the system wheel. Rows appear only for pieces in the chosen set-up. The second couch row starts on \"Same as first\". Tiles, bar, gallery, build and sheet all redraw live. The owner should set the swatch values to the common real fabric colours without using the maker's colour names.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Add \"2 couches + round add-on\" as a set-up",
+     "problem": "setups.js defines three set-ups and two-couch has addon: false. A family with two couches and a round add-on must pick \"2 play couches\" (losing 12 add-on builds) or \"couch + add-on\" (losing 12 two-couch builds), and the only way to see all 36 is to pick \"Show everything\", which then gives a sheet for the wrong set-up.",
+     "proposal": "Add a fourth owned inventory (couches 2, add-on true) that fits every build. It needs no new builds: the existing fits() logic already works on inventories. The sheet needs a rule for this case; the mock-up takes four builds from each of the three sets.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Park builds you can't make instead of deleting them",
+     "problem": "Choosing a set-up makes the other builds vanish with only the count changing (\"12 builds\"). A parent who saw a castle with the round ring in a video and owns one couch cannot find it and has no explanation why.",
+     "proposal": "Split the gallery into \"You can build these now\" and a single quiet row: \"24 more builds need a round add-on or a second couch. Show them anyway\". Opened, those cards are dimmed and each says what it needs. Wording states the fact and never pushes a purchase.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Build page says whether you can make it",
+     "problem": "build.html shows name, label and 3D only. A parent arriving from a shared link to a two-couch build gets no hint that it needs a second couch until they step through all the pieces and run out.",
+     "proposal": "Under the 3D view: a one-line verdict (\"You have every piece for this\" / \"You need a round add-on for this one\" / \"Made for: 2 play couches. Tell us what you have\") and a pieces list grouped by play couch, second couch and round add-on, each with its colour dot and have/not-in-your-set-up status. When something is missing, a button leads to the builds they can make.",
+     "impact": "high",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "An honest path for \"I have something else\"",
+     "problem": "There is no option for three couches, two round add-ons, the add-on alone, or another brand of play couch. Those visitors pick something untrue or leave the filter on \"Show everything\".",
+     "proposal": "A quiet \"I have something else\" disclosure under the tiles with four choices. Each shows a \"Not covered yet\" note in plain words and falls back to the closest set-up (for example another brand with the same four pieces gets the 1-couch builds and a warning that sizes may be a little off).",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Sheet stops guessing the set-up, and the name is asked where it is used",
+     "problem": "sheet.js falls back to DEFAULT_SETUP ('couch-addon') when nothing is stored, so a one-couch family who goes straight to the sheet prints 12 builds they cannot make. The child's name exists only in the sheet toolbar, squeezed among six other controls.",
+     "proposal": "If no set-up is stored, the sheet shows one question (\"Which couch is this sheet for?\") with the four options instead of a default. The builder's name is an optional field in the set-up editor and again at the top of the sheet, marked optional; both write the same value and the title updates as you type.",
+     "impact": "medium",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Say the choices stay on the device",
+     "problem": "The site stores set-up, colours and a child's first name in localStorage but never says so. A parent typing their child's name on an unfamiliar site from a social video has reason to hesitate.",
+     "proposal": "One line under the editor: \"Saved in this browser only. Nothing is sent anywhere.\" Keep \"Clear and show everything\" as the way to undo the set-up.",
+     "impact": "low",
+     "effort": "small",
+     "in_mockup": true
+    },
+    {
+     "title": "Carry the set-up in shared links",
+     "problem": "Preferences live only in the browser, so the set-up and colours do not travel when one parent sends the sheet or a build to the other, or opens the site on a laptop to print.",
+     "proposal": "Encode set-up and colours (not the name) in an optional query string on the sheet and build links, read on arrival and offered as \"Use this set-up?\" rather than overwriting stored choices. The plan lists share links as later work, so this is a follow-up.",
+     "impact": "medium",
+     "effort": "medium",
+     "in_mockup": false
+    },
+    {
+     "title": "Learn which uncovered set-ups people actually have",
+     "problem": "With no backend there is no way to know how many visitors own three couches or another brand, so the owner cannot prioritise new builds.",
+     "proposal": "On the \"Not covered yet\" note, add a mailto link or a link to a free form the owner already uses (\"Tell us what you have\"). This costs nothing per visitor but does add an outside link, so it is the owner's call.",
+     "impact": "low",
+     "effort": "small",
+     "in_mockup": false
+    }
+   ],
+   "references": [
+    "Mobbin was available and used (two searches, 11 screens viewed).",
+    "Hatch Sleep (iOS), 'Select the device you're trying to setup' https://mobbin.com/screens/3f2969fe-f51c-4245-9476-2e588af9aaa5 : borrowed large picture tiles of the product itself with a short name, so the choice is made by recognition rather than reading.",
+    "Tempo (iOS), 'Which device would you like to set up?' https://mobbin.com/screens/23d04542-092c-4cb4-94b9-ada2acc3a033 : borrowed the two-across picture cards with the label under the image, which fits four options in a 2x2 grid at phone width.",
+    "Oura (iOS), 'Select your ring' with 'My Oura Ring isn't shown' https://mobbin.com/screens/f982cd43-f260-47eb-9400-37e08e47ccf7 : borrowed the quiet escape link under the choices for people whose product is not listed.",
+    "Eight Sleep (iOS), 'What are you setting up?' https://mobbin.com/screens/09aea046-aefd-418a-b9ef-6efd863f54df : considered its multi-select of separate pieces (couch count and add-on as separate answers); rejected in favour of four combined tiles because that is one tap instead of two.",
+    "Reddit avatar builder (web) https://mobbin.com/screens/1fab36b8-b38d-44fc-82e6-cf850c854517 : borrowed one row of round swatches per part with a custom-colour control at the end of each row, and a live preview that updates on every tap.",
+    "Givingli card customiser (web) https://mobbin.com/screens/b33e0752-c151-4eb6-8a09-12488bb08e42 : borrowed the swatch grid with a colour-wheel option kept as a fallback rather than the default.",
+    "Fitbit 'Select Device' and Amazon Alexa device list were also returned; their long text lists are the pattern the mock-up moves away from."
+   ],
+   "cross_area_notes": [
+    "Gallery track: the 'What do you own?' chip row and the collapsed 'Couch colors' drawer are removed from the filter area and replaced by the set-up card/bar above it. Only theme chips remain as filters. The gallery also gains two groups ('You can build these now' and a parked row for the rest).",
+    "Build page track: the mock-up adds a verdict line and a pieces list grouped by play couch / second couch / round add-on beside the 3D view, and expects the shared set-up bar at the top. The 3D view itself is a flat-drawing stand-in here.",
+    "Sheet track: the sheet toolbar loses its set-up dropdown and colour inputs to the shared bar; it keeps the name field and print button. With no stored set-up the sheet asks instead of defaulting to couch + add-on (changes sheetSetup() in js/sheet.js).",
+    "Data change needed: a fourth owned set-up, 2 couches + round add-on, in js/setups.js. It should be an owned inventory only, not a set-up builds are authored for, so the checks on builds are unaffected. R15 and AE4 in the plan need a rule for which 12 builds this set-up's sheet shows; the mock-up takes four from each set.",
+    "Brand and copy track: wording used here that needs a voice pass: 'Which one is at your house?', 'Your set-up', 'You can build these now', 'Needs a round add-on', 'Not covered yet', 'Builder's name', 'Saved in this browser only. Nothing is sent anywhere.' The four set-up drawings could double as brand illustrations. The swatch list needs real fabric colour values with generic names, not the maker's colour names.",
+    "The set-up bar is sticky at the top of every page, so any other sticky header or step controls proposed by other tracks need to stack with it (it is about 60px tall)."
+   ],
+   "caveats": "Mock-up state is held in memory, not in the site's localStorage, so it always opens as a first visit and does not touch real saved choices; a \"Start again\" button resets it. The build page uses the flat drawing as a stand-in for the 3D view. The sheet preview shows page 1 (six cards) only, and its print button does nothing. Checked in headless Chrome at 500px and 1200px wide (first visit, editor with two couches and add-on, filtered gallery with parked builds open, build page with a missing piece, sheet, and the \"different play couch\" path); 390px was judged from the CSS (two-column grids with minmax(0,1fr), wrapping rows), not from a real phone. Taps, the system colour wheel and sticky behaviour on scroll were not exercised in a real browser. Query parameters exist for review links, e.g. ?own=couch&cant=1, ?own=two-couch&tab=sheet, ?else=brand&open=1. The set-up tile drawings each scale to fit, so one couch looks larger than two; a shared scale would be better in the real build. The 2 couches + add-on option and the sheet asking instead of defaulting both change decisions recorded in the plan (R1, R15) and need the owner's agreement.",
+   "render_checked": true
+  }
+ ],
+ "routes": [
+  {
+   "route": "Warm and tactile",
+   "file": "/Users/jeffmacdonald/Sites/NuggetCouchCoach/design/brand/warm-tactile.html",
+   "idea": "The brand is the foam pieces themselves: three soft shapes (slab, triangle pillow, hoop) in three colors on a warm off-white floor, and those same three shapes stand for the three kinds of build in the logo, the filters and the printed sheet.",
+   "palette": [
+    {
+     "name": "Oat",
+     "hex": "#F6EFE3",
+     "use": "Page background"
+    },
+    {
+     "name": "Paper",
+     "hex": "#FFFBF4",
+     "use": "Cards, chips, panels"
+    },
+    {
+     "name": "Ink",
+     "hex": "#2B2521",
+     "use": "All main text, the chosen chip, dark surfaces"
+    },
+    {
+     "name": "Stone",
+     "hex": "#675B4F",
+     "use": "Small print and labels, including \"Not yet kid-tested\""
+    },
+    {
+     "name": "Seam",
+     "hex": "#E3D8C6",
+     "use": "Hairlines and the solid 3px edge under cards"
+    },
+    {
+     "name": "Seam deep",
+     "hex": "#B9AB96",
+     "use": "Outline of tappable chips and pills"
+    },
+    {
+     "name": "Clay",
+     "hex": "#C2512F",
+     "use": "Main button, the triangle in the mark, Climb & slide theme"
+    },
+    {
+     "name": "Clay deep",
+     "hex": "#9C3D20",
+     "use": "Links, button edge, Clay-colored text"
+    },
+    {
+     "name": "Clay tint",
+     "hex": "#F7E0D4",
+     "use": "Background behind Climb & slide drawings"
+    },
+    {
+     "name": "Clay light",
+     "hex": "#EC8A66",
+     "use": "Clay on Ink only"
+    },
+    {
+     "name": "Pond",
+     "hex": "#2E8196",
+     "use": "The slab in the mark, Forts theme, default couch color in drawings, focus ring"
+    },
+    {
+     "name": "Pond deep",
+     "hex": "#1F5C6B",
+     "use": "Pond-colored text"
+    },
+    {
+     "name": "Pond tint",
+     "hex": "#DCEBEA",
+     "use": "Background behind Forts drawings"
+    },
+    {
+     "name": "Pond light",
+     "hex": "#74BCCB",
+     "use": "Pond on Ink only"
+    },
+    {
+     "name": "Marigold",
+     "hex": "#EDAE36",
+     "use": "The hoop in the mark, Things that go theme, default round add-on color in drawings"
+    },
+    {
+     "name": "Marigold deep",
+     "hex": "#7D5200",
+     "use": "Marigold-colored text"
+    },
+    {
+     "name": "Marigold tint",
+     "hex": "#FBECC6",
+     "use": "Background behind Things that go drawings"
+    }
+   ],
+   "type": "Display: Fredoka (SIL Open Font License 1.1), weights 500 and 600, one variable file to self-host later; used for headlines, build names, buttons and filter questions. Text: the system UI font, permanently (nothing to download or license). Fredoka is not loaded in the mock-up; the display fallback actually used is: ui-rounded, \"SF Pro Rounded\", \"Arial Rounded MT Bold\", \"Hiragino Maru Gothic ProN\", \"Varela Round\", system-ui, sans-serif (the screenshots I checked were Chrome on a Mac, which showed Arial Rounded). Text stack: system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif. Sizes shown: display 40/30/18, text 16 and 13, nothing below 12 on screen.",
+   "logo": "Mark: a Pond slab with a Clay triangle pillow and a Marigold hoop sitting on it, built from a rounded rectangle, a rounded triangle and a ring. It reads as three stacked foam pieces and as a couch seen from the side, and it holds up at 16px. Wordmark: lowercase \"couch coach\" drawn by me as stroked paths from one thick round-ended line (no font needed, so it renders the same everywhere); only five letter shapes, and in the stacked version the two words line up letter for letter, differing only in u and a. Shown as a horizontal lockup, a stacked lockup, the mark at 16/32/48px, a home-screen tile and a 22px header lockup, each on light and on Ink (where the slab and triangle switch to Pond light and Clay light).",
+   "voice": "Talk like the parent on the next cushion: short, plain and specific, with no exclamation marks. Say what a thing is and what to do next, admit what has not been tried, and leave the excitement to the kid.",
+   "sample_copy": {
+    "headline": "36 things to build with your play couch",
+    "pitch": "Cars, forts and slides for one play couch, two, or one with the round add-on. Tap a build to turn it around and see it go together piece by piece. Fits the Nugget and Chunk. Not affiliated with their maker.",
+    "primary_button": "Print the sheet",
+    "sheet_title": "Max's couch builds (no name: \"Our couch builds\"; page two: \"More couch builds\")",
+    "untested_label": "Not yet kid-tested"
+   },
+   "theme_colours": "Each theme gets one shape and one color, always shown together. Things that go: the hoop (a wheel), Marigold on Marigold tint. Forts: the slab (a wall), Pond on Pond tint. Climb & slide: the triangle (a ramp), Clay on Clay tint. On gallery cards the drawing sits on the theme tint with the theme shape in a small Paper badge; on the printed card the theme color is the thick outline. Default drawing colors are Pond for the couch and Marigold for the round add-on; a second couch follows the first until the parent picks one.",
+   "contrast_checked": "Computed with the WCAG formula in Node. Text pairs: Ink on Oat 13.23; Ink on Paper 14.65; Stone on Oat 5.77; Stone on Paper 6.39 (the \"Not yet kid-tested\" label); Paper on Ink 14.65; white on Clay 4.65 (main button, the tightest pass); Clay deep on Oat 5.92 (links); Clay deep on Clay tint 5.34; Pond deep on Pond tint 6.11; Marigold deep on Marigold tint 5.82; Ink on Marigold 7.71; Stone on the three tints 5.20 to 5.62. Shapes, not text: Clay on Oat 4.07, Pond on Oat 3.91, Marigold on Oat 1.72 (fails 3:1, so Marigold never carries text or meaning alone on light); on Ink, Clay light 6.04, Pond light 7.05, Marigold 7.71. Chip outlines (Seam deep on Oat) are about 2:1 and were not held to 3:1.",
+   "render_checked": true,
+   "risks": [
+    "Not seen at a true 390px: Chrome headless stops at about 500px, so the phone layout is judged from that shot plus the CSS. The header lockup and \"Print a sheet\" pill together need about 349px of the 358px available at 390, so it is tight and worth a look on a real phone.",
+    "Marigold is too pale against Oat (1.72:1). The hoop in the logo and the Things that go shape are the weakest of the three at small sizes and for low-vision parents; the route leans on the shape-plus-word pairing to cover it.",
+    "Climb & slide and the main button are both Clay, so on a page with a Clay button and Clay theme chips the action color is not unique.",
+    "For kids this is the quietest way to do it: muted colors, no character and no faces. A 2 to 5 year old may find the printed sheet less exciting than a brighter route; the real drawings and their emoji stickers carry all the fun.",
+    "Default couch (Pond) on a Forts card sits on a Pond tint, so those cards are the least contrasty; the white rug under each drawing is doing the separating.",
+    "The warm-neutral, terracotta-and-teal look is common among premium kids' brands, so it risks reading as tasteful but familiar. The shape system and hand-drawn wordmark are what make it ours.",
+    "Fredoka is not loaded here. Until it is self-hosted, most Android phones have no rounded system font and will show Roboto for headlines, which loses much of the soft feel; the mock-up shows the Mac fallback (Arial Rounded), not the final face.",
+    "The gallery slice uses 44px chips that wrap to five rows, so on a phone the first build cards start below the fold. That is a layout question for the UX work, but this brand's large soft controls make it worse.",
+    "The mark has not been checked against existing trademarks; three geometric shapes is a crowded idea, so it needs a search before it is used publicly.",
+    "The sheet card uses a tint and 4px colored outlines; it has not been test-printed, and tints can band or vanish on home inkjets.",
+    "Copy uses US spelling (\"color\") to match the current site and US Letter sheet, although the brief was written in British spelling."
+   ]
+  },
+  {
+   "route": "Bold and playful",
+   "file": "/Users/jeffmacdonald/Sites/NuggetCouchCoach/design/brand/bold-playful.html",
+   "idea": "Three foam shapes in three crayon-box colours, outlined in ink like stickers, with copy that sounds like the grown-up who gets down on the floor: loud in headlines, plain in instructions.",
+   "palette": [
+    {
+     "name": "Ink",
+     "hex": "#16193B",
+     "use": "Text, 3px outlines, hard offset shadows, selected chips, dark panels"
+    },
+    {
+     "name": "Paper",
+     "hex": "#FFF8E7",
+     "use": "Page background"
+    },
+    {
+     "name": "White",
+     "hex": "#FFFFFF",
+     "use": "Cards, chips, the printed sheet"
+    },
+    {
+     "name": "Sunshine",
+     "hex": "#FFC61A",
+     "use": "Brand colour: hero block, main buttons (ink text), default round add-on in drawings"
+    },
+    {
+     "name": "Zoom Red",
+     "hex": "#D92B1F",
+     "use": "Theme: Things that go; the A in the wordmark"
+    },
+    {
+     "name": "Fort Blue",
+     "hex": "#1F55D6",
+     "use": "Theme: Forts; default play couch in drawings; the U in the wordmark"
+    },
+    {
+     "name": "Climb Green",
+     "hex": "#0A7D43",
+     "use": "Theme: Climb & slide"
+    },
+    {
+     "name": "Slate",
+     "hex": "#4A4F6E",
+     "use": "Secondary text"
+    },
+    {
+     "name": "Red tint",
+     "hex": "#FFE4E0",
+     "use": "Behind drawings on Things that go cards"
+    },
+    {
+     "name": "Blue tint",
+     "hex": "#DFE8FF",
+     "use": "Behind drawings on Forts cards"
+    },
+    {
+     "name": "Green tint",
+     "hex": "#DCF3E5",
+     "use": "Behind drawings on Climb & slide cards"
+    },
+    {
+     "name": "Light red",
+     "hex": "#FF6B5E",
+     "use": "Wordmark A on dark backgrounds only"
+    },
+    {
+     "name": "Light blue",
+     "hex": "#7FA6FF",
+     "use": "Wordmark U on dark backgrounds only"
+    }
+   ],
+   "type": "Display: Fredoka Bold (SIL Open Font License), to be self-hosted as one file later; the mock-up uses the fallback stack \"Arial Rounded MT Bold\", ui-rounded, \"SF Pro Rounded\", system-ui (the screenshots show Arial Rounded MT Bold on macOS). Text: the device's system UI stack (system-ui, -apple-system, Segoe UI, Roboto), with no font file at all. Display face for anything a kid might shout (headline, build names, buttons); system face for anything a parent reads. Labels never below 11px.",
+   "logo": "Mark: a coach's whistle built from three foam pieces, tilted 12 degrees: a blue slab as the mouthpiece, a yellow hoop as the body, a red triangle pillow on top. Flat shapes with no outline, so it survives at 16px as the favicon; the app icon puts it on an ink tile. Wordmark: COUCH stacked over COACH on a five-column grid so the one letter that differs lines up, blue U over red A (lightened on dark). The same three shapes double as the theme icons. The wordmark is live SVG text in the fallback face for now and needs drawing as outlines before launch.",
+   "voice": "We talk like the grown-up who gets down on the floor: short, loud where it is fun, and straight about what we have and have not tried. Jokes go in headlines and never in instructions or safety notes.",
+   "sample_copy": {
+    "headline": "What are we building today?",
+    "pitch": "36 builds for your play couch and round add-on: cars, forts and slides. Tap one to see it in 3D, one piece at a time. Fits the Nugget and Chunk. Not made by or affiliated with their maker.",
+    "primary_button": "Print the pointing sheet (shortened to \"Print sheet\" in the phone header)",
+    "sheet_title": "Maya, pick one! (no name: \"Pick one!\"; page two: \"Pick another!\")",
+    "untested_label": "Not yet kid-tested (kept word for word on cards and the sheet; the build page adds \"We drew it. No small person has jumped on it yet.\")"
+   },
+   "theme_colours": "Things that go: Zoom Red #D92B1F name band with #FFE4E0 behind the drawing, shape icon is the hoop (wheels). Forts: Fort Blue #1F55D6 with #DFE8FF, shape icon is the slab (walls). Climb & slide: Climb Green #0A7D43 with #DCF3E5, shape icon is the triangle pillow (ramps). Each theme has a shape as well as a colour, so cards and filter chips do not depend on colour alone. Drawings default to a Fort Blue couch and a Sunshine #FFC61A round add-on; a second couch starts the same blue. On the printed sheet the card is white inside with a thick theme-colour border and name band, to save printer ink.",
+   "contrast_checked": "WCAG 2 ratios, computed from the hex values (the board also computes them live): Ink on Paper 16.0:1 (body text); Ink on White 17.0:1; Slate on Paper 7.5:1 and on White 8.0:1 (secondary text); Ink on Sunshine 10.8:1 (hero, main button); White on Zoom Red 4.9:1, on Fort Blue 6.3:1, on Climb Green 5.2:1 (card names); White on Ink 17.0:1 (selected chip); Ink on red/blue/green tints 14.1 / 13.9 / 14.6:1 (label on card); Paper on Ink 16.0:1 (dark panels); wordmark accents on dark: light red 6.1:1, light blue 7.1:1. All text pairs pass 4.5:1. Not a text pair: the yellow hoop of the mark on Paper is low contrast by design and relies on the blue and red pieces to hold the shape.",
+   "render_checked": true,
+   "risks": [
+    "The last CSS tweak (letting the 'Match my couch' / build-count row wrap instead of breaking mid-link) was made after the final screenshot and has not been re-rendered; everything else was checked at 1200px, 500px and inside a 390px iframe.",
+    "Loud for a tired parent: yellow hero, ink outlines and hard shadows on every element are a lot at 6am one-handed. It may read as a toy brand, not a trusted guide, next to the calmer Yoto-style reference.",
+    "The hero plus two rows of 44px chips push the first build cards below the fold on a phone; the plan asks for the first row of cards to be visible without scrolling, so the filters need compacting (one scrolling row, or a collapsed control) if this route is chosen.",
+    "Circle, square and triangle in red, blue and yellow is a well-worn kids-brand formula; the whistle reading helps, but at 16px the mark is three coloured blobs and the whistle is not legible. It should be checked against existing marks before launch.",
+    "The whistle could read as sports coaching or as bossy; some parents may not connect it to foam pieces without the explanation.",
+    "The wordmark is live text in a fallback face. On Android, with no rounded system font, it falls to the plain system bold and loses its character until Fredoka is self-hosted or the wordmark is drawn as outlines.",
+    "Fort Blue is both the Forts theme colour and the default couch colour, so Forts cards are blue on blue-tint; the white rug under each drawing keeps it readable, but that theme has the least contrast between the drawing and the card.",
+    "Theme colours are fixed while couch colours are the parent's choice: a red or green couch on its matching theme tint will look flat.",
+    "For kids: the pointing sheet relies on the drawings to carry the excitement; white card interiors (chosen to save ink) are less exciting than the on-screen cards, and a 2-year-old cannot read the theme shapes.",
+    "The dashed 'Not yet kid-tested' pill sits on every card at 11px bold; it is honest and visible, but twelve of them on one screen is repetitive and could make the whole library look unfinished.",
+    "Humour ages fast and the extra untested line ('No small person has jumped on it yet') may read as flippant about safety to a cautious parent; it needs testing with real parents.",
+    "Copy uses US spelling ('Color the star') to match US Letter and the current site, while the board's own section labels say 'Colour'; site copy should stay consistently US.",
+    "The filter headings 'What's in your living room?' and 'What kind of day is it?' are friendlier than the current 'What do you own?' and 'Theme' but less literal; a parent skimming may take a beat longer to see they are filters."
+   ]
+  },
+  {
+   "route": "Calm and minimal",
+   "file": "/Users/jeffmacdonald/Sites/NuggetCouchCoach/design/brand/calm-minimal.html",
+   "idea": "A tidy playroom: warm paper, two soft foam colours, one quiet serif and a lot of room around the real drawings, so a parent can find a build with one thumb and a child can point at the one they want.",
+   "palette": [
+    {
+     "name": "Paper",
+     "hex": "#F5F2EA",
+     "use": "Page background"
+    },
+    {
+     "name": "Card",
+     "hex": "#FFFFFF",
+     "use": "Chips, panels, the printed sheet"
+    },
+    {
+     "name": "Ink",
+     "hex": "#232B29",
+     "use": "Headlines and body text"
+    },
+    {
+     "name": "Soft ink",
+     "hex": "#56605C",
+     "use": "Captions, small labels, the kid-tested note"
+    },
+    {
+     "name": "Pine",
+     "hex": "#2E4B43",
+     "use": "The only action colour: buttons, links, the chosen filter, the slab in the logo"
+    },
+    {
+     "name": "Line",
+     "hex": "#DAD4C6",
+     "use": "Hairlines and chip outlines; never text"
+    },
+    {
+     "name": "Night",
+     "hex": "#1F2725",
+     "use": "Dark backgrounds such as the 3D stage and the logo on dark"
+    },
+    {
+     "name": "Sage",
+     "hex": "#86A593",
+     "use": "Default play couch colour in drawings (first and second couch); triangle in the logo"
+    },
+    {
+     "name": "Apricot",
+     "hex": "#E3A77C",
+     "use": "Default round add-on colour in drawings; hoop in the logo"
+    },
+    {
+     "name": "Harbour",
+     "hex": "#3F6183",
+     "use": "Theme label: Things that go (tint #E4EBF1 behind the drawing)"
+    },
+    {
+     "name": "Plum",
+     "hex": "#76557A",
+     "use": "Theme label: Forts (tint #EEE7EF behind the drawing)"
+    },
+    {
+     "name": "Clay",
+     "hex": "#9A5532",
+     "use": "Theme label: Climb and slide (tint #F4E7DC behind the drawing)"
+    }
+   ],
+   "type": "Display: Fraunces (SIL Open Font Licence, self-host later), regular weight, used for the wordmark, headline and build names. The mock-up loads no fonts and falls back to \"Iowan Old Style\" on Apple devices, then Palatino Linotype/Palatino, Georgia, serif. Text: Figtree (SIL Open Font Licence, self-host later), regular with 600 for buttons and links; the mock-up falls back to system-ui (San Francisco, Roboto, Segoe UI). Sizes shown: display 40, 28, 19; text 17, 15, 13; nothing on screen below 12px.",
+   "logo": "Mark: three simple shapes set down side-on, a Pine rounded slab with a Sage triangle pillow and an Apricot hoop resting on it. They are the three shapes every build is made from, and together they read as a small couch. Wordmark: \"Couch Coach\" in the display serif, title case, regular weight, to the right of the mark. Shown as a lockup on light and on dark (the slab switches to Paper on Night), plus the mark large, as a home-screen icon, and at 32px and 16px. The wordmark is live SVG text in the fallback serif for now; the final version should be Fraunces converted to outlines.",
+   "theme_colours": "Each theme gets a muted colour, a pale tint and a small shape. Things that go: Harbour #3F6183 on tint #E4EBF1, a circle (wheel). Forts: Plum #76557A on tint #EEE7EF, a square (wall). Climb and slide: Clay #9A5532 on tint #F4E7DC, a ramp. The tint sits behind the drawing and the strong colour is used only for the small shape and label, so the theme still reads on a black-and-white print and for colour-blind parents.",
+   "voice": "Say what it is and what to do next, in the words you would use across the room with a child on your hip. No exclamation marks, no baby talk, and never claim a build is safe or tested when it is not.",
+   "sample_copy": {
+    "headline": "What shall we build today?",
+    "pitch": "36 build ideas for your play couch and round add-on. Pick one, see it in 3D, and follow it one piece at a time. Fits the Nugget and the Chunk. Not affiliated with their maker.",
+    "primary_button": "Print the sheet",
+    "sheet_title": "Max's builds (no name: Our builds; side two: More builds)",
+    "untested_label": "Not yet kid-tested"
+   },
+   "contrast_checked": "WCAG ratios computed with a script from the hex values: Ink on Paper 12.95; Ink on Card 14.49; Soft ink on Paper 5.82; Soft ink on Card 6.51; Paper on Pine (buttons, chosen filter) 8.52; Pine on Paper (links) 8.52; Harbour on Paper 5.78, on Card 6.46, on its tint 5.37; Plum on Paper 5.60, on Card 6.27, on its tint 5.17; Clay on Paper 5.05, on Card 5.65, on its tint 4.65; Soft ink on the three tints 5.37 to 5.41; Paper on Night 13.65. All text pairs pass 4.5:1. Sage on Paper is 2.40 and Line on Paper is 1.32; both are drawing or decoration colours and carry no text.",
+   "render_checked": true,
+   "risks": [
+    "Weak for kids: muted Sage and Apricot drawings on pale tints are less exciting to a 2 to 5 year old than bright primaries, and the printed sheet may look plain next to typical toddler printables.",
+    "I removed the emoji stickers (flags, checkered flag, and so on) from the drawings in this route because they clash with the palette. That loses the cue that tells a child a pile of foam is a pirate ship; the build names now carry that, and a pre-reader cannot read them. Putting the stickers back, or drawing replacements in the brand colours, is an open decision.",
+    "The serif display face has a two-storey 'a' and reads as grown-up; it suits parents but is less friendly for a child learning letters on the printed sheet.",
+    "Coming from a loud TikTok or Instagram video, a quiet page may feel flat or premium-priced at first glance; nothing on it shouts 'free' or 'fun'. The copy never says the site is free.",
+    "The page shows fallback fonts only (Iowan Old Style on Apple, the device serif elsewhere, e.g. Noto Serif on Android). The brand will look different on Android and Windows until Fraunces and Figtree are self-hosted, and I could not see those two faces rendered.",
+    "Theme colours are deliberately close in strength, so the three themes are harder to tell apart at a glance than today's blue, purple and orange; the shapes help, but they are small (10 to 14px).",
+    "'Not yet kid-tested' is styled quietly (Soft ink, dashed outline, 12px). It is visible on every card and sheet card, but a parent in a hurry could miss it more easily than a coloured warning.",
+    "Default Sage and Apricot do not match any couch a parent owns until they pick colours, and the colour picker stays collapsed.",
+    "Phone layout was judged from the CSS and a 500px-wide headless screenshot, not a real 390px device. The filters and colour picker in the mock-up are for show and do not filter.",
+    "The mark is original and built from basic shapes, but a slab, triangle and ring is a common construction; it has not been checked against existing trademarks.",
+    "On a phone the filters take about one screen before the first build card appears; that is a layout question for the UX sprint, but this route's generous spacing makes it worse."
+   ]
+  }
+ ],
+ "naming": {
+  "verdict_on_couch_coach": "Good enough to keep. Said aloud it is short and memorable, but the two words differ only by a vowel, so spoken quickly it can blur into \"coach coach\" or \"couch couch\"; it should be said slowly once and shown as on-screen text in every video. Spelling after one hearing is easy: two common words, no \"and\", \"&\", number or hyphen, and the exact-match couchcoach.com is available. It promises someone who shows you what to do with the couch, which fits the step-through build view, but it does not say \"play\", \"ideas\" or \"builds\", so it needs its descriptor line (\"build ideas for your play couch\") beside it. To a 2 to 5 year old it is sayable and slightly silly but \"coach\" means little, so kid warmth has to come from the drawings and the mark. Confusions are mild: fitness (couch-to-5K style), life coaching or therapy, and the armchair fan or couch potato; none survives a picture of a foam fort, but in a bare text link the fitness reading is the likely first guess. It uses no play-couch brand name. Not checked: a trademark search for \"Couch Coach\" and social handles.",
+  "alternatives": [
+   {
+    "name": "Play Couch Builds",
+    "domain": "playcouchbuilds.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Descriptive. Says exactly what the site is in the words a parent would type into search; needs no explaining.",
+    "risk": "A label more than a name. Hard to build a logo or character around, and three words is long for a spoken sign-off."
+   },
+   {
+    "name": "Couch Playbook",
+    "domain": "couchplaybook.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Descriptive. Keeps the coaching idea and adds \"play\" and \"book of ideas\"; fits a library of 36 builds.",
+    "risk": "\"Playbook\" is business and sports jargon, means nothing to a child, and is less warm than the current name."
+   },
+   {
+    "name": "Couch Captain",
+    "domain": "couchcaptain.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Playful. Same shape as Couch Coach without the fitness reading; a child knows what a captain is and it puts the child in charge.",
+    "risk": "Promises pretend play more than build instructions and leans toward the boats-and-cars theme. Not enough better to justify switching."
+   },
+   {
+    "name": "Pick a Fort",
+    "domain": "pickafort.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Playful. Names the real moment: a toddler points at the printed sheet and picks one. Easy for a child to say.",
+    "risk": "Only about a third of the builds are forts; drops \"couch\"; heard aloud it may be typed with hyphens."
+   },
+   {
+    "name": "Couch Castles",
+    "domain": "couchcastles.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Playful. Friendly alliteration, strong picture, keeps \"couch\", easy to draw a logo for.",
+    "risk": "Too narrow: cars, slides and boats are not castles. Singular/plural will be mistyped."
+   },
+   {
+    "name": "Big Build Day",
+    "domain": "bigbuildday.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Playful. Sounds like something a parent says to a child; three one-syllable words, simple to spell.",
+    "risk": "Could be about blocks, bricks or DIY. Nothing says couch, so it needs the most explaining."
+   },
+   {
+    "name": "Tumblefort",
+    "domain": "tumblefort.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Invented. One ownable word that sounds like soft play; good for a wordmark.",
+    "risk": "\"Tumble\" hints at falling, which sits badly beside the \"Not yet kid-tested\" label. One word or two is unclear when heard."
+   },
+   {
+    "name": "Foamfolk",
+    "domain": "foamfolk.com",
+    "domain_available": "yes (GoDaddy availability lookup, exact .com match, 2026-11-18; no price returned)",
+    "why": "Invented. Warm and distinctive; suggests a family of characters made from the foam pieces.",
+    "risk": "Says nothing about what the site does, sounds like a mattress or craft brand, and no parent would guess or search for it."
+   }
+  ],
+  "recommendation": "Keep Couch Coach: none of the eight alternatives is clearly better, because the descriptive ones are findable but forgettable and the playful ones each cover only part of the library or drop the word \"couch\". Register couchcoach.com, point playcouchbuilds.com at it as a redirect, and always show the name with \"build ideas for your play couch\" and a foam-shape mark so it is not read as fitness or life coaching.\n\nCaveats: availability is a point-in-time GoDaddy lookup with no prices returned; trademark registers and social handles were not checked for any name. Also checked and taken: cushionclub.com, couchquest.com, couchcrew.com, stackaroo.com, foamfort.com, fortbook.com, todaywebuild.com, fortling.com, fortsy.com, playcouchclub.com. The page was screenshotted at 1200px and 500px and rendered correctly; a small CSS tweak afterwards (stop domain names wrapping mid-word on desktop) was not re-screenshotted.",
+  "file": "/Users/jeffmacdonald/Sites/NuggetCouchCoach/design/brand/naming.html"
+ },
+ "critique": {
+  "ranking": [
+   {
+    "route": "Warm and tactile (/Users/jeffmacdonald/Sites/NuggetCouchCoach/design/brand/warm-tactile.html)",
+    "score": 7.5,
+    "strengths": [
+     "Fastest to trust on a phone: the headline \"36 things to build with your play couch\" says what the site is before any scrolling, and the copy stays plain throughout.",
+     "One idea carried all the way through: hoop, slab and triangle are the logo, the three theme icons and the sheet key, each with the same colour everywhere (hoop Marigold, slab Pond, triangle Clay).",
+     "Best theme separation of the three. Strong colours stay apart under simulated protan, deutan and tritan vision (smallest difference 32 delta-E), and each has a different lightness, so they survive a greyscale print.",
+     "Every contrast figure on the board matched my own calculation from the hex values. All text pairs pass: lowest is white on Clay at 4.65:1, Stone small print is 5.8 to 6.6:1.",
+     "The only route with a wordmark actually drawn as SVG paths, so the logo already looks the same on every device. The other two show live text in a fallback font.",
+     "Drawings read clearly: Pond couch and Marigold add-on on pale tints, with the emoji stickers kept. \"Not yet kid-tested\" is on every card and the sheet card, quiet but legible (6.4:1).",
+     "Sheet card is light on ink (pale tint, 4px outline) with a big number and a star to colour in."
+    ],
+    "weaknesses": [
+     "Marigold fails as a signal colour on light: 1.7:1 on Oat, 1.9:1 on Paper, 1.96:1 on white. That is the hoop in the logo and the \"Things that go\" icon in chips, card badges and the sheet key. The designer admits this on the board but did not fix it.",
+     "Colours do too many jobs. Clay is the main button, the link colour family, a theme and the suggested second couch. Pond is a theme, the default couch in every drawing and the focus ring. A Forts card is Pond-on-Pond-tint (3.6:1), and a Pond couch on a Clay card muddies \"colour means theme\".",
+     "The background tints are weak on their own: Clay tint vs Marigold tint is about 4.6 delta-E under tritan simulation, Pond tint vs Clay tint about 8.5 under protan. The 26px shape badge carries the meaning, and it sits top-left where it bumps into the emoji sticker (Race Car, Secret Hideout).",
+     "The mark reads as three stacked shapes, not obviously as a couch. It is also the same mark as the Calm route (slab, triangle, hoop in the same arrangement), so the concept is not unique to this route.",
+     "At 16px the mark is three small blobs and the hoop nearly vanishes on a white browser tab.",
+     "Printed small print breaks the route's own \"never below 12\" rule: untested label 11px, footer 10.5px.",
+     "Looks a lot like the current standard for modern kids' brands: terracotta, teal and mustard on oat with a rounded sans."
+    ],
+    "must_fix": [
+     "Give the hoop and the \"Things that go\" icon at least 3:1 on light backgrounds (darker amber for small uses, or an Ink keyline), and put the favicon on an Ink tile.",
+     "Separate action colour from theme colour: pick one colour that only means \"tap this\" (Ink would do) and move the focus ring off Pond.",
+     "Add the theme name in words on each card, or enlarge the badge and move it clear of the stickers, so theme never rests on tint alone.",
+     "Darken chip outlines (Seam deep is 1.97:1 on Oat, needs 3:1) and raise \"Print a sheet\" and \"Change\" from 40px to 44px tall.",
+     "Raise the sheet's untested label and footer to 12px or more.",
+     "Self-host Fredoka and re-check every headline and the drawn wordmark against it. Nobody has seen this route in its real typeface; Android currently gets Roboto.",
+     "Decide on a default couch colour that is not also a theme colour, or accept the overlap knowingly."
+    ]
+   },
+   {
+    "route": "Bold and playful (/Users/jeffmacdonald/Sites/NuggetCouchCoach/design/brand/bold-playful.html)",
+    "score": 6,
+    "strengths": [
+     "Most kid appeal by a distance. The solid colour name bands and filled number badge make the strongest printed card for a toddler to point at.",
+     "Highest text contrast: Ink on Paper 16.0:1, white on red 4.87, on green 5.21, on blue 6.31, Ink on yellow 10.8. All pass.",
+     "Contrast table is computed in the page from the hex values, so it cannot drift.",
+     "The app icon on an Ink tile is the best home-screen icon of the three.",
+     "Stacked COUCH over COACH with the one differing letter coloured is a real wordmark idea.",
+     "Sheet copy (\"Maya, pick one!\") and big round step buttons suit the audience."
+    ],
+    "weaknesses": [
+     "Parent trust is the weakest. Thick ink outlines, hard shadows and a yellow hero block read as a toy-shop flyer or a trendy template, and six dashed \"Not yet kid-tested\" pills on red, blue and green cards look like warnings.",
+     "Theme colours are red and green, the worst pair for colour-blind viewers: about 12 delta-E apart under protan simulation, and the tints collapse to about 3. All three strong colours also have near-identical lightness, so a black-and-white print turns every name band the same grey.",
+     "The logo and the themes disagree: in the mark the hoop is yellow and the triangle red; in the themes the hoop is red and the triangle green.",
+     "The whistle is not legible as a whistle at favicon size. At 16px it is a yellow ring with specks, and yellow is 1.57:1 on white. On dark the blue slab is 2.69:1.",
+     "The wordmark is live text in Arial Rounded, not drawn, so it is not yet a reproducible logo.",
+     "Copy breaks its own rule. \"We drew it. No small person has jumped on it yet\" is a joke in a safety note. \"What's in your living room?\" and \"What kind of day is it?\" are slower to understand than plain filter labels.",
+     "The mock-up says \"12 builds you can make\" with \"1 play couch + round add-on\" selected; the library gives 24.",
+     "Card drawing artefact: the white floor of the drawing pokes down into the name band, and the theme badge overlaps the drawing.",
+     "The yellow hero block pushes the first build below the first screen more than the other routes."
+    ],
+    "must_fix": [
+     "Replace red/green as a theme pair and vary lightness between the three theme colours.",
+     "Make shape-to-colour mapping the same in the logo and the themes.",
+     "Redraw the mark so it survives 16px on a white tab, or use the Ink tile everywhere small.",
+     "Draw the wordmark as outlines.",
+     "Rewrite the two filter questions and the safety sentence in plain words.",
+     "Tone down the untested pill so it informs without alarming, and fix the 12/24 count.",
+     "\"Match my couch\" is a bare inline link with no 44px target; no focus styles are specified."
+    ]
+   },
+   {
+    "route": "Calm and minimal (/Users/jeffmacdonald/Sites/NuggetCouchCoach/design/brand/calm-minimal.html)",
+    "score": 5,
+    "strengths": [
+     "Looks trustworthy and adult; the cleanest layout and the best-behaved controls (44px targets everywhere, visible focus ring, real radio inputs).",
+     "One clear rule worth keeping: Pine is the only colour that means \"tap this\".",
+     "Each card names its theme in words next to the shape, so theme does not depend on colour.",
+     "All contrast figures on the board matched my calculation; text pairs run 5.05 to 14.5:1 (Clay label on its own tint is 4.65).",
+     "Useful extra copy: empty state with a \"Show everything\" button, \"Choose Save as PDF to keep a copy\", \"Page 1 of 2\"."
+    ],
+    "weaknesses": [
+     "Not kid-friendly. Sage and apricot foam on pale lilac and grey-blue is muted to the point of dull, and removing the emoji stickers takes away the flag and pirate cues that make a Race Car a race car. A three-year-old has little to point at.",
+     "Worst theme separation. Harbour and Plum are about 3 delta-E apart under protan simulation; the three tints are 1 to 11 apart even with normal vision and have identical lightness. On a home printer the tints will mostly disappear and the only cue left is an 11px shape.",
+     "Weakest favicon: at 16px only the Pine slab reads (Sage is 2.7:1 and Apricot under 2:1 on white), so it looks like a dash.",
+     "Same mark as the Warm route, in quieter colours.",
+     "Wordmark is live text in Iowan Old Style; the intended Fraunces has not been seen. Two font files to host instead of one.",
+     "The sticker removal is a regex on the SVG string in the mock-up; shipping it needs a change to the drawing code.",
+     "Voice wobbles between US and British: \"What shall we build today?\" and \"That's the lot.\" alongside \"Color\" and US Letter.",
+     "Headline does not say what the site is; three lines of text under every picture make cards tall, so fewer builds per screen.",
+     "Default drawing colours are 2.2 to 2.4:1 against their backgrounds and lean on the outline to be seen."
+    ],
+    "must_fix": [
+     "Stronger default couch colours and a decision on the stickers that keeps kid cues.",
+     "Three theme colours that differ in lightness and survive colour-blind simulation.",
+     "A mark that reads at 16px on white.",
+     "Draw the wordmark; pick one English.",
+     "A sheet card with enough colour and line weight to survive a cheap inkjet."
+    ]
+   }
+  ],
+  "recommendation": "Choose Warm and tactile. It is the only route where a parent knows what the site is from the first line, the three shapes do real work in the logo, filters and sheet, the wordmark is already drawn, and the theme colours hold up for colour-blind viewers and in greyscale. It is not ready to ship: the Marigold hoop is too pale to carry meaning on light backgrounds, Clay and Pond each do too many jobs, and nobody has seen it in Fredoka yet. Those are fixable without changing the idea.\n\nBold is second: better for the child and for print, but it costs parent trust, leans on red versus green, and its logo and copy need the most rework. Calm is third: it earns trust but gives a toddler very little, and its themes, favicon and printed sheet are the weakest.\n\nOne point applies to all three: in every phone mock-up the first build drawing sits below the first screen, under the headline, pitch and two rows of filters. That is for the UX work, but the brand should not add a hero block that makes it worse.",
+  "worth_grafting": [
+   "From Bold: the app icon on a dark Ink tile. It solves the pale hoop at small sizes.",
+   "From Bold: the printed card with a white interior, a solid colour name band and a filled number badge. Test it against Warm's tinted card on a real printer; it is easier for a toddler to point at.",
+   "From Bold: colouring the one letter that differs (u and a) in the stacked wordmark. Warm already lines those letters up.",
+   "From Bold: the contrast table computed in the page from the hex values, and the 48px round step buttons.",
+   "From Bold: \"Maya, pick one!\" as an optional sheet title, and \"Print the pointing sheet\" as the name of the thing. Leave the jokes off safety text.",
+   "From Calm: one colour that only means \"tap this\", kept separate from the theme colours.",
+   "From Calm: the theme name in words on each card beside the shape.",
+   "From Calm: the empty state with a \"Show everything\" button, \"Choose Save as PDF to keep a copy\", \"Page 1 of 2\" on the sheet, and the voice rule \"never claim a build is safe or tested when it is not\".",
+   "From Calm: \"Match your couch colors\" as the label for the colour pickers, with the two current colours shown beside it."
+  ],
+  "accessibility_problems": [
+   "Warm: Marigold is 1.72:1 on Oat, 1.90:1 on Paper and 1.96:1 on white. The logo hoop and the \"Things that go\" icon fall below the 3:1 needed for a meaningful graphic.",
+   "Warm: chip outline 1.97:1 and card edge 1.23:1 against the page; Pond focus ring 3.91:1 on Oat (passes 3:1, with little margin).",
+   "Warm: tints alone do not separate themes for some viewers (Clay tint vs Marigold tint about 4.6 delta-E under tritan simulation; Pond tint vs Clay tint about 8.5 under protan).",
+   "Warm: \"Print a sheet\" and \"Change\" are 40px tall, under the 44px target. Sheet small print is 10.5 to 11px.",
+   "Bold: themes are red and green; about 12 delta-E apart under protan simulation, tints about 3. All three theme colours have near-equal lightness (0.12 to 0.17), so greyscale print loses them.",
+   "Bold: yellow mark is 1.57:1 on white and 1.49:1 on Paper; on Ink the blue slab is 2.69:1 and the red wedge 3.49:1.",
+   "Bold: \"Match my couch\" has no 44px target; chips in the mock-up are plain spans, not controls; no focus style is specified. Untested label is 11px on cards and 10.5px on the sheet.",
+   "Calm: Harbour vs Plum about 3 delta-E under protan and 10 under deutan; the three tints are 1 to 11 apart and identical in lightness. Theme then rests on a 10 to 11px shape.",
+   "Calm: default drawing colours are 2.2 to 2.7:1 against their backgrounds; mark colours Sage and Apricot are under 3:1 on light.",
+   "Calm: chip outline is 1.32:1 on Paper.",
+   "All three: body text passes 4.5:1. Lowest text pairs measured: Warm 4.65 (white on Clay), Bold 4.87 (white on red), Calm 4.65 (Clay label on its tint).",
+   "All three: \"Not yet kid-tested\" is present on every card and sheet card shown."
+  ],
+  "originality_concerns": [
+   "Warm and Calm use the same mark: a slab with a triangle and a hoop on top. Whichever wins, it is one concept, not two. A bar, triangle and circle are also generic shapes; I found no specific brand it copies, but I did not run an image or trademark search.",
+   "Warm: a warm orange-red main button, rounded sans headings and an off-white page sit in the same neighbourhood as Yoto, which the brief names as a reference not to copy. It is not a copy, but keep Clay from becoming the dominant brand colour. This comparison is from memory, not a side-by-side check.",
+   "Warm and Bold both specify Fredoka, which is very widely used in children's apps, so the type alone will not make the brand distinctive.",
+   "Bold: rounded all-caps letters in mixed primary colours is toy-retailer territory (Toys R Us, LEGO, Playskool), and the ink outline with hard offset shadow on yellow is the common \"neobrutalist\" web template look.",
+   "Calm: sage, apricot and a soft serif on cream is the familiar premium-parenting look (Lovevery and similar). Fraunces on cream is very common.",
+   "The name itself: \"Coach\" is a well-known fashion trademark and the product names are someone else's marks. All three boards keep the \"Fits the Nugget and Chunk. Not affiliated with their maker.\" line and none uses those marks in the logo. Name clearance is outside what I checked."
+  ],
+  "unverified": "- Real typefaces: none of the boards loads Fredoka, Fraunces or Figtree. I saw Arial Rounded and Iowan Old Style fallbacks in Chrome on a Mac. Android would show Roboto or a default serif.\n- Real phones: I judged phone layout from a 390px-wide frame screenshot of each page and from the CSS. No clipped content was visible, but Bold and Calm set overflow-x: hidden on the body, which would hide any overflow, and my script to measure overflow did not run. Widths of 320 and 360 were not checked.\n- Printing: nothing was printed. Print judgements come from the on-screen sheet cards, colour lightness values and line weights. Each board shows only one or two sheet cards, so ink load for a full 12-card page is unknown.\n- Favicons: judged from 16px renders in a 1x screenshot, not in a real browser tab or on a high-density screen.\n- Colour-blind results: from a standard simulation (Machado matrices) and delta-E, not from colour-blind viewers.\n- Brand similarity: no trademark or image search was run; comparisons to Yoto, Lovevery and toy retailers are from memory.\n- Not shown by any route, so not reviewed: the 3D build page in brand colours, dark mode, and the full sheet page.\n- Desktop: I checked the applied section of each board at 1200px wide; the mock-ups there are still the phone frame, so no route shows a real desktop gallery layout.\n- No files were edited. Screenshots and the contrast script are in /private/tmp/claude-501/-Users-jeffmacdonald-Sites-NuggetCouchCoach/4be79254-bad8-487a-9444-08c41af20504/scratchpad/cdreview"
+ }
+}

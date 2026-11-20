@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couch Coach design sprint</title>
+<style>
+  body { font: 16px/1.45 system-ui, sans-serif; margin: 0; background: #f4f6fa; color: #1b2440; }
+  main { max-width: 1000px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 26px; margin: 0 0 4px; } h2 { font-size: 19px; margin: 28px 0 8px; }
+  p { margin: 0 0 10px; } .muted { color: #55607a; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  a.tile { display: block; background: #fff; border: 2px solid #c9d1de; border-radius: 12px; padding: 14px; color: inherit; text-decoration: none; }
+  a.tile:hover, a.tile:focus-visible { border-color: #1b2440; outline: none; }
+  .tile b { display: block; font-size: 17px; margin-bottom: 4px; } .tile span { font-size: 14px; color: #55607a; }
+  .pick { border-color: #12a150 !important; } .tag { display: inline-block; font-size: 12px; font-weight: 700; background: #12a150; color: #fff; border-radius: 10px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Couch Coach design sprint</h1>
+  <p class="muted">Eight mock-ups to compare. Nothing here has been applied to the live site. Open each on a phone and a computer.</p>
+
+  <h2>Brand: three routes</h2>
+  <p class="muted">Each board shows logo, colour, type, voice, real copy, and a slice of the gallery in that brand. Scores are from an independent critic.</p>
+  <div class="grid">
+    <a class="tile pick" href="brand/warm-tactile.html"><b>Warm and tactile <span class="tag">critic's pick · 7.5</span></b><span>The three foam shapes are the logo, the theme icons and the sheet key. Oat background, clay, pond and marigold. Needs the pale yellow fixed.</span></a>
+    <a class="tile" href="brand/bold-playful.html"><b>Bold and playful · 6</b><span>Crayon-box colours with ink outlines, a whistle built from foam pieces. Strongest for kids and for print, weakest for parent trust.</span></a>
+    <a class="tile" href="brand/calm-minimal.html"><b>Calm and minimal · 5</b><span>Warm paper, a quiet serif, muted foam colours. Looks adult and tidy, gives a three-year-old little to point at.</span></a>
+    <a class="tile" href="brand/naming.html"><b>Naming check</b><span>Couch Coach against eight alternatives, with domain availability. Verdict: keep it.</span></a>
+  </div>
+
+  <h2>UX sprint: four focus areas</h2>
+  <p class="muted">These are deliberately near-greyscale: judge structure, wording and interaction here, and colour and logo on the brand boards. Each page opens with a "What changed and why" strip.</p>
+  <div class="grid">
+    <a class="tile" href="ux/first-visit-gallery.html"><b>First visit and gallery</b><span>Plain headline, picture tiles for what you own, all 36 grouped by set-up, a set-up tag on every card, a "from the video" card.</span></a>
+    <a class="tile" href="ux/what-you-own.html"><b>What-you-own set-up</b><span>Asks inline with drawings of the pieces, one set-up bar shared by every page, named colour swatches.</span></a>
+    <a class="tile" href="ux/build-page-3d.html"><b>Build page and 3D view</b><span>Picture first with 3D on request, steps that say what to do, a parts list, a one-thumb step bar.</span></a>
+    <a class="tile" href="ux/print-flow.html"><b>Print flow</b><span>The paper preview is the editor: tap a card to swap, keep or move it. Add to sheet from the gallery. Paper size and sides.</span></a>
+  </div>
+
+  <h2>The current site, for comparison</h2>
+  <div class="grid">
+    <a class="tile" href="../index.html"><b>Gallery</b><span>Today's home page.</span></a>
+    <a class="tile" href="../build.html?b=castle"><b>Build page</b><span>Today's 3D view.</span></a>
+    <a class="tile" href="../sheet.html"><b>Printable sheet</b><span>Today's sheet.</span></a>
+  </div>
+</main>
+</body>
+</html>

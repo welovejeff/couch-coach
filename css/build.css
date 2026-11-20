@@ -1,0 +1,158 @@
+/* The build page. Brand tokens and shared pieces (.btn, .chip, .panel, .card) come from brand.css. */
+
+.build-page .wrap { padding-bottom: 132px; } /* room for the step bar fixed to the bottom of a phone */
+.missing { padding: 40px 0; }
+.missing h1 { font-size: 32px; margin-bottom: 8px; }
+
+.back-link { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; text-decoration: none; }
+.back-link:hover { text-decoration: underline; }
+
+/* ---------- name, facts, label ---------- */
+.b-head { margin-bottom: 14px; }
+.b-head h1 { font-size: 34px; margin-bottom: 8px; }
+.b-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; margin: 0; padding: 0; list-style: none; font-size: 14.5px; color: var(--stone); }
+.b-meta li { display: inline-flex; align-items: center; }
+.b-meta li + li::before { content: "·"; margin: 0 8px; color: var(--edge); }
+.b-meta .theme-label { font-size: 14.5px; }
+.b-tested { margin-top: 10px; }
+.b-tested .chip { font-size: 13.5px; }
+.b-tested .chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; border: 1.5px dashed var(--stone); flex: none; }
+.b-tested .chip::after { content: "?"; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--oat); border: 1px solid var(--seam); font-size: 12.5px; color: var(--stone); }
+.b-tested .chip[aria-expanded=true]::after { content: "×"; }
+.b-tested p { margin-top: 8px; max-width: 60ch; font-size: 14.5px; color: var(--stone); }
+
+.print-hero, .print-foot { display: none; }
+
+/* ---------- layout ---------- */
+.b-layout { display: flex; flex-direction: column; gap: 14px; }
+.b-layout h2 { font-size: 20px; margin-bottom: 10px; }
+.stage, .similar { scroll-margin-top: calc(var(--bar-h) + 10px); }
+
+/* ---------- the picture ---------- */
+.stage { position: relative; margin: 0; background: var(--paper); border: 1px solid var(--seam); border-radius: 22px; box-shadow: var(--slab); overflow: hidden; }
+.stage.go { background: var(--go-tint); } .stage.fort { background: var(--fort-tint); } .stage.climb { background: var(--climb-tint); }
+.stage.in-3d { background: var(--paper); }
+.stage-pic, .stage-3d { width: 100%; aspect-ratio: 4 / 3; max-height: 46vh; }
+.stage-pic { position: relative; }
+/* pinned to the frame so a wide build shrinks to fit instead of spilling out */
+.stage-pic svg { position: absolute; inset: 62px 14px 18px; display: block; width: calc(100% - 28px); height: calc(100% - 80px); overflow: visible; }
+.stage-3d canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; } /* only the 3D view takes over touch */
+.stage-3d canvas:active { cursor: grabbing; }
+.stage-view { position: absolute; top: 8px; right: 8px; display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--paper); border: 1.5px solid var(--edge); box-shadow: var(--slab); }
+.stage-view button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: none; font-family: var(--display); font-weight: 600; font-size: 15px; color: var(--ink); white-space: nowrap; }
+.stage-view button[aria-pressed=true] { background: var(--ink); color: var(--paper); }
+.stage-msg { position: absolute; left: 10px; bottom: 10px; max-width: calc(100% - 20px); padding: 5px 11px; border-radius: 12px; background: var(--paper); border: 1px solid var(--seam); font-size: 13px; line-height: 1.35; color: var(--stone); }
+
+/* ---------- the step ---------- */
+.stepcard { padding: 6px 16px 14px; }
+.prog { display: flex; gap: 4px; }
+.prog button { flex: 1; min-width: 0; height: 44px; padding: 0; border: 0; background: none; }
+.prog button::before { content: ""; display: block; height: 8px; border-radius: 4px; background: var(--seam); }
+.prog button.done::before { background: var(--edge); }
+.prog button.now::before { background: var(--ink); height: 12px; border-radius: 6px; }
+.kicker { font-size: 13px; font-weight: 700; color: var(--stone); text-transform: uppercase; letter-spacing: .05em; }
+.say { margin: 2px 0 6px; min-height: 2.4em; font-family: var(--display); font-weight: 600; font-size: 22px; line-height: 1.2; }
+.piece { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14.5px; color: var(--stone); }
+.piece .linkish { display: block; }
+.ico { display: block; flex: none; width: 60px; height: 40px; }
+.piece .ico { width: 54px; height: 36px; }
+.ico svg, .th svg, .print-hero svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* one-thumb bar: pinned to the bottom of a phone */
+.stepbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 7; display: flex; gap: 10px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--oat); border-top: 1px solid var(--seam); }
+.stepbar .back { flex: none; width: 64px; min-height: 56px; padding: 0; font-size: 20px; }
+.stepbar .next { flex: 1; min-width: 0; }
+.stepbar .next small { font-family: var(--text); font-weight: 600; font-size: 14px; opacity: .8; }
+
+/* ---------- parts ---------- */
+.verdict { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 8px; padding: 10px 14px; border-radius: 14px; font-size: 14.5px; }
+.verdict b { font-family: var(--display); font-weight: 600; font-size: 17px; line-height: 1.2; }
+.verdict.ok { background: var(--ok-tint); color: var(--ok); }
+.verdict.ok b::before { content: "✓ "; }
+.verdict.short { background: var(--warn-tint); }
+.verdict.short .btn { margin-top: 6px; white-space: normal; text-align: center; padding: 8px 18px; }
+.verdict.unknown { background: var(--oat); }
+.verdict .linkish { min-height: 0; padding: 12px 0; margin: -12px 0; }
+.parts ul { list-style: none; margin: 0; padding: 0; }
+.parts li { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 5px 8px; margin: 0 -8px; border-radius: 12px; }
+.parts li + li { border-top: 1px solid var(--seam); }
+.parts li.now { background: var(--oat); box-shadow: inset 0 0 0 1.5px var(--edge); border-top-color: transparent; }
+.parts li.now + li { border-top-color: transparent; }
+.parts .nm { flex: 1; min-width: 0; font-weight: 600; line-height: 1.25; }
+.parts .nm small { display: block; font-weight: 400; font-size: 13px; color: var(--stone); }
+.parts li.done .note { color: var(--ok); font-weight: 600; }
+.parts li.done .note::before { content: "✓ "; }
+.parts .qty { font-family: var(--display); font-weight: 600; font-size: 17px; font-variant-numeric: tabular-nums; }
+.parts .left { margin-top: 8px; }
+
+/* ---------- every step at a glance ---------- */
+.all ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.all li button { display: flex; align-items: center; gap: 10px; width: calc(100% + 16px); min-height: 60px; padding: 4px 8px; margin: 0 -8px; border: 0; border-radius: 12px; background: none; text-align: left; font-size: 15px; line-height: 1.3; color: var(--ink); }
+.all li button:hover { background: var(--oat); }
+.all li button[aria-current=step] { background: var(--oat); box-shadow: inset 0 0 0 1.5px var(--edge); font-weight: 700; }
+.all .th { flex: none; width: 76px; height: 54px; }
+.all .num { flex: none; width: 20px; text-align: right; font-family: var(--display); font-weight: 600; color: var(--stone); }
+.all .tx { flex: 1; min-width: 0; }
+
+/* ---------- print, sheet, send, screen ---------- */
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.actions .btn { flex: 1 1 150px; }
+.actions .btn[aria-pressed=true] { background: var(--ink); border-color: var(--ink); color: var(--paper); box-shadow: 0 3px 0 #000; }
+.actions .btn[aria-pressed=true]::before { content: "✓"; }
+.act-note { flex: 1 1 100%; overflow-wrap: anywhere; }
+.act-note a { font-weight: 600; }
+
+/* ---------- where next ---------- */
+.similar { margin-top: 14px; outline: none; }
+.similar h2 { font-size: 24px; margin-bottom: 2px; }
+.sim-note { color: var(--stone); font-size: 14.5px; margin-bottom: 12px; }
+.next-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 14px; }
+.pager a { display: inline-flex; align-items: center; min-height: 44px; min-width: 0; font-weight: 600; }
+.pager a:last-child { text-align: right; }
+
+/* ---------- wide screens: picture stays put on the left, everything else scrolls on the right ---------- */
+@media (min-width: 800px) {
+  .build-page .wrap { padding-bottom: 56px; }
+  .b-head h1 { font-size: 44px; }
+  .b-layout { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(330px, 1fr); gap: 14px 28px; align-items: start; }
+  .b-layout > * { grid-column: 2; }
+  .stage { grid-column: 1; grid-row: 1 / span 5; position: sticky; top: calc(var(--bar-h) + 14px); }
+  .stage-pic, .stage-3d { max-height: min(72vh, calc(100vh - var(--bar-h) - 40px)); }
+  .stage-pic svg { inset: 66px 28px 30px; width: calc(100% - 56px); height: calc(100% - 96px); }
+  .say { font-size: 24px; }
+  .stepbar { position: static; padding: 0; border: 0; background: none; z-index: auto; }
+  .similar { grid-column: 1 / -1; margin-top: 22px; }
+  .next-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+}
+
+/* ---------- print: this one build on one US Letter page, flat drawings only ---------- */
+@media print {
+  @page { size: letter; margin: 0.5in; }
+  html, body { background: #fff; }
+  body { font-size: 11pt; }
+  .build-page .wrap { max-width: none; margin: 0; padding: 0; }
+  .back-link, .stage, .stepcard, .stepbar, .actions, .similar, .verdict, .missing, #testedWhy, .parts .note, .parts .left { display: none !important; }
+  .b-head { margin: 0; }
+  .b-head h1 { font-size: 30pt; margin-bottom: 4pt; }
+  .b-meta, .b-meta .theme-label { font-size: 11pt; color: #000; }
+  .b-tested { margin-top: 5pt; }
+  .b-tested .chip { min-height: 0; padding: 2pt 9pt; border: 1pt solid #666; box-shadow: none; background: none; font-size: 10pt; }
+  .b-tested .chip::after { display: none; }
+  .print-hero { display: block; height: 2.7in; margin: 0.15in 0 0.2in; }
+  .b-layout { display: block; }
+  .b-layout h2 { font-size: 14pt; margin-bottom: 4pt; }
+  .panel { border: 0; box-shadow: none; background: none; border-radius: 0; padding: 0; margin: 0 0 0.16in; }
+  .parts ul { display: flex; flex-wrap: wrap; gap: 2pt 0.3in; }
+  .parts li, .parts li + li, .parts li.now { border: 0; background: none; box-shadow: none; min-height: 0; margin: 0; padding: 0; gap: 6pt; }
+  .parts .ico { width: 0.62in; height: 0.42in; }
+  .parts .nm { flex: none; font-size: 10.5pt; }
+  .parts .nm small { font-size: 9pt; color: #333; }
+  .parts .qty { font-size: 11pt; }
+  .all ol { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.12in; }
+  .all li { break-inside: avoid; border: 1pt solid #aaa; border-radius: 8pt; padding: 6pt; }
+  .all li button, .all li button[aria-current=step] { flex-wrap: wrap; align-items: flex-start; gap: 4pt; width: 100%; min-height: 0; margin: 0; padding: 0; background: none; box-shadow: none; font-weight: 400; font-size: 9.5pt; line-height: 1.25; color: #000; }
+  .all .th { order: -1; width: 100%; height: 0.95in; }
+  .all .num { width: auto; color: #000; font-size: 11pt; line-height: 1.1; }
+  .print-foot { display: block; margin-top: 0.1in; font-size: 9pt; color: #333; }
+}

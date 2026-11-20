@@ -1,0 +1,86 @@
+/* The gallery home page. Tokens, buttons, chips, cards and the set-up bar come from brand.css. */
+
+.intro { padding: 4px 0 14px; }
+.intro h1 { font-size: 28px; }
+.intro .sub { margin-top: 6px; color: var(--stone); font-size: 16px; max-width: 56ch; }
+.intro .small { margin-top: 6px; }
+
+/* ---------- theme filter: sticks under the closed set-up bar ---------- */
+.filter {
+  position: sticky; top: var(--bar-h); z-index: 5; margin: 12px -16px 0; padding: 4px 16px 0;
+  background: var(--oat); border-bottom: 1px solid var(--seam);
+}
+/* while the set-up editor is open it scrolls with the page, so nothing sits above the filter */
+#setup:not(.sb-closed) ~ .filter { top: 0; }
+.filter-in { max-width: 1148px; margin: 0 auto; }
+.filter .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 5px 16px 7px; }
+.filter .chips::-webkit-scrollbar { display: none; }
+.filter .chips label { position: relative; flex: none; }
+.filter .chip { white-space: nowrap; }
+.status { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14.5px; }
+.status #count { font-weight: 600; }
+.status .linkish { font-size: 14.5px; white-space: nowrap; }
+
+/* ---------- "From the video" ---------- */
+.card.seen {
+  display: grid; grid-template-columns: 42% minmax(0, 1fr); gap: 12px; align-items: center;
+  max-width: 680px; margin-top: 14px; padding: 8px; border: 2px solid var(--ink);
+}
+.seen-pic { display: block; border-radius: 17px; }
+.seen-body { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.seen .eyebrow { padding: 0 6px; font-size: 12.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--stone); }
+.card.seen .name { font-size: 22px; padding-top: 2px; }
+.seen .btn { margin: 10px 6px 4px; padding: 0 14px; font-size: 15px; white-space: normal; text-align: center; }
+
+/* ---------- sections and the card grid ---------- */
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 22px 0 10px; }
+.sec-head h2 { font-size: 20px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+/* cards in a row end level: the sheet button sits at the bottom of each */
+.grid .card .add { margin-top: auto; }
+.grid .card .untested { padding-bottom: 8px; }
+.empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+main > .empty { margin-top: 22px; }
+
+/* ---------- builds the family cannot make yet: folded, not hidden ---------- */
+.parked { margin-top: 14px; padding: 0 12px; border: 1.5px dashed var(--edge); border-radius: 22px; }
+.sec + .parked { margin-top: 26px; }
+.parked summary { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 10px 2px; cursor: pointer; list-style: none; border-radius: 14px; }
+.parked summary::-webkit-details-marker { display: none; }
+.parked summary::before {
+  content: ""; flex: none; width: 9px; height: 9px; margin: 0 4px 0 2px;
+  border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink); transform: rotate(-45deg);
+}
+.parked[open] summary::before { transform: rotate(45deg); margin-top: -4px; }
+.parked summary b { display: block; font-family: var(--display); font-weight: 600; font-size: 17px; line-height: 1.2; }
+.parked summary small { display: block; font-size: 13px; color: var(--stone); }
+.parked .grid { padding-bottom: 12px; }
+
+.explain { max-width: 62ch; margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--seam); font-size: 14px; line-height: 1.45; color: var(--stone); }
+.explain b { color: var(--ink); }
+
+
+
+@media (min-width: 600px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+}
+@media (min-width: 700px) {
+  .intro { padding: 10px 0 18px; }
+  .intro h1 { font-size: 40px; }
+  .intro .sub { font-size: 18px; }
+  .filter-in { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .filter { padding-top: 2px; padding-bottom: 2px; }
+  .filter .chips { margin: 0; padding: 5px 3px 7px; min-width: 0; }
+  .status { flex: none; gap: 18px; }
+  .card.seen { grid-template-columns: 260px minmax(0, 1fr); gap: 18px; padding: 12px; }
+  .card.seen .name { font-size: 28px; }
+  .seen .btn { font-size: 16px; padding: 0 18px; }
+  .sec-head { margin-top: 28px; }
+  .sec-head h2 { font-size: 24px; }
+  .parked { padding: 0 16px; }
+  .parked .grid { padding-bottom: 16px; }
+}
+@media (min-width: 900px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+}
+@media print { .filter { display: none; } }

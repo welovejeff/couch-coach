@@ -15,7 +15,7 @@ test('a blocked store falls back to the default colours', () => {
   const blocked = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
   const p = createPrefs(blocked);
   p.set('nug', '#112233');
-  assert.deepEqual(p.colors(), { nug: '#3f86d6', nug2: '#3f86d6', chk: '#f4b63a' });
+  assert.deepEqual(p.colors(), { nug: '#4f7cb8', nug2: '#4f7cb8', chk: '#9db08a' });
 });
 
 test('the second couch colour defaults to the first, then keeps its own', () => {

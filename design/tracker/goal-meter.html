@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sheet tracker mock-up: Goal meter</title>
+<link rel="icon" href="../../favicon.svg">
+<link rel="stylesheet" href="../../css/brand.css">
+<link rel="stylesheet" href="../../css/gallery.css">
+<style>
+/* ---------- design notes (review aid, not part of the tracker) ---------- */
+.notes { margin: 4px 0 14px; padding: 0 14px; background: var(--paper); border: 1.5px dashed var(--edge); border-radius: 18px; }
+.notes > summary { display: flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 600; font-size: 16px; }
+.notes > summary::-webkit-details-marker { display: none; }
+.notes > summary::before { content: ""; flex: none; width: 8px; height: 8px; margin: 0 2px; border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink); transform: rotate(-45deg); }
+.notes[open] > summary::before { transform: rotate(45deg); margin-top: -4px; }
+.notes > summary small { font-family: var(--text); font-weight: 400; font-size: 13px; color: var(--stone); }
+.notes-body { padding: 2px 0 16px; font-size: 14.5px; line-height: 1.5; max-width: 74ch; }
+.notes-body h3 { font-size: 16px; margin: 14px 0 4px; }
+.notes-body ul { margin: 0; padding-left: 20px; }
+.notes-body li { margin: 3px 0; }
+.notes-body .jump { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; }
+.notes-body .jump a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
+
+/* ---------- goal meter: the tracker ---------- */
+.gm {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; padding: 0 16px calc(8px + env(safe-area-inset-bottom));
+  background: var(--paper); border-top: 2px solid var(--ink);
+}
+.gm-in { max-width: 1148px; margin: 0 auto; }
+
+/* a short message with a way back, shown above the meter */
+.gm-flash { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0 0; font-size: 14px; font-weight: 600; }
+.gm-flash .linkish { flex: none; font-size: 14px; padding: 0 4px; }
+.gm.only-flash .gm-flash { padding: 6px 0 0; font-size: 15px; }
+
+/* the bar: six spots, a milestone, then six more once the back is in play */
+.gm-meter { display: flex; align-items: center; gap: 5px; padding: 11px 0 3px; }
+.gm-half { display: flex; gap: 3px; flex: 1 1 0; min-width: 0; transition: flex-grow .35s ease, opacity .35s ease; }
+.gm-seg { flex: 1 1 0; height: 10px; border-radius: 5px; background: var(--seam); min-width: 0; }
+.gm-seg.sug { background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--edge); }
+.gm-seg.go { background: var(--go); } .gm-seg.fort { background: var(--fort); } .gm-seg.climb { background: var(--climb); }
+.gm-seg.new { animation: gm-pop .35s ease; }
+@keyframes gm-pop { 0% { transform: scaleY(2.2); } 100% { transform: none; } }
+.gm-ms {
+  flex: none; display: grid; place-items: center; width: 24px; height: 24px; margin: -7px 0; border-radius: 50%;
+  border: 2px solid var(--edge); background: var(--paper); color: var(--stone); font-size: 12px; font-weight: 700; line-height: 1;
+  transition: opacity .35s ease, width .35s ease, margin .35s ease, border-width .35s ease;
+}
+.gm-ms.hit { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.gm.one-page .gm-half.back { flex-grow: 0; opacity: 0; gap: 0; }
+.gm.one-page .gm-ms.end { width: 0; border-width: 0; margin-left: -5px; opacity: 0; overflow: hidden; }
+
+.gm-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 10px; }
+.gm-say {
+  flex: 1 1 150px; min-width: 0; min-height: 48px; display: flex; align-items: center; gap: 10px; padding: 2px 0;
+  border: 0; background: none; text-align: left; border-radius: 10px;
+}
+.gm-say::before { content: ""; flex: none; width: 8px; height: 8px; margin: 4px 3px 0; border-left: 2.5px solid var(--ink); border-top: 2.5px solid var(--ink); transform: rotate(45deg); }
+.gm-say[aria-expanded=true]::before { transform: rotate(225deg); margin-top: -4px; }
+.gm-say span { min-width: 0; }
+.gm-say b { display: block; font-family: var(--display); font-weight: 600; font-size: 17px; line-height: 1.2; }
+.gm-say small { display: block; font-size: 13px; line-height: 1.3; color: var(--stone); }
+.gm.is-full .gm-say small { color: var(--ink); font-weight: 600; }
+.gm-acts { display: flex; align-items: center; gap: 8px; flex: none; margin-left: auto; padding-bottom: 2px; }
+.gm-acts .btn { padding: 0 16px; font-size: 15.5px; }
+.gm-acts .btn.goal { background: var(--ink); color: var(--paper); box-shadow: 0 3px 0 #000; }
+.gm-hide { flex: none; min-width: 44px; padding: 0 2px; font-size: 14px; }
+@media (max-width: 599px) {
+  /* the one moment with two buttons: they take a row of their own */
+  .gm.choice .gm-acts { flex: 1 1 100%; padding-bottom: 4px; }
+  .gm.choice .gm-acts .btn { flex: 1 1 0; padding: 0 10px; }
+}
+
+/* ---------- the panel: what is on the sheet, page count, hide and clear ---------- */
+.gm-panel { max-height: min(64vh, 520px); overflow-y: auto; padding: 12px 0 10px; border-bottom: 1px solid var(--seam); }
+.gm-panel h2 { font-size: 20px; }
+.gm-panel h3 { font-size: 14px; margin: 12px 0 6px; font-family: var(--text); font-weight: 700; color: var(--stone); }
+.gm-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.gm-head h2 { min-width: 0; overflow-wrap: anywhere; }
+.gm-head .linkish { flex: none; min-width: 44px; }
+.gm-pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.gm-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; list-style: none; margin: 0; padding: 0; }
+.gm-slot { display: flex; align-items: center; gap: 7px; min-width: 0; min-height: 46px; padding: 0 2px 0 10px; background: var(--oat); border: 1.5px solid var(--seam); border-radius: 14px; font-size: 14px; font-weight: 600; line-height: 1.2; }
+.gm-slot .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gm-slot .nm small { display: block; font-size: 12px; font-weight: 400; color: var(--stone); }
+.gm-slot.sug, .gm-slot.blank { background: var(--paper); border-style: dashed; border-color: var(--edge); }
+.gm-slot.blank { color: var(--stone); font-weight: 400; padding-right: 10px; }
+.gm-slot button { flex: none; width: 44px; height: 44px; border: 0; background: none; border-radius: 50%; font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.gm-opt { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 10px; font-size: 14.5px; cursor: pointer; }
+.gm-opt input { width: 22px; height: 22px; accent-color: var(--ink); flex: none; margin: 0; }
+.gm-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 18px; margin-top: 6px; }
+.gm-foot .linkish { font-size: 14.5px; }
+.gm-confirm { margin-top: 8px; padding: 12px 14px; border-radius: 14px; background: var(--warn-tint); }
+.gm-confirm p { font-weight: 600; font-size: 15px; }
+.gm-confirm div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.gm-confirm .btn { font-size: 15px; padding: 0 16px; }
+
+/* ---------- tucked away: a small pill that brings the tracker back ---------- */
+.gm-pill {
+  position: fixed; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 8;
+  display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 4px; min-height: 48px; padding: 6px 16px 8px;
+  border-radius: 999px; border: 2px solid var(--ink); background: var(--paper); box-shadow: 0 3px 0 #000;
+  font-family: var(--display); font-weight: 600; font-size: 15px; line-height: 1.1; color: var(--ink);
+}
+.gm-pill .mini { display: flex; gap: 2px; }
+.gm-pill .mini i { flex: 1; height: 5px; border-radius: 3px; background: var(--seam); min-width: 5px; }
+.gm-pill .mini i.on { background: var(--ink); }
+.gm-pill .mini i.gap { flex: none; width: 2px; min-width: 2px; background: none; }
+
+/* room so the tracker never covers the last cards */
+body.has-gm .wrap { padding-bottom: 170px; }
+body.has-pill .wrap { padding-bottom: 90px; }
+@media (min-width: 700px) {
+  .gm-panel-in { max-width: 760px; }
+  .gm-slots { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .gm-say b { font-size: 18px; }
+  .gm-say small { font-size: 14px; }
+}
+@media print { .gm, .gm-pill, .notes { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="page">
+  <header id="top"></header>
+
+  <details class="notes" id="notes">
+    <summary><span>Design notes: Goal meter <small>mock-up B of the sheet tracker</small></span></summary>
+    <div class="notes-body">
+      <p><b>The idea.</b> The tracker is one slim bar of six spots with a milestone at the end, like a free-shipping meter, and one line that says what the next pick gets you. At six the goal is reached and the bar offers one choice: print a one-page sheet, or keep going and the bar grows to twelve.</p>
+
+      <h3>States</h3>
+      <ul>
+        <li><b>Empty:</b> no tracker at all. It appears with the first pick.</li>
+        <li><b>First picks (1 to 5):</b> "3 of 6 picked. 3 more fills page one." The button is a quiet "Open sheet".</li>
+        <li><b>Page one full (6):</b> "Page one is full." Two buttons: "Print 1 page" (solid) and "Fill the back".</li>
+        <li><b>Working on page two (7 to 11):</b> the bar is twelve spots with a 6 marker in the middle. "9 of 12 picked. 3 more fills the back."</li>
+        <li><b>All full (12):</b> "Both sides are full." The button is a solid "Print 2 pages". A 13th tap changes nothing and the line says to take one off first.</li>
+      </ul>
+
+      <h3>One page or two</h3>
+      <ul>
+        <li>A sheet starts as one page. It becomes two when you tap "Fill the back" or simply pick a 7th build. The 7th pick is never refused; a line says "Started the back of the sheet" with Undo.</li>
+        <li>To go back: take picks off until six or fewer are left (a back that was started by picking closes by itself), or open the tracker and choose "1 page". If that drops picks, they are named in a line with Undo.</li>
+        <li><b>Suggestions:</b> spots you have not picked are filled with our suggestions when the sheet opens, as today. They show as hollow spots on the bar and never count as progress. A checkbox in the panel turns them off, so only your picks print.</li>
+        <li><b>The name:</b> the bar itself stays nameless so it stays short. The panel heading carries it ("Cole and Thomas's sheet") and wraps onto a second line when it is long.</li>
+        <li><b>Taking a pick off:</b> tap "On your sheet" on the card again, or open the tracker (tap the line) and tap "Off" beside the build.</li>
+        <li>Filled spots take the color of each build's theme, so the bar also shows the mix. Ink stays the only tap color.</li>
+      </ul>
+
+      <h3>Hide and clear</h3>
+      <ul>
+        <li><b>Hide:</b> the "Hide" link on the bar tucks the tracker into a small pill at the bottom right that keeps counting ("Sheet: 3 of 6"). Tap the pill to bring it back. It stays tucked while you pick.</li>
+        <li><b>Clear sheet:</b> lives inside the panel, not on the bar, so it takes two taps to reach. It asks first ("Take all 9 builds off the sheet?"), and after clearing the bar stays for a few seconds with "Sheet cleared. Undo".</li>
+      </ul>
+
+      <h3>References (Mobbin)</h3>
+      <ul>
+        <li><b>SHEIN</b> cart: a pinned bottom strip with one sentence, a thin bar and one button. This is the layout.</li>
+        <li><b>WHOOP</b> cart: "Spend $6 more to get free shipping" over a bar, then Checkout and Keep shopping. This is the wording pattern and the two-button choice at the goal.</li>
+        <li><b>Instacart</b> cart: "Add $7.33 to get $0 delivery fee" on a hairline bar. Proof the meter can be very slim. Its greyed-out checkout button is what we chose not to copy: our button always works.</li>
+        <li><b>Nike Run Club</b> levels: a bar split by a tick with a marker at the next milestone. This is the 6 and 12 markers.</li>
+        <li><b>Google Photos</b> and <b>Apple News</b> selection mode: a count with a clear or trash control beside it. This is why clearing sits next to the count, but behind a confirm.</li>
+      </ul>
+
+      <h3>Jump to a state</h3>
+      <p class="jump"><a href="?">Empty</a><a href="?picked=3">3 picked</a><a href="?picked=6">Page one full</a><a href="?picked=9">9 picked</a><a href="?picked=12">All full</a><a href="?picked=12&full=1">13th tap</a><a href="?picked=4&panel=1">Panel</a><a href="?picked=9&panel=1&confirm=1">Clear, asking</a><a href="?cleared=1">Cleared, undo</a><a href="?picked=3&tucked=1">Hidden</a><a href="?picked=3&fill=0&panel=1">No suggestions</a><a href="?picked=4&panel=1&kid=Cole,Thomas,Josephine">Three names</a></p>
+      <p class="small">Mock-up only: nothing is saved, and the print buttons do not leave this page.</p>
+    </div>
+  </details>
+
+  <div class="intro">
+    <h1 id="headline"></h1>
+    <p class="sub" id="sub"></p>
+  </div>
+  <main id="list"></main>
+</div>
+
+<div class="gm one-page" id="gm" hidden>
+  <div class="gm-in">
+    <div class="gm-panel" id="gmPanel" hidden></div>
+    <div class="gm-flash" id="gmFlash" role="status" hidden></div>
+    <div class="gm-meter" id="gmMeter" role="img">
+      <div class="gm-half one"></div><span class="gm-ms mid">6</span>
+      <div class="gm-half back"></div><span class="gm-ms end">12</span>
+    </div>
+    <div class="gm-row" id="gmRow">
+      <button type="button" class="gm-say" id="gmSay" aria-expanded="false" aria-controls="gmPanel">
+        <span aria-live="polite"><b id="gmText"></b><small id="gmNote"></small></span>
+      </button>
+      <div class="gm-acts">
+        <button type="button" class="btn quiet" id="gmMore" hidden>Fill the back</button>
+        <button type="button" class="btn quiet" id="gmGo">Open sheet</button>
+        <button type="button" class="linkish gm-hide" id="gmHide">Hide</button>
+      </div>
+    </div>
+  </div>
+</div>
+<button type="button" class="gm-pill" id="gmPill" hidden></button>
+
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { OWNED, THEMES } from '../../js/setups.js';
+import { candidates } from '../../js/sheet-state.js';
+import { cardHtml, drawWhenSeen } from '../../js/card.js';
+import { mountHeader, themeIcon } from '../../js/brand.js';
+import { DEFAULTS } from '../../js/prefs.js';
+import { palette } from '../../js/flat.js';
+
+const PER = 6;                       // builds on one side of the sheet
+const q = new URLSearchParams(location.search), $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const owned = OWNED[q.get('own')] ? q.get('own') : 'couch-addon';
+// one child or several: ?kid=Cole,Thomas reads "Cole and Thomas"
+const kids = (q.get('kid') ?? 'Max').split(',').map(k => k.trim().slice(0, 14)).filter(Boolean).slice(0, 4);
+const kid = kids.length > 1 ? `${kids.slice(0, -1).join(', ')} and ${kids.at(-1)}` : kids[0] || '';
+const pool = candidates(BUILDS, owned);            // everything this family can make, best first
+const shown = pool.slice(0, 15);                   // the slice of the gallery this mock-up lists
+const find = id => BUILDS.find(b => b.id === id);
+const plural = (n, w = 'build') => `${n} ${w}${n === 1 ? '' : 's'}`;
+
+// ---------- state: in memory only ----------
+// picks: build ids in the order they were added. back: '' (one page), 'pick' (the 7th pick
+// started the back) or 'choice' (the parent asked for two pages). fill: suggestions in empty spots.
+const n0 = Math.max(0, Math.min(12, +q.get('picked') || 0));
+let st = {
+  picks: pool.slice(0, n0).map(b => b.id),
+  back: q.get('pages') === '2' ? 'choice' : n0 > PER ? 'pick' : '',
+  fill: q.get('fill') !== '0',
+};
+let ui = { panel: q.has('panel'), confirm: q.has('confirm'), tucked: q.has('tucked'), full: q.has('full'), flash: null, lastAdded: '' };
+let flashTimer = 0;
+
+const pages = () => st.back ? 2 : 1;
+const spots = () => pages() * PER;
+const suggestions = () => st.fill ? pool.filter(b => !st.picks.includes(b.id)).slice(0, spots() - st.picks.length) : [];
+
+// What the tracker says and offers at each stage.
+function model() {
+  const n = st.picks.length, total = spots(), two = pages() === 2;
+  const left = n < PER ? PER - n : total - n, where = n < PER ? 'page one' : 'the back';
+  let text, note, go = 'Open sheet', goal = false, more = false;
+  if (ui.full) { text = 'The sheet is full'; note = 'Take one off to add another.'; go = 'Print 2 pages'; goal = true; }
+  else if (n === 12) { text = 'Both sides are full'; note = 'All 12 are your picks.'; go = 'Print 2 pages'; goal = true; }
+  else if (n === PER && !two) { text = 'Page one is full'; note = 'Print it, or keep going on the back.'; go = 'Print 1 page'; goal = true; more = true; }
+  else if (n === PER) { text = `${n} of ${total} picked`; note = `Page one is full. ${left} more fills the back.`; }
+  else { text = `${n} of ${total} picked`; note = `${left} more fills ${where}.`; }
+  return { n, total, two, text, note, go, goal, more };
+}
+
+// ---------- actions ----------
+const snap = () => JSON.parse(JSON.stringify(st));
+function flash(text, undo = null, ms = 7000) {
+  clearTimeout(flashTimer);
+  ui.flash = { text, undo };
+  if (ms) flashTimer = setTimeout(() => { ui.flash = null; render(); }, ms);
+}
+function toggle(id) {
+  ui.full = false; ui.lastAdded = ''; ui.flash = null; clearTimeout(flashTimer);
+  if (st.picks.includes(id)) {
+    st.picks = st.picks.filter(p => p !== id);
+    if (st.back === 'pick' && st.picks.length <= PER) st.back = '';   // a back nobody asked for closes again
+    return;
+  }
+  if (st.picks.length >= 12) { ui.full = true; return; }
+  const before = snap();
+  st.picks = [...st.picks, id]; ui.lastAdded = id;
+  if (st.picks.length > PER && !st.back) { st.back = 'pick'; flash('Started the back of the sheet.', before); }
+}
+function setPages(want) {
+  if (want === pages()) return;
+  ui.full = false;
+  if (want === 2) { st.back = 'choice'; ui.flash = null; return; }
+  const before = snap(), off = st.picks.slice(PER);
+  st.picks = st.picks.slice(0, PER); st.back = '';
+  if (off.length) flash(`One page holds 6. Took off ${off.map(id => find(id).name).join(', ')}.`, before, 10000);
+}
+function clearAll() {
+  const before = snap(), name = kid ? `${kid}'s sheet` : 'Sheet';
+  st = { ...st, picks: [], back: '' };
+  ui = { ...ui, panel: false, confirm: false, tucked: false, full: false };
+  flash(`${name} cleared.`, before, q.has('cleared') ? 0 : 8000);
+}
+function undo() {
+  if (!ui.flash?.undo) return;
+  st = ui.flash.undo; ui.flash = null; ui.full = false; clearTimeout(flashTimer);
+}
+
+// ---------- drawing ----------
+function renderCards() {
+  $('list').querySelectorAll('[data-add]').forEach(btn => {
+    const on = st.picks.includes(btn.dataset.add);
+    btn.setAttribute('aria-pressed', on);
+    btn.textContent = on ? 'On your sheet' : 'Add to sheet';
+  });
+}
+
+function panelHtml(m) {
+  const sug = suggestions(), title = kid ? `${esc(kid)}'s sheet` : 'Your sheet';
+  const slot = i => {
+    const id = st.picks[i], s = !id && sug[i - st.picks.length];
+    if (id) { const b = find(id); return `<li class="gm-slot">${themeIcon(b.theme)}<span class="nm">${esc(b.name)}</span><button type="button" data-off="${id}" aria-label="Take ${esc(b.name)} off the sheet">Off</button></li>`; }
+    if (s) return `<li class="gm-slot sug">${themeIcon(s.theme)}<span class="nm">${esc(s.name)}<small>Suggestion</small></span><button type="button" data-keep="${s.id}" aria-label="Pick ${esc(s.name)}">Pick</button></li>`;
+    return `<li class="gm-slot blank">Empty spot</li>`;
+  };
+  const side = (from, label) => `<h3>${label}</h3><ul class="gm-slots">${Array.from({ length: PER }, (_, i) => slot(from + i)).join('')}</ul>`;
+  const confirm = ui.confirm ? `<div class="gm-confirm" role="alertdialog" aria-label="Clear sheet">
+      <p>Take ${m.n === 1 ? 'your 1 build' : `all ${m.n} builds`} off the sheet?</p>
+      <div><button type="button" class="btn primary" data-act="keep">Keep them</button><button type="button" class="btn" data-act="clear-yes">Clear sheet</button></div></div>`
+    : `<div class="gm-foot"><button type="button" class="linkish" data-act="hide">Hide tracker</button><button type="button" class="linkish" data-act="clear">Clear sheet</button></div>`;
+  return `<div class="gm-panel-in">
+    <div class="gm-head"><h2>${title}</h2><button type="button" class="linkish" data-act="close">Close</button></div>
+    <div class="gm-pages" role="group" aria-label="Pages">
+      <button type="button" class="chip" data-pages="1" aria-pressed="${!m.two}">1 page, 6 builds</button>
+      <button type="button" class="chip" data-pages="2" aria-pressed="${m.two}">2 pages, 12 builds</button>
+    </div>
+    ${side(0, 'Page one')}${m.two ? side(PER, 'The back') : ''}
+    <label class="gm-opt"><input type="checkbox" id="gmFill"${st.fill ? ' checked' : ''}><span>Fill empty spots with our suggestions</span></label>
+    ${confirm}</div>`;
+}
+
+function render() {
+  const m = model(), gm = $('gm'), has = m.n > 0, onlyFlash = !has && !!ui.flash;
+  const showBar = (has && !ui.tucked) || onlyFlash, showPill = has && ui.tucked;
+  renderCards();
+
+  gm.hidden = !showBar;
+  $('gmPill').hidden = !showPill;
+  document.body.classList.toggle('has-gm', showBar);
+  document.body.classList.toggle('has-pill', showPill);
+  gm.classList.toggle('one-page', !m.two);
+  gm.classList.toggle('choice', m.more);
+  gm.classList.toggle('is-full', ui.full);
+  gm.classList.toggle('only-flash', onlyFlash);
+
+  // the bar
+  const sug = suggestions();
+  const seg = i => {
+    const id = st.picks[i];
+    if (id) return `<i class="gm-seg ${find(id).theme}${id === ui.lastAdded ? ' new' : ''}"></i>`;
+    return `<i class="gm-seg${sug[i - m.n] ? ' sug' : ''}"></i>`;
+  };
+  const [one, mid, back, end] = $('gmMeter').children;
+  one.innerHTML = Array.from({ length: PER }, (_, i) => seg(i)).join('');
+  back.innerHTML = Array.from({ length: PER }, (_, i) => seg(PER + i)).join('');
+  mid.classList.toggle('hit', m.n >= PER); mid.textContent = m.n >= PER ? '✓' : '6';
+  end.classList.toggle('hit', m.n >= 12); end.textContent = m.n >= 12 ? '✓' : '12';
+  $('gmMeter').setAttribute('aria-label', `${m.n} of ${m.total} spots picked`);
+  $('gmMeter').hidden = onlyFlash; $('gmRow').hidden = onlyFlash;
+
+  // the line and the buttons
+  $('gmText').textContent = m.text; $('gmNote').textContent = m.note;
+  $('gmGo').textContent = m.go;
+  $('gmGo').className = `btn ${m.goal ? 'goal' : 'quiet'}`;
+  $('gmMore').hidden = !m.more;
+  $('gmSay').setAttribute('aria-expanded', ui.panel);
+
+  // message with a way back
+  $('gmFlash').hidden = !ui.flash;
+  $('gmFlash').innerHTML = ui.flash ? `<span>${esc(ui.flash.text)}</span>${ui.flash.undo ? '<button type="button" class="linkish" data-act="undo">Undo</button>' : ''}` : '';
+
+  // the panel
+  const open = ui.panel && has && !ui.tucked;
+  $('gmPanel').hidden = !open;
+  $('gmPanel').innerHTML = open ? panelHtml(m) : '';
+  if (open && ui.confirm) $('gmPanel').scrollTop = $('gmPanel').scrollHeight;   // the question must be in view
+
+  // the pill
+  if (showPill) {
+    const bits = Array.from({ length: m.total }, (_, i) => `${i === PER ? '<i class="gap"></i>' : ''}<i class="${i < m.n ? 'on' : ''}"></i>`).join('');
+    $('gmPill').innerHTML = `<span>Sheet: ${m.n} of ${m.total}</span><span class="mini" aria-hidden="true">${bits}</span>`;
+    $('gmPill').setAttribute('aria-label', `Show the sheet tracker. ${m.n} of ${m.total} picked.`);
+  }
+}
+
+// ---------- page ----------
+mountHeader($('top'), 'gallery');
+$('headline').textContent = 'You can build these now';
+$('sub').textContent = `${plural(shown.length)} from the gallery for ${OWNED[owned].tag}. Tap "Add to sheet" to try the tracker.`;
+$('list').innerHTML = `<div class="grid">${shown.map(b => cardHtml(b, { owned, onSheet: st.picks.includes(b.id) })).join('')}</div>`;
+// the real pages live two folders up
+document.querySelectorAll('#top a[href], #list a[href]').forEach(a => a.setAttribute('href', '../../' + a.getAttribute('href')));
+drawWhenSeen($('page'), find, () => palette({ nug: DEFAULTS.nug, nug2: DEFAULTS.nug, chk: DEFAULTS.chk }));
+
+$('list').addEventListener('click', e => {
+  const btn = e.target.closest('[data-add]');
+  if (!btn) return;
+  toggle(btn.dataset.add); render();
+});
+$('gmSay').addEventListener('click', () => { ui.panel = !ui.panel; ui.confirm = false; render(); });
+$('gmHide').addEventListener('click', () => { ui.tucked = true; ui.panel = false; ui.confirm = false; render(); });
+$('gmPill').addEventListener('click', () => { ui.tucked = false; render(); $('gmSay').focus(); });
+$('gmMore').addEventListener('click', () => { setPages(2); render(); });
+$('gmGo').addEventListener('click', () => {
+  const m = model(), s = suggestions().length;
+  flash(`Mock-up: this opens the sheet. ${plural(pages(), 'page')}, ${plural(m.n, 'pick')}${s ? ` and ${plural(s, 'suggestion')}` : ''}.`, null, 5000);
+  render();
+});
+$('gm').addEventListener('click', e => {
+  const t = e.target.closest('[data-act], [data-off], [data-keep], [data-pages]');
+  if (!t) return;
+  const act = t.dataset.act;
+  if (t.dataset.off) toggle(t.dataset.off);
+  else if (t.dataset.keep) toggle(t.dataset.keep);
+  else if (t.dataset.pages) setPages(+t.dataset.pages);
+  else if (act === 'close') ui.panel = false;
+  else if (act === 'hide') { ui.tucked = true; ui.panel = false; }
+  else if (act === 'clear') ui.confirm = true;
+  else if (act === 'keep') ui.confirm = false;
+  else if (act === 'clear-yes') clearAll();
+  else if (act === 'undo') undo();
+  render();
+});
+$('gm').addEventListener('change', e => { if (e.target.id === 'gmFill') { st.fill = e.target.checked; render(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && ui.panel) { ui.panel = false; ui.confirm = false; render(); $('gmSay').focus(); } });
+
+// REVIEW AIDS: ?picked=N ?pages=2 ?panel=1 ?confirm=1 ?tucked=1 ?full=1 ?fill=0 ?cleared=1 ?notes=1 ?own= ?kid=
+if (q.has('notes')) $('notes').open = true;
+if (q.has('cleared')) { st.picks = pool.slice(0, n0 || 4).map(b => b.id); clearAll(); }
+render();
+</script>
+</body>
+</html>

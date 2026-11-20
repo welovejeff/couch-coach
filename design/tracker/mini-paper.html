@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sheet tracker mock-up: Mini paper</title>
+<link rel="icon" href="../../favicon.svg">
+<link rel="stylesheet" href="../../css/brand.css">
+<style>
+/* MOCK-UP ONLY. One direction for the sheet progress tracker: "Mini paper".
+   Tokens, buttons, chips and cards come from brand.css. Nothing here is saved. */
+
+/* ---------- design notes ---------- */
+.notes { margin: 4px 0 18px; padding: 0 16px; }
+.notes > summary { display: flex; align-items: center; gap: 10px; min-height: 52px; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 600; font-size: 17px; }
+.notes > summary::-webkit-details-marker { display: none; }
+.notes > summary::before { content: ""; flex: none; width: 9px; height: 9px; margin: 0 4px 0 2px; border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink); transform: rotate(-45deg); }
+.notes[open] > summary::before { transform: rotate(45deg); margin-top: -4px; }
+.notes > summary small { font-family: var(--text); font-weight: 400; font-size: 13px; color: var(--stone); }
+.notes-in { padding: 0 0 16px; font-size: 15px; max-width: 78ch; }
+.notes-in h3 { font-size: 16px; margin: 16px 0 6px; }
+.notes-in p { margin: 0 0 8px; }
+.notes-in ul { margin: 0; padding-left: 20px; }
+.notes-in li { margin-bottom: 5px; }
+.notes-in .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.notes-in .links a { min-height: 44px; }
+
+/* ---------- gallery slice (the grid rules mirror css/gallery.css) ---------- */
+.intro { padding: 4px 0 6px; }
+.intro h1 { font-size: 28px; }
+.intro .sub { margin-top: 6px; color: var(--stone); max-width: 56ch; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 18px 0 10px; }
+.sec-head h2 { font-size: 20px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.grid .card .add { margin-top: auto; }
+.grid .card .untested { padding-bottom: 8px; }
+@media (min-width: 600px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; } }
+@media (min-width: 700px) { .intro h1 { font-size: 40px; } .sec-head h2 { font-size: 24px; } }
+@media (min-width: 900px) { .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; } }
+.has-tk .wrap { padding-bottom: 140px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- the mini paper: one or two tiny pages, 2 x 3 ---------- */
+.mp { display: flex; align-items: center; flex: none; }
+.mp-page {
+  width: 34px; height: 44px; padding: 3px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); gap: 2px;
+  background: #fff; border: 1.5px solid var(--ink); border-radius: 5px; box-shadow: 0 2px 0 var(--seam);
+}
+.mp-page + .mp-page { margin-left: 5px; }
+.mp i { display: block; border-radius: 2px; }
+/* picked: the theme's full colour. suggestion: the same theme, ghosted */
+.mp i.pick.go { background: var(--go); } .mp i.pick.fort { background: var(--fort); } .mp i.pick.climb { background: var(--climb); }
+.mp i.sug.go { background: var(--go-tint); } .mp i.sug.fort { background: var(--fort-tint); } .mp i.sug.climb { background: var(--climb-tint); }
+.mp i.new { animation: pop .45s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pop { from { transform: scale(.2); } to { transform: scale(1); } }
+/* page two before it is wanted: a blank page peeking out from behind page one */
+.mp-peek {
+  width: 13px; height: 38px; margin-left: -1.5px; display: grid; place-items: center;
+  border: 1.5px dashed var(--edge); border-left: 0; border-radius: 0 5px 5px 0; font-weight: 700; font-size: 13px; line-height: 1; color: var(--ink);
+}
+
+/* ---------- the tracker, fixed to the bottom ---------- */
+.tk {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; background: var(--paper); border-top: 2px solid var(--ink);
+  padding: 0 16px env(safe-area-inset-bottom); transition: transform .28s cubic-bezier(.2, .8, .2, 1);
+}
+.tk-in { display: flex; align-items: center; gap: 10px; max-width: 1148px; margin: 0 auto; }
+.tk-main {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 12px 0 10px;
+  border: 0; background: none; text-align: left; border-radius: 12px; touch-action: none; position: relative;
+}
+/* the grab handle says "this pulls up" */
+.tk-grab { position: absolute; top: 5px; left: 50%; width: 36px; height: 4px; margin-left: -18px; border-radius: 2px; background: var(--edge); pointer-events: none; }
+.tk-txt { min-width: 0; display: block; }
+.tk-txt b { display: flex; align-items: center; gap: 6px; font-family: var(--display); font-weight: 600; font-size: 17px; line-height: 1.2; }
+.tk-txt b svg { width: 12px; height: 12px; flex: none; }
+.tk-txt .small { display: block; }
+.tk-txt .small.full { color: var(--ink); font-weight: 600; }
+.tk .btn { flex: none; padding: 0 16px; }
+/* Hide / Show: one tab on the top edge. It is all that stays when the tracker is tucked away. */
+.tk-tab {
+  position: absolute; right: 16px; bottom: 100%; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
+  background: var(--paper); border: 2px solid var(--ink); border-bottom: 0; border-radius: 12px 12px 0 0;
+  font-weight: 600; font-size: 13px; line-height: 1; color: var(--ink);
+}
+.tk-tab::before { content: ""; position: absolute; inset: -10px 0 0; } /* 44px tap target */
+.tk-tab svg { width: 12px; height: 12px; flex: none; }
+.tk-tab .mp, .tk-tab .cnt { display: none; }
+.tk.tucked { transform: translateY(100%); }
+.tk.tucked .tk-tab {
+  bottom: calc(100% + 12px + env(safe-area-inset-bottom)); height: 58px; padding: 0 14px 0 8px; border-bottom: 2px solid var(--ink); border-radius: 16px;
+  box-shadow: 0 3px 0 #000; font-family: var(--display); font-size: 15px;
+}
+.tk.tucked .tk-tab .mp, .tk.tucked .tk-tab .cnt { display: flex; }
+.tk.tucked .tk-tab .cnt { flex-direction: column; align-items: flex-start; gap: 3px; }
+.tk.tucked .tk-tab .cnt small { font-family: var(--text); font-weight: 400; font-size: 12.5px; color: var(--stone); }
+.tk.tucked .tk-tab svg { transform: rotate(180deg); }
+.tk.tucked .tk-tab .lab { display: none; }
+@media (max-width: 420px) {
+  .tk-main { gap: 10px; } .tk-txt b { font-size: 16px; } .tk-txt b svg { display: none; } .tk .btn { padding: 0 14px; }
+  .tk-in .mp-page { width: 30px; height: 40px; } .tk-in .mp-page + .mp-page { margin-left: 4px; } .tk-in .mp-peek { height: 34px; }
+}
+@media (min-width: 700px) { .tk-main { gap: 16px; } .tk-txt b { font-size: 19px; } .tk .btn { padding: 0 22px; } }
+
+/* ---------- toast with Undo ---------- */
+.toastbar {
+  position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 12; margin: 0 auto; max-width: 420px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 6px 4px 16px; border-radius: 16px; font-size: 15px;
+}
+.has-tk .toastbar { bottom: calc(118px + env(safe-area-inset-bottom)); }
+.toastbar button { min-height: 44px; padding: 0 12px; border: 0; background: none; color: var(--paper); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; flex: none; }
+.toastbar button:focus-visible { outline-color: var(--paper); }
+
+/* ---------- the pull-up ---------- */
+.scrim { position: fixed; inset: 0; z-index: 9; background: rgba(43, 37, 33, .45); opacity: 0; visibility: hidden; transition: opacity .25s, visibility 0s .25s; }
+.pu {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; max-width: 820px; margin: 0 auto; max-height: 92vh; max-height: 92dvh; display: flex; flex-direction: column;
+  background: var(--paper); border: 2px solid var(--ink); border-bottom: 0; border-radius: 22px 22px 0 0;
+  transform: translateY(105%); visibility: hidden; transition: transform .3s cubic-bezier(.2, .8, .2, 1), visibility 0s .3s;
+}
+.pu-open .scrim { opacity: 1; visibility: visible; transition-delay: 0s; }
+.pu-open .pu { transform: none; visibility: visible; transition-delay: 0s; }
+.pu-head { flex: none; padding: 0 16px 10px; touch-action: none; cursor: grab; }
+.pu-grab { display: grid; place-items: center; width: 100%; height: 26px; padding: 0; border: 0; background: none; }
+.pu-grab span { width: 40px; height: 5px; border-radius: 3px; background: var(--edge); }
+.pu-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pu-title > div { min-width: 0; }
+.pu-title h2 { font-size: 22px; overflow-wrap: anywhere; } /* long names wrap: "Cole, Thomas and Ada's sheet" */
+.pu-title .btn { flex: none; }
+.pu-body { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px calc(16px + env(safe-area-inset-bottom)); display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); align-content: start; }
+.pu .chips legend { font-size: 15px; }
+.pu .chip small { font-weight: 400; font-size: 13px; opacity: .85; }
+.pu .notice { margin: 0; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.acts .btn { padding: 0 16px; font-size: 15px; }
+
+/* the paper, bigger: two pages side by side on a desk */
+.desk { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 10px 10px 6px; background: var(--seam); border-radius: 18px; }
+.slot { min-width: 0; }
+.pg {
+  aspect-ratio: 8.5 / 11; width: 100%; padding: 6%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 5px;
+  background: #fff; border-radius: 6px; box-shadow: 0 2px 0 var(--edge);
+}
+.pg-lab { margin: 6px 2px 0; font-size: 13px; color: var(--stone); }
+.pg-lab b { color: var(--ink); }
+.cell { position: relative; min-width: 0; min-height: 0; padding: 3px; border-radius: 9px; border: 1.5px solid transparent; background: var(--bg); overflow: hidden; }
+.cell.go { --bg: var(--go-tint); } .cell.fort { --bg: var(--fort-tint); } .cell.climb { --bg: var(--climb-tint); }
+.cell svg.cc-d { display: block; width: 100%; height: 100%; pointer-events: none; }
+/* a suggestion: on the page, but ghosted until someone keeps it */
+.cell.sug { background: #fff; border: 1.5px dashed var(--edge); }
+.cell.sug svg.cc-d { opacity: .38; }
+.cell .tick { position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; }
+.cell .tick svg { width: 10px; height: 10px; }
+.cell[aria-pressed=true] { border-color: var(--ink); box-shadow: 0 0 0 2.5px var(--ink); }
+.cell.new { animation: pop .4s cubic-bezier(.3, 1.4, .5, 1); }
+.pg.ghost {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center;
+  background: transparent; border: 2px dashed var(--edge); box-shadow: none; color: var(--ink);
+}
+.pg.ghost .plus { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper); display: grid; place-items: center; font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1; margin-bottom: 4px; }
+.pg.ghost b { font-family: var(--display); font-weight: 600; font-size: 16px; line-height: 1.2; }
+.pg.ghost small { font-size: 13px; color: var(--stone); }
+
+/* what you can do with the build you tapped */
+.sel { padding: 12px 14px; border: 1px solid var(--seam); border-radius: 18px; background: #fff; min-height: 76px; }
+.sel b { font-family: var(--display); font-weight: 600; font-size: 17px; }
+.sel .hint { color: var(--stone); font-size: 15px; }
+.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; }
+.foot .btn { flex: 1 1 auto; }
+.foot .linkish { font-size: 15px; }
+
+@media (min-width: 760px) {
+  .pu-head { padding: 0 24px 12px; }
+  .pu-body { grid-template-columns: 400px minmax(0, 1fr); gap: 16px 24px; padding: 4px 24px 24px; }
+  .desk { grid-column: 1; grid-row: 1 / span 4; align-self: start; }
+  .pu-body > :not(.desk) { grid-column: 2; }
+  .foot .btn { flex: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="page">
+  <header class="top" id="top"></header>
+
+  <details class="panel notes" id="notes">
+    <summary><span>Design notes <small>Mock-up C: Mini paper</small></span></summary>
+    <div class="notes-in">
+      <p><b>The idea.</b> The tracker is a tiny picture of the thing being made: one or two little pages, each two across and three down, that fill with color as builds are picked. Tap it and it pulls up into a bigger view of the same paper, where picks can be moved or taken off and the parent chooses 1 page or 2.</p>
+
+      <h3>States</h3>
+      <ul>
+        <li><b>Empty.</b> Nothing picked, no tracker. It appears on the first pick, as it does today.</li>
+        <li><b>First pick.</b> One page. The first spot turns the build's theme color; the other five are pale, because we fill them with suggestions. A blank second page peeks out from behind. Button: <i>Open sheet</i>.</li>
+        <li><b>Page one full.</b> Six solid spots. The peeking page shows a plus. "Page one is full. Pick one more to start page two." Button becomes solid: <i>Print 1 page</i>.</li>
+        <li><b>Working on page two.</b> The seventh pick slides the second page out. "7 of 12 picked. Page two started." Button goes back to <i>Open sheet</i>.</li>
+        <li><b>All full.</b> Twelve solid spots. "All 12 picked. Both pages are full." Button: <i>Print 2 pages</i>. A thirteenth tap changes nothing and says "Take one off to add another."</li>
+        <li><b>Expanded.</b> Tap the tracker, or swipe it up. Close with the handle, a swipe down, <i>Keep picking</i>, the dimmed page or Escape. Tap a build on the paper, then act on it in the bar below: Earlier, Later, Take off, or for a suggestion, Keep it and Show another.</li>
+        <li><b>Hidden.</b> The <i>Hide</i> tab on the tracker's top edge (or a swipe down) tucks it away. A small tile stays in the bottom corner with the mini paper, the count and <i>Show</i>. It keeps counting while tucked and never comes back by itself.</li>
+        <li><b>Cleared.</b> <i>Clear sheet</i> lives only in the pull-up. It asks first ("Take all 7 picks off the sheet?"), and after it clears a bar offers <i>Undo</i> for ten seconds.</li>
+      </ul>
+
+      <h3>1 page or 2 pages</h3>
+      <ul>
+        <li>A sheet starts as 1 page (6 builds). If the parent just keeps picking, the seventh pick starts page two. Nobody has to decide up front.</li>
+        <li>The pull-up has the plain choice: "1 page, 6 builds" or "2 pages, 12 builds". The dashed second page on the desk is the same choice as a big tap target.</li>
+        <li>Once the parent chooses 1 page, it stays 1 page: a seventh pick is refused with "Page is full. Take one off, or add page two."</li>
+        <li>Going from 2 pages to 1 with more than six picks asks first, takes the last picks off, and offers Undo.</li>
+        <li>Suggestions are ghosted, not empty: pale color on the mini paper, a faded drawing with a dashed edge in the pull-up. The printed sheet is never half blank.</li>
+        <li>Picks sit first, in the order they were picked; suggestions fill the spots after them.</li>
+      </ul>
+
+      <h3>References from Mobbin</h3>
+      <ul>
+        <li><a href="https://mobbin.com/screens/d09f35c1-c150-4580-b8a9-08fc8b7858fa">Apple Music</a> and <a href="https://mobbin.com/screens/63341f16-e4cb-41c5-a6d1-ef6ccb952d1a">Spotify</a>, now playing: a small bar that grows into a full view, with a grab handle on top and a swipe down to put it back.</li>
+        <li><a href="https://mobbin.com/screens/a6d40d6c-4420-4334-bde0-9ac2663a5965">Snapchat</a> and <a href="https://mobbin.com/screens/d90bfda9-026b-4435-8ae8-69f09c806817">Shopee</a>, media pickers: a bottom tray that shows what was picked, in order, beside one button, with the limit said in plain words.</li>
+        <li><a href="https://mobbin.com/screens/a00a0184-7311-40ec-95e8-c167bf17134c">Google Photos</a>, photo book "Edit page": tap a thing on the page, then act on it in a bar underneath (Remove, Replace).</li>
+        <li><a href="https://mobbin.com/screens/8336db3e-249b-4511-9efd-9ceb3ebf09f1">Polarsteps</a>, travel book: pages drawn as paper, a plus between pages, and the page count beside the main button.</li>
+        <li><a href="https://mobbin.com/screens/e7cd306a-2825-4707-b0ea-25af4846dea6">WHOOP</a> and <a href="https://mobbin.com/screens/d7cdfb02-e43f-44dc-bd7a-00acc02f9bd4">Temu</a>, cart sheets: progress toward a goal on top, "Keep shopping" to close, and removing everything kept inside the sheet, away from the bar.</li>
+      </ul>
+
+      <h3>Jump to a state</h3>
+      <div class="links">
+        <a class="btn quiet" href="?">Empty</a>
+        <a class="btn quiet" href="?picked=1">1 pick</a>
+        <a class="btn quiet" href="?picked=3">3 picks</a>
+        <a class="btn quiet" href="?picked=6">Page one full</a>
+        <a class="btn quiet" href="?picked=9">Page two</a>
+        <a class="btn quiet" href="?picked=12">All full</a>
+        <a class="btn quiet" href="?picked=4&amp;open=1">Pulled up, 1 page</a>
+        <a class="btn quiet" href="?picked=9&amp;open=1&amp;sel=1">Pulled up, 2 pages</a>
+        <a class="btn quiet" href="?picked=9&amp;hidden=1">Hidden</a>
+        <a class="btn quiet" href="?picked=9&amp;open=1&amp;confirm=clear">Clear, asking</a>
+        <a class="btn quiet" href="?picked=9&amp;cleared=1">Cleared, undo</a>
+        <a class="btn quiet" href="?picked=9&amp;open=1&amp;kid=Cole,Thomas,Ada">Three children</a>
+      </div>
+      <p class="small" style="margin-top:10px">Mock-up only. Choices live in memory and are gone on reload. Other parameters: pages=1 or 2, kid=Cole,Thomas, own=set-up, notes=1.</p>
+      <p class="small">The name shows only as the pull-up's title, where a long one ("Cole, Thomas and Ada's sheet") wraps onto a second line. The collapsed tracker never shows it, so it stays the same width for every family.</p>
+    </div>
+  </details>
+
+  <div class="intro">
+    <h1>Build ideas for your play couch</h1>
+    <p class="sub">A slice of the real gallery. Tap "Add to sheet" on a few builds and watch the bottom of the screen.</p>
+  </div>
+  <section aria-labelledby="sec-can">
+    <div class="sec-head"><h2 id="sec-can">You can build these now</h2><span class="small" id="count"></span></div>
+    <div class="grid" id="list"></div>
+  </section>
+</div>
+
+<div class="tk" id="tk" hidden></div>
+<div class="toastbar on-dark" id="toast" hidden></div>
+<div class="scrim" id="scrim"></div>
+<section class="pu" id="pu" role="dialog" aria-modal="true" aria-labelledby="pu-title" tabindex="-1" inert></section>
+<p class="sr" id="live" aria-live="polite"></p>
+
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { OWNED } from '../../js/setups.js';
+import { candidates } from '../../js/sheet-state.js';
+import { cardHtml, drawWhenSeen } from '../../js/card.js';
+import { installBrand, lockup } from '../../js/brand.js';
+import { createPrefs } from '../../js/prefs.js';
+import { palette, drawBuild } from '../../js/flat.js';
+
+const q = new URLSearchParams(location.search), $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// Choices live in a Map, never in localStorage.
+const mem = new Map();
+const prefs = createPrefs({ getItem: k => mem.get(k), setItem: (k, v) => mem.set(k, v) });
+const OWN = OWNED[q.get('own')] ? q.get('own') : 'couch-addon';
+// ?kid=Cole,Thomas names several children: "Cole and Thomas's sheet".
+const KIDS = (q.get('kid') ?? 'Max').split(',').map(s => s.trim().slice(0, 14)).filter(Boolean).slice(0, 4);
+const KID = KIDS.length > 1 ? `${KIDS.slice(0, -1).join(', ')} and ${KIDS.at(-1)}` : KIDS[0] || '';
+const PER = 6, SHOWN = 15;
+const pool = candidates(BUILDS, OWN), byId = new Map(BUILDS.map(b => [b.id, b]));
+const pal = () => palette(prefs.colors());
+const pics = new Map(), picOf = id => pics.get(id) || pics.set(id, drawBuild(byId.get(id), pal())).get(id);
+const sheetName = KID ? `${KID}'s sheet` : 'Your sheet';
+
+// ---------- state ----------
+// picks: build ids in the order they were picked. pages: 1 or 2. chosen: the parent picked the
+// page count on purpose, so it no longer grows by itself. skipped: suggestions waved away.
+const S = { picks: [], pages: 1, chosen: false, skipped: [], open: false, tucked: false, sel: null, blocked: false, grew: false, confirm: '', fresh: '', toast: null };
+const count = () => S.pages * PER;
+
+// The sheet: picks first, then suggestions fill the rest.
+function sheetIds() {
+  let spare = pool.map(b => b.id).filter(id => !S.picks.includes(id) && !S.skipped.includes(id));
+  if (spare.length < count() - S.picks.length) { S.skipped = []; spare = pool.map(b => b.id).filter(id => !S.picks.includes(id)); }
+  return [...S.picks, ...spare].slice(0, count());
+}
+const snapshot = () => ({ picks: [...S.picks], pages: S.pages, chosen: S.chosen });
+
+// A tap on "Add to sheet".
+function toggle(id) {
+  S.blocked = S.grew = false; S.fresh = ''; S.confirm = '';
+  if (S.picks.includes(id)) { S.picks = S.picks.filter(p => p !== id); if (S.sel === id) S.sel = null; say(`${byId.get(id).name} is off the sheet.`); return; }
+  if (S.picks.length >= count()) {
+    if (S.pages === 1 && !S.chosen) { S.pages = 2; S.grew = true; }
+    else { S.blocked = true; say(S.pages === 1 ? 'Your page is full. Take one off, or add page two.' : 'The sheet is full. Take one off to add another.'); return; }
+  }
+  S.picks.push(id); S.fresh = id;
+  say(`${byId.get(id).name} added. ${S.picks.length} of ${count()} picked.${S.grew ? ' Page two started.' : ''}`);
+}
+
+function setPages(n, force = false) {
+  S.blocked = S.grew = false; S.confirm = '';
+  if (n === 1 && S.picks.length > PER && !force) { S.confirm = 'shrink'; return; }
+  if (n === 1 && S.picks.length > PER) {
+    const undo = snapshot(), off = S.picks.length - PER;
+    S.picks = S.picks.slice(0, PER);
+    showToast(`Took ${off} ${off === 1 ? 'pick' : 'picks'} off to fit 1 page.`, undo);
+  }
+  S.pages = n; S.chosen = true;
+  if (S.sel && !sheetIds().includes(S.sel)) S.sel = null;
+}
+
+function clearAll() {
+  const undo = snapshot();
+  Object.assign(S, { picks: [], pages: 1, chosen: false, skipped: [], open: false, tucked: false, sel: null, blocked: false, grew: false, confirm: '' });
+  showToast('Sheet cleared.', undo);
+}
+
+function movePick(id, by) {
+  const i = S.picks.indexOf(id), j = i + by;
+  if (i < 0 || j < 0 || j >= S.picks.length) return;
+  [S.picks[i], S.picks[j]] = [S.picks[j], S.picks[i]];
+}
+
+// ---------- words ----------
+function words() {
+  const k = S.picks.length, n = count(), left = n - k;
+  const fill = left === 1 ? 'We fill the last spot.' : `We fill the other ${left}.`;
+  let head = `${k} of ${n} picked`, note = fill, full = false;
+  if (S.blocked) { head = S.pages === 1 ? 'Page is full' : 'Sheet is full'; note = S.pages === 1 ? 'Take one off, or add page two.' : 'Take one off to add another.'; full = true; }
+  else if (k === n && S.pages === 2) { head = 'All 12 picked'; note = 'Both pages are full.'; }
+  else if (k === n && S.chosen) { head = 'All 6 picked'; note = 'Your page is full.'; }
+  else if (k === n) { head = 'Page one is full'; note = 'Pick one more to start page two.'; }
+  else if (S.grew) note = `Page two started. ${fill}`;
+  const done = k === n;
+  return { head, note, full, done, button: done ? `Print ${S.pages === 1 ? '1 page' : '2 pages'}` : 'Open sheet', long: `${k} of ${n} picked. ${k < n ? fill : ''}` };
+}
+const say = text => { $('live').textContent = text; };
+
+// ---------- drawings ----------
+const CHEV = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 8l4-4 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHEV_DOWN = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const TICK = '<span class="tick"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2.1 2.1L8 3.2" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+
+function miniPaper() {
+  const ids = sheetIds(), page = pg => `<span class="mp-page">${ids.slice(pg * PER, pg * PER + PER).map(id =>
+    `<i class="${S.picks.includes(id) ? 'pick' : 'sug'} ${byId.get(id).theme}${id === S.fresh ? ' new' : ''}"></i>`).join('')}</span>`;
+  const peek = `<span class="mp-peek">${S.picks.length >= PER && !S.chosen ? '+' : ''}</span>`;
+  return `<span class="mp" aria-hidden="true">${page(0)}${S.pages === 2 ? page(1) : peek}</span>`;
+}
+
+// ---------- the tracker ----------
+function renderTracker() {
+  const show = S.picks.length > 0, w = words(), tk = $('tk');
+  tk.hidden = !show;
+  document.body.classList.toggle('has-tk', show && !S.tucked);
+  tk.classList.toggle('tucked', S.tucked);
+  if (!show) { tk.innerHTML = ''; return; }
+  const k = S.picks.length;
+  tk.innerHTML = `
+    <button type="button" class="tk-tab" data-act="tuck" data-f="tab" aria-label="${S.tucked ? `Show the sheet tracker. ${esc(w.long)}` : 'Hide the sheet tracker'}">
+      ${miniPaper()}<span class="cnt"><span>${k} of ${count()} picked</span><small>Show</small></span><span class="lab">Hide</span>${CHEV_DOWN}
+    </button>
+    <div class="tk-in"${S.tucked ? ' inert' : ''}>
+      <button type="button" class="tk-main" data-act="open" data-f="main" aria-haspopup="dialog" aria-label="${esc(sheetName)}: ${esc(w.head)}. ${esc(w.note)} Tap to change it.">
+        <span class="tk-grab"></span>${miniPaper()}
+        <span class="tk-txt"><b>${esc(w.head)}${CHEV}</b><span class="small${w.full ? ' full' : ''}">${esc(w.note)}</span></span>
+      </button>
+      <a class="btn${w.done ? ' primary' : ''}" href="../../sheet.html" data-act="go">${w.button}</a>
+    </div>`;
+}
+
+// ---------- the pull-up ----------
+function cellHtml(id, i) {
+  const b = byId.get(id), pick = S.picks.includes(id);
+  return `<button type="button" class="cell ${b.theme}${pick ? '' : ' sug'}${id === S.fresh ? ' new' : ''}" data-cell="${id}" data-f="cell-${id}" aria-pressed="${S.sel === id}"
+    aria-label="${esc(b.name)}, spot ${i + 1}, ${pick ? 'your pick' : 'a suggestion'}">${picOf(id)}${pick ? TICK : ''}</button>`;
+}
+
+function selHtml() {
+  const ids = sheetIds(), id = S.sel, i = ids.indexOf(id);
+  if (!id || i < 0) return `<div class="sel"><p class="hint">Tap a build on the paper to move it or take it off. Faded builds are our suggestions.</p></div>`;
+  const b = byId.get(id), pi = S.picks.indexOf(id), where = `Spot ${i + 1}${S.pages === 2 ? `, page ${i < PER ? 1 : 2}` : ''}`;
+  return pi >= 0
+    ? `<div class="sel"><p><b>${esc(b.name)}</b> <span class="small">${where}. Your pick.</span></p><div class="acts">
+        <button type="button" class="btn quiet" data-act="earlier" data-f="earlier"${pi === 0 ? ' disabled' : ''}>Earlier</button>
+        <button type="button" class="btn quiet" data-act="later" data-f="later"${pi === S.picks.length - 1 ? ' disabled' : ''}>Later</button>
+        <button type="button" class="btn quiet" data-act="off" data-f="off">Take off</button></div></div>`
+    : `<div class="sel"><p><b>${esc(b.name)}</b> <span class="small">${where}. A suggestion.</span></p><div class="acts">
+        <button type="button" class="btn quiet" data-act="keep" data-f="keep">Keep it</button>
+        <button type="button" class="btn quiet" data-act="another" data-f="another">Show another</button></div></div>`;
+}
+
+function renderPullUp() {
+  const pu = $('pu'), ids = sheetIds(), w = words(), k = S.picks.length;
+  document.body.classList.toggle('pu-open', S.open);
+  pu.inert = !S.open; $('page').inert = S.open; $('tk').inert = S.open;
+  const pageHtml = pg => { const mine = ids.slice(pg * PER, pg * PER + PER).filter(id => S.picks.includes(id)).length;
+    return `<div class="slot"><div class="pg">${ids.slice(pg * PER, pg * PER + PER).map((id, i) => cellHtml(id, pg * PER + i)).join('')}</div>
+      <p class="pg-lab"><b>${S.pages === 1 ? 'Your page' : pg ? 'Page 2' : 'Page 1'}</b> · ${mine} picked</p></div>`; };
+  const ghost = `<div class="slot"><button type="button" class="pg ghost" data-act="pages2" data-f="ghost"><span class="plus" aria-hidden="true">+</span><b>Add page two</b><small>6 more builds on the back</small></button>
+      <p class="pg-lab">Not on the sheet yet</p></div>`;
+  const shrink = S.confirm === 'shrink' ? `<div class="notice" role="alert"><b>1 page holds 6 builds.</b> Your last ${k - PER} ${k - PER === 1 ? 'pick comes' : 'picks come'} off.
+      <div class="acts"><button type="button" class="btn" data-act="shrink-yes" data-f="shrink-yes">Use 1 page</button><button type="button" class="btn primary" data-act="cancel" data-f="cancel">Keep 2 pages</button></div></div>` : '';
+  const foot = S.confirm === 'clear'
+    ? `<div class="notice" role="alert"><b>Take all ${k} ${k === 1 ? 'pick' : 'picks'} off the sheet?</b> You start again with nothing picked.
+        <div class="acts"><button type="button" class="btn" data-act="clear-yes" data-f="clear-yes">Clear sheet</button><button type="button" class="btn primary" data-act="cancel" data-f="cancel">Keep them</button></div></div>`
+    : `<div class="foot"><a class="btn primary" href="../../sheet.html" data-act="go">${w.button}</a><button type="button" class="linkish" data-act="clear" data-f="clear">Clear sheet</button></div>`;
+  pu.innerHTML = `
+    <div class="pu-head">
+      <button type="button" class="pu-grab" data-act="close" aria-label="Close"><span></span></button>
+      <div class="pu-title"><div><h2 id="pu-title">${esc(sheetName)}</h2><p class="small">${esc(w.long)}</p></div>
+        <button type="button" class="btn quiet" data-act="close" data-f="done">Keep picking</button></div>
+    </div>
+    <div class="pu-body">
+      <fieldset class="chips"><legend>How big is the sheet?</legend>
+        ${[[1, '1 page', '6 builds'], [2, '2 pages', '12 builds']].map(([n, t, s]) =>
+          `<label><input type="radio" name="pages" value="${n}" data-f="pages-${n}"${S.pages === n ? ' checked' : ''}><span class="chip">${t} <small>${s}</small></span></label>`).join('')}
+      </fieldset>
+      ${shrink}
+      <div class="desk">${pageHtml(0)}${S.pages === 2 ? pageHtml(1) : ghost}</div>
+      ${selHtml()}
+      ${foot}
+    </div>`;
+}
+
+// ---------- toast ----------
+let toastTimer = 0;
+function showToast(text, undo) {
+  clearTimeout(toastTimer);
+  S.toast = { text, undo };
+  toastTimer = setTimeout(() => { S.toast = null; renderToast(); }, 10000);
+  say(text);
+}
+function renderToast() {
+  const t = $('toast');
+  t.hidden = !S.toast;
+  t.innerHTML = S.toast ? `<span>${esc(S.toast.text)}</span>${S.toast.undo ? '<button type="button" data-act="undo">Undo</button>' : ''}` : '';
+}
+
+// ---------- everything ----------
+function syncCards() {
+  $('list').querySelectorAll('[data-add]').forEach(btn => {
+    const on = S.picks.includes(btn.dataset.add);
+    btn.setAttribute('aria-pressed', on);
+    btn.textContent = on ? 'On your sheet' : 'Add to sheet';
+  });
+}
+function render() {
+  const keep = document.activeElement?.dataset?.f;
+  if (!S.picks.length) S.open = false;
+  renderTracker(); renderPullUp(); renderToast(); syncCards();
+  if (keep) document.querySelector(`[data-f="${keep}"]:not([disabled])`)?.focus({ preventScroll: true });
+}
+function open() { S.open = true; S.tucked = false; S.blocked = false; S.fresh = ''; render(); $('pu').focus({ preventScroll: true }); }
+function close() { S.open = false; S.confirm = ''; S.sel = null; S.fresh = ''; render(); document.querySelector('[data-f="main"]')?.focus({ preventScroll: true }); }
+
+// gallery slice
+installBrand();
+$('top').innerHTML = `<span class="brand">${lockup()}</span><span class="pill" aria-hidden="true">Print a sheet</span>`;
+const shown = pool.slice(0, SHOWN);
+$('count').textContent = `${shown.length} of ${pool.length} builds you can make with ${OWNED[OWN].tag}`;
+$('list').innerHTML = shown.map(b => cardHtml(b, { owned: OWN })).join('');
+$('list').querySelectorAll('a.card-open').forEach(a => { a.href = '../../' + a.getAttribute('href'); });
+drawWhenSeen($('list'), id => byId.get(id), pal);
+
+$('list').addEventListener('click', e => {
+  const btn = e.target.closest('[data-add]');
+  if (!btn) return;
+  toggle(btn.dataset.add); render();
+});
+
+let swallow = false;
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act], [data-cell]');
+  if (e.target === $('scrim')) return close();
+  if (!el) return;
+  if (swallow) { e.preventDefault(); return; }
+  if (el.dataset.cell) { S.sel = S.sel === el.dataset.cell ? null : el.dataset.cell; S.fresh = ''; S.confirm = ''; return render(); }
+  const act = el.dataset.act, id = S.sel;
+  S.fresh = '';
+  if (act === 'go') { e.preventDefault(); showToast('Mock-up: this opens the printable sheet.'); }
+  else if (act === 'open') return open();
+  else if (act === 'close') return close();
+  else if (act === 'tuck') { S.tucked = !S.tucked; say(S.tucked ? 'Tracker hidden. Use Show to bring it back.' : 'Tracker shown.'); }
+  else if (act === 'pages2') setPages(2);
+  else if (act === 'shrink-yes') setPages(1, true);
+  else if (act === 'clear') S.confirm = 'clear';
+  else if (act === 'cancel') S.confirm = '';
+  else if (act === 'clear-yes') clearAll();
+  else if (act === 'undo') { Object.assign(S, S.toast.undo, { toast: null, blocked: false, grew: false }); clearTimeout(toastTimer); say('Your picks are back.'); }
+  else if (act === 'earlier') movePick(id, -1);
+  else if (act === 'later') movePick(id, 1);
+  else if (act === 'off') { S.picks = S.picks.filter(p => p !== id); S.sel = null; S.blocked = false; }
+  else if (act === 'keep') { if (S.picks.length < count()) { S.picks.push(id); S.fresh = id; } }
+  else if (act === 'another') { const at = sheetIds().indexOf(id); S.skipped.push(id); S.sel = sheetIds()[at] || null; }
+  render();
+  if (act === 'clear') document.querySelector('[data-f="cancel"]')?.focus();
+});
+$('pu').addEventListener('change', e => { if (e.target.name === 'pages') { setPages(+e.target.value); render(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.open) close(); });
+
+// Swipes: up on the tracker opens it, down tucks it away; down on the pull-up's header closes it.
+let drag = null;
+document.addEventListener('pointerdown', e => {
+  if (e.target.closest('.tk-main')) drag = { what: 'tk', y: e.clientY };
+  else if (e.target.closest('.pu-head')) drag = { what: 'pu', y: e.clientY };
+});
+window.addEventListener('pointermove', e => {
+  if (drag?.what !== 'pu') return;
+  const dy = Math.max(0, e.clientY - drag.y);
+  if (dy > 4) { $('pu').style.transition = 'none'; $('pu').style.transform = `translateY(${dy}px)`; }
+});
+const endDrag = e => {
+  if (!drag) return;
+  const dy = e.clientY - drag.y, what = drag.what;
+  drag = null; $('pu').style.transition = ''; $('pu').style.transform = '';
+  if (Math.abs(dy) < 24) return;
+  swallow = true; setTimeout(() => { swallow = false; }, 0);
+  if (what === 'pu' && dy > 70) close();
+  else if (what === 'tk' && dy < 0) open();
+  else if (what === 'tk') { S.tucked = true; render(); }
+};
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', () => { drag = null; $('pu').style.transition = ''; $('pu').style.transform = ''; });
+
+// REVIEW AIDS, not features: ?picked=N ?pages=1|2 ?open=1 ?sel=<spot> ?hidden=1 ?confirm=clear ?cleared=1 ?notes=1
+const n = Math.max(0, Math.min(12, parseInt(q.get('picked'), 10) || 0));
+S.picks = pool.slice(0, n).map(b => b.id);
+if (q.get('pages') === '1' || q.get('pages') === '2') { S.pages = +q.get('pages'); S.chosen = true; S.picks = S.picks.slice(0, count()); }
+else if (n > PER) S.pages = 2;
+if (q.get('hidden') && n) S.tucked = true;
+if (q.get('open') && n) S.open = true;
+if (q.get('sel')) S.sel = sheetIds()[+q.get('sel') - 1] || null;
+if (q.get('confirm') === 'clear' && S.open) S.confirm = 'clear';
+if (q.get('cleared') && n) clearAll();
+if (q.get('notes')) $('notes').open = true;
+render();
+</script>
+</body>
+</html>

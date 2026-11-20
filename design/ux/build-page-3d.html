@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build page mock-up · Couch Coach design sprint</title>
+<script type="importmap">{ "imports": { "three": "../../vendor/three/three.module.js" } }</script>
+<style>
+:root {
+  --ink: #1c2230; --muted: #5c6475; --line: #d9dde5; --paper: #f5f6f8; --card: #fff; --soft: #eef0f4;
+  --go: #2f7de1; --fort: #8a4fd3; --climb: #ef7d1a;
+  --t: var(--ink);
+  /* brand track picks the typeface; system stack here */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.4 var(--font); }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--go); outline-offset: 2px; }
+.draw path { stroke-width: .8px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.draw path.ln { fill: none; stroke-width: 1.5px; stroke-linecap: butt; }
+.ico svg polygon { display: none; }
+.draw svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* ---------- sprint chrome: not part of the design ---------- */
+.sprint { max-width: 1120px; margin: 0 auto; padding: 12px 16px 0; }
+.why { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 6px; }
+.why summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
+.why ol { margin: 0 0 8px; padding-left: 22px; display: grid; gap: 6px 28px; font-size: 14px; }
+.why li b { font-weight: 700; }
+.why .was { color: var(--muted); }
+@media (min-width: 800px) { .why ol { grid-template-columns: 1fr 1fr; } }
+.mock { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 10px 0 0; padding: 8px 12px; border: 1px dashed #9aa3b5; border-radius: 12px; font-size: 13px; color: var(--muted); }
+.mock strong { color: var(--ink); }
+.mock label { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.mock select { max-width: 100%; min-height: 36px; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 4px 8px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; background: #fff; padding: 2px; }
+.seg button { border: 0; background: none; border-radius: 999px; padding: 6px 12px; min-height: 36px; font-weight: 600; font-size: 13px; color: var(--muted); }
+.seg button[aria-pressed=true] { background: var(--ink); color: #fff; }
+
+/* ---------- the page ---------- */
+.frame { container: frame / inline-size; max-width: 1120px; margin: 12px auto 0; padding: 0 16px 0; }
+.frame.phone { max-width: 390px; background: var(--paper); box-shadow: 0 0 0 1px var(--line), 0 8px 30px rgba(20, 30, 60, .12); border-radius: 18px; margin-bottom: 24px; }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; font-size: 14px; }
+.nav a { font-weight: 600; text-decoration: none; padding: 12px 0; }
+.nav .site { color: var(--muted); font-weight: 700; }
+
+.head h1 { margin: 2px 0 6px; font-size: 30px; line-height: 1.05; letter-spacing: -.01em; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
+.meta .theme { color: var(--t); font-weight: 700; }
+.meta .theme::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--t); margin-right: 6px; }
+.tested { margin: 8px 0 0; }
+.tested button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 5px 12px; min-height: 32px; font-size: 13px; font-weight: 600; }
+.tested button::after { content: " ?"; color: var(--muted); }
+.tested p { margin: 6px 0 0; font-size: 14px; color: var(--muted); max-width: 60ch; }
+.fit { margin: 8px 0 12px; font-size: 14px; }
+.fit.ok::before { content: "✓ "; font-weight: 700; }
+.fit.no { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 8px; padding: 8px 12px; }
+
+.layout { display: flex; flex-direction: column; gap: 14px; }
+
+.stage { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.stage .draw, .stage .three { aspect-ratio: 4 / 3; max-height: 46vh; width: 100%; padding: 44px 14px 30px; }
+.stage .three { padding: 0; }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.stage .view { position: absolute; top: 8px; right: 8px; }
+.stage .tag { position: absolute; left: 10px; bottom: 8px; right: 10px; margin: 0; font-size: 11.5px; color: var(--muted); }
+.stage .msg { position: absolute; left: 10px; top: 10px; right: 170px; margin: 0; font-size: 12.5px; color: var(--muted); }
+.cur { animation: drop .32s ease-out; }
+@keyframes drop { from { transform: translateY(-14px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cur { animation: none; } }
+
+.stepcard { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px 14px; }
+.prog { display: flex; gap: 4px; margin: 0 0 10px; }
+.prog button { flex: 1; height: 20px; padding: 7px 0; border: 0; background: none; }
+.prog button::before { content: ""; display: block; height: 6px; border-radius: 3px; background: var(--soft); }
+.prog button.done::before { background: #aab1c0; }
+.prog button.now::before { background: var(--t); }
+.kicker { margin: 0; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.say { margin: 2px 0 6px; font-size: 22px; line-height: 1.2; font-weight: 700; min-height: 2.4em; }
+.piece { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: var(--muted); min-height: 36px; }
+.piece .ico { width: 48px; height: 32px; flex: none; }
+.linkish { border: 0; background: none; padding: 8px 0; text-decoration: underline; font-weight: 600; font-size: 14px; }
+
+.stepbar { order: 99; position: sticky; bottom: 0; z-index: 5; display: flex; gap: 10px; margin: 0 -16px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, .97); border-top: 1px solid var(--line); }
+.stepbar button { min-height: 56px; border-radius: 14px; font-weight: 700; font-size: 17px; border: 2px solid var(--ink); background: #fff; }
+.stepbar .back { flex: none; width: 64px; }
+.stepbar .next { flex: 1; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.stepbar .next small { font-weight: 600; font-size: 13px; opacity: .75; }
+
+.block h2 { margin: 0 0 8px; font-size: 17px; }
+.block { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+.parts ul { list-style: none; margin: 0; padding: 0; }
+.parts li { display: flex; align-items: center; gap: 10px; padding: 4px 6px; margin: 0 -6px; border-radius: 10px; min-height: 48px; }
+.parts li + li { border-top: 1px solid var(--soft); }
+.parts li.now { background: var(--soft); border-top-color: transparent; }
+.parts .ico { width: 60px; height: 40px; flex: none; }
+.parts .nm { flex: 1; font-weight: 600; min-width: 0; }
+.parts .nm small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.parts .qty { font-weight: 700; font-variant-numeric: tabular-nums; }
+.parts .miss { color: #a4262c; }
+.parts .left { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+
+.all ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.all li button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: none; border-radius: 10px; padding: 4px 6px; margin: 0 -6px; min-height: 56px; font-size: 14.5px; }
+.all li button[aria-current=step] { background: var(--soft); font-weight: 700; }
+.all .th { width: 72px; height: 52px; flex: none; }
+.all .num { flex: none; width: 22px; font-weight: 700; color: var(--muted); text-align: right; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.actions button, .actions a { flex: 1 1 140px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; text-align: center; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 8px 12px; font-weight: 600; font-size: 14.5px; text-decoration: none; }
+.actions button[aria-pressed=true] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.actions .note { flex: 1 1 100%; margin: 0; font-size: 12.5px; color: var(--muted); }
+
+.similar h2 { margin: 6px 0 2px; font-size: 20px; }
+.similar > p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.bcard { display: flex; flex-direction: column; text-align: left; padding: 0; border: 1px solid var(--line); border-top: 4px solid var(--c); background: #fff; border-radius: 14px; overflow: hidden; min-width: 0; }
+.bcard .pic { height: 110px; padding: 10px 12px 2px; }
+.bcard .nm { padding: 4px 12px 0; font-weight: 700; font-size: 15.5px; }
+.bcard .sub { padding: 0 12px 10px; font-size: 12px; color: var(--muted); }
+.bcard .sub b { color: var(--c); }
+.pager { display: flex; justify-content: space-between; gap: 10px; margin: 12px 0 0; }
+.pager button { border: 0; background: none; padding: 12px 0; font-weight: 600; font-size: 14.5px; text-decoration: underline; text-align: left; min-width: 0; }
+.pager button:last-child { text-align: right; }
+.foot { max-width: 1120px; margin: 0 auto; padding: 18px 16px 28px; font-size: 12.5px; color: var(--muted); }
+.print-only { display: none; }
+
+@container frame (min-width: 761px) {
+  .head h1 { font-size: 40px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr); gap: 14px 28px; align-items: start; }
+  .layout > * { grid-column: 2; }
+  .stage { grid-column: 1; grid-row: 1 / span 5; position: sticky; top: 12px; }
+  .stage .draw, .stage .three { max-height: 72vh; }
+  .stage .draw { padding: 52px 28px 36px; }
+  .stepbar { order: 0; position: static; margin: 0; padding: 0; border: 0; background: none; }
+  .similar { grid-column: 1 / -1; margin-top: 10px; }
+  .cards { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .bcard .pic { height: 150px; }
+}
+
+/* ---------- print: this one build on one page ---------- */
+@media print {
+  @page { size: letter; margin: 0.5in; }
+  body { background: #fff; font-size: 11pt; }
+  .sprint, .nav, .stage, .stepcard, .stepbar, .actions, .similar, .foot, .fit, .tested p { display: none !important; }
+  .frame, .frame.phone { max-width: none; padding: 0; margin: 0; box-shadow: none; }
+  .head h1 { font-size: 28pt; }
+  .tested button { border: 0; padding: 0; font-weight: 400; }
+  .tested button::after { content: ""; }
+  .layout { display: block; }
+  .print-only { display: block; height: 2.5in; margin: 0.25in 0 0.3in; }
+  .block { border: 0; padding: 0; margin: 0 0 0.12in; }
+  .parts ul { display: flex; flex-wrap: wrap; gap: 0 0.25in; }
+  .parts li, .parts li + li { border: 0; background: none; min-height: 0; margin: 0; padding: 0; }
+  .parts .ico { width: 0.6in; height: 0.4in; }
+  .parts .nm small { display: none; }
+  .all ol { grid-template-columns: repeat(4, 1fr); gap: 0.12in; }
+  .all li { break-inside: avoid; border: 1px solid #bbb; border-radius: 8px; padding: 6px; }
+  .all li button { flex-wrap: wrap; align-items: flex-start; background: none !important; font-weight: 400 !important; margin: 0; padding: 0; font-size: 9.5pt; gap: 4px; }
+  .all .th { order: -1; width: 100%; height: 0.85in; }
+  .all .num { width: auto; color: #000; }
+  .all .tx { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="sprint">
+  <details class="why" open>
+    <summary>What changed and why (build page and 3D view)</summary>
+    <ol>
+      <li><b>The picture shows at once; 3D is a button.</b> <span class="was">Today the page shows "Loading 3D view…" until about 2 MB of 3D code arrives, and if 3D fails the step-through is removed.</span> Here the flat drawing and every step work with no 3D at all.</li>
+      <li><b>Each step says what to do.</b> <span class="was">Today: "Step 3 of 8: Triangle pillow".</span> Here: "Stand a triangle pillow on its end on the floor." The new piece is in full colour, earlier pieces are faded, and the picture never jumps size between steps.</li>
+      <li><b>One big Next button at the bottom of the phone.</b> <span class="was">Today four small buttons sit mid-page and the darkest one is "Show all".</span> Here Next fills the thumb area and stays on screen while you scroll.</li>
+      <li><b>A parts list before you start.</b> What the build needs, how much floor it takes, what is left over, and whether your set-up has it. Rows tick off as pieces go down.</li>
+      <li><b>3D no longer traps the page.</b> <span class="was">Today the 3D box fills 58% of the screen and a thumb on it spins the model instead of scrolling.</span> Here 3D is opt-in and one tap returns to the picture.</li>
+      <li><b>All steps on one screen, and "Print this build".</b> One Letter page: the finished picture, the parts, and every step. Try it with the Print button.</li>
+      <li><b>Somewhere to go when you finish.</b> <span class="was">Today the only way on is back to the wall of 36.</span> Here the page ends with builds that use the same pieces, plus previous and next.</li>
+      <li><b>"Not yet kid-tested" stays put and explains itself.</b> Next to the name, on every card, on the printout. Tap it for one plain sentence.</li>
+    </ol>
+  </details>
+  <div class="mock" aria-label="Mock-up controls">
+    <strong>Mock-up controls</strong>
+    <label>Build <select id="pick"></select></label>
+    <label>Visitor owns <select id="own"></select></label>
+    <span class="seg" role="group" aria-label="Preview width">
+      <button type="button" id="wFull" aria-pressed="true">Full width</button>
+      <button type="button" id="wPhone" aria-pressed="false">Phone (390)</button>
+    </span>
+  </div>
+</div>
+
+<div class="frame" id="frame">
+  <nav class="nav">
+    <a href="../../index.html">← All builds</a>
+    <span class="site">Couch Coach</span>
+  </nav>
+
+  <header class="head">
+    <h1 id="name"></h1>
+    <ul class="meta" id="meta"></ul>
+    <div class="tested" id="tested">
+      <button type="button" id="testedBtn" aria-expanded="false" aria-controls="testedWhy"></button>
+      <p id="testedWhy" hidden>We drew this build but have not tried it with a real child yet. Check it stands firm before anyone climbs on, and stay close the first time.</p>
+    </div>
+    <p class="fit" id="fit"></p>
+  </header>
+
+  <div class="print-only draw" id="printHero"></div>
+
+  <div class="layout">
+    <figure class="stage" style="margin:0">
+      <div class="draw" id="draw"></div>
+      <div class="three" id="three" hidden></div>
+      <span class="seg view" role="group" aria-label="View">
+        <button type="button" id="vFlat" aria-pressed="true">Picture</button>
+        <button type="button" id="v3d" aria-pressed="false">Spin in 3D</button>
+      </span>
+      <p class="msg" id="msg" hidden></p>
+      <figcaption class="tag" id="tag"></figcaption>
+    </figure>
+
+    <section class="stepcard" aria-live="polite">
+      <div class="prog" id="prog"></div>
+      <p class="kicker" id="kicker"></p>
+      <p class="say" id="say"></p>
+      <p class="piece" id="piece"></p>
+    </section>
+
+    <div class="stepbar" id="bar">
+      <button type="button" class="back" id="back" aria-label="Back one step">←</button>
+      <button type="button" class="next" id="next"></button>
+    </div>
+
+    <section class="block parts">
+      <h2 id="partsH"></h2>
+      <ul id="parts"></ul>
+      <p class="left" id="left"></p>
+    </section>
+
+    <section class="block all">
+      <h2 id="allH"></h2>
+      <ol id="all"></ol>
+    </section>
+
+    <div class="actions">
+      <button type="button" id="print">Print this build</button>
+      <button type="button" id="share">Send to someone</button>
+      <button type="button" id="awake" aria-pressed="false" hidden>Keep screen on</button>
+      <a href="../../sheet.html">Sheet of 12 for your child</a>
+      <p class="note" id="actNote" hidden></p>
+    </div>
+
+    <section class="similar" id="similar">
+      <h2 id="simH"></h2>
+      <p id="simP"></p>
+      <div class="cards" id="cards"></div>
+      <div class="pager"><button type="button" id="prevB"></button><button type="button" id="nextB"></button></div>
+    </section>
+  </div>
+</div>
+<p class="foot">Design sprint mock-up. Structure, wording and interaction only: colours, type and logo belong to the brand track. Step sentences are worked out from each build's geometry by a rule in this file, and would need a read-through per build before launch.</p>
+
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { solidsOf, piecesOf, PIECE_NAMES, baseFlat, cushFlat, tri, pad, hoop, puck } from '../../js/pieces.js';
+import { tilesOf, sortTiles, drawBuild, palette } from '../../js/flat.js';
+import { SETUPS, SETUP_IDS, THEMES, inventory, fits, canMake, untestedLabel } from '../../js/setups.js';
+import { browserPrefs } from '../../js/prefs.js';
+import { esc } from '../../js/html.js';
+
+const $ = id => document.getElementById(id);
+const prefs = browserPrefs(), colors = prefs.colors(), pal = palette(colors);
+const q = new URLSearchParams(location.search);
+
+/* ---------- flat step drawings: same tiles as js/flat.js, drawn up to a given piece ---------- */
+const COS = Math.cos(Math.PI / 6), LIGHT = [0.24, 0.52, 0.82], W = [255, 255, 255], K = [20, 24, 48];
+const proj = p => [(p[0] - p[1]) * COS, (p[0] + p[1]) * 0.5 - p[2]];
+const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+const hex = c => '#' + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+const f = v => v.toFixed(1);
+const prepped = new Map();
+function prep(build) {
+  if (prepped.has(build.id)) return prepped.get(build.id);
+  const tiles = sortTiles(solidsOf(build).flatMap(s => tilesOf(s).map(t => { t.piece = s.piece; return t; }))).tiles;
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, fx0 = 1e9, fy0 = 1e9, fx1 = -1e9, fy1 = -1e9;
+  const grow = (x, y) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); };
+  for (const t of tiles) {
+    t.b = Math.max(0.5, Math.min(1.04, 0.58 + 0.5 * (t.n[0] * LIGHT[0] + t.n[1] * LIGHT[1] + t.n[2] * LIGHT[2])));
+    t.d = t.pts.map((p, i) => { const s = proj(p); grow(s[0], s[1]); fx0 = Math.min(fx0, p[0]); fx1 = Math.max(fx1, p[0]); fy0 = Math.min(fy0, p[1]); fy1 = Math.max(fy1, p[1]); return (i ? 'L' : 'M') + f(s[0]) + ' ' + f(s[1]); }).join('') + 'Z';
+    t.e = t.edges.map(([p, r]) => { const a = proj(p), c = proj(r); return `M${f(a[0])} ${f(a[1])}L${f(c[0])} ${f(c[1])}`; }).join('');
+  }
+  const m = 9, rug = [[fx0 - m, fy0 - m, 0], [fx1 + m, fy0 - m, 0], [fx1 + m, fy1 + m, 0], [fx0 - m, fy1 + m, 0]].map(proj).map(s => f(s[0]) + ',' + f(s[1])).join(' ');
+  let stick = '';
+  for (const [x, y, z, ch, size] of build.stickers || []) {
+    const s = proj([x, y, z]); grow(s[0] - size * 0.7, s[1] - size); grow(s[0] + size * 0.7, s[1] + size * 0.3);
+    stick += `<foreignObject x="${f(s[0] - size)}" y="${f(s[1] - size * 1.2)}" width="${size * 2}" height="${size * 1.5}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${size}px;line-height:1.3;text-align:center">${ch}</div></foreignObject>`;
+  }
+  const p = 5, out = { tiles, rug, stick, vb: `${f(x0 - p)} ${f(y0 - p)} ${f(x1 - x0 + 2 * p)} ${f(y1 - y0 + 2 * p)}`, feet: [fx1 - fx0, fy1 - fy0] };
+  prepped.set(build.id, out);
+  return out;
+}
+// n = 0: the whole build with its stickers. Otherwise pieces 1..n, piece n in full colour and the rest faded.
+function drawStep(build, n, { animate = false, label = '' } = {}) {
+  const { tiles, rug, stick, vb } = prep(build);
+  let out = '';
+  for (const t of tiles) {
+    if (n && t.piece >= n) continue;
+    const col = pal[t.role], cur = n && t.piece === n - 1, fade = n && !cur;
+    let fill = t.b <= 1 ? col.map(v => v * t.b) : mix(col, W, (t.b - 1) * 2), line = mix(col, K, 0.6);
+    if (fade) { fill = mix(fill, W, 0.66); line = mix(line, W, 0.62); }
+    const cls = cur && animate ? ' class="cur"' : '';
+    out += `<path d="${t.d}" fill="${hex(fill)}" stroke="${hex(fill)}"${cls}/>`;
+    if (t.e) out += `<path d="${t.e}" class="ln${cur && animate ? ' cur' : ''}" stroke="${hex(line)}"/>`;
+  }
+  return `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(label || build.name)}">
+    <polygon points="${rug}" fill="#f1f2f5" stroke="#f1f2f5" stroke-width="10" stroke-linejoin="round"/>${out}${n ? '' : stick}</svg>`;
+}
+
+/* ---------- step wording, worked out from where each piece sits ---------- */
+const SHORT = { base: 'base', cushion: 'cushion', triangle: 'triangle pillow', pad: 'round pad', hoop: 'hoop', puck: 'puck' };
+function bboxOf(solids) {
+  const b = [1e9, 1e9, 1e9, -1e9, -1e9, -1e9];
+  for (const s of solids) {
+    const m = (t, u, v) => s.axis === 'x' ? [s.o[0] + t, s.o[1] + u, s.o[2] + v] : s.axis === 'y' ? [s.o[0] + u, s.o[1] + t, s.o[2] + v] : [s.o[0] + u, s.o[1] + v, s.o[2] + t];
+    for (const [u, v] of s.profile) for (const t of [0, s.len]) m(t, u, v).forEach((c, i) => { b[i] = Math.min(b[i], c); b[i + 3] = Math.max(b[i + 3], c); });
+  }
+  return b;
+}
+const kindOf = s => s.axis !== 'z' ? 'lean' : s.len <= 6 ? 'flat' : 'up';
+function describeSteps(pieces) {
+  const total = {}, seen = {};
+  pieces.forEach(p => total[p.type] = (total[p.type] || 0) + 1);
+  const boxes = pieces.map(p => bboxOf(p.solids));
+  return pieces.map((p, i) => {
+    const k = seen[p.type] = (seen[p.type] || 0) + 1, T = total[p.type], s = SHORT[p.type];
+    const n = T === 1 ? `the ${s}` : k === 1 ? `a ${s}` : k === T ? (T === 2 ? `the other ${s}` : `the last ${s}`) : `another ${s}`;
+    const b = boxes[i], cx = (b[0] + b[3]) / 2, cy = (b[1] + b[4]) / 2;
+    // a piece that is part flat and part sloping rests where its flat part is
+    const level = p.solids.filter(x => kindOf(x) !== 'lean'), z0 = level.length && level.length < p.solids.length ? bboxOf(level)[2] : b[2];
+    const flatHoop = x => x.type === 'hoop' && x.solids[0].axis === 'z';
+    const mid = j => [(boxes[j][0] + boxes[j][3]) / 2, (boxes[j][1] + boxes[j][4]) / 2];
+    const sameSpot = j => Math.hypot(mid(j)[0] - cx, mid(j)[1] - cy) < 3 && boxes[j][2] < b[5] - 0.5 && boxes[j][5] > b[2] + 0.5;
+    let where = '';
+    if (p.type === 'puck' && p.solids[0].axis === 'z' && pieces.some((x, j) => j < i && flatHoop(x) && sameSpot(j))) where = 'inside the hoop';
+    if (!where && flatHoop(p)) {
+      const inside = pieces.filter((x, j) => j < i && x.type === 'puck' && sameSpot(j)).length;
+      if (inside) where = inside > 1 ? 'around the pucks' : 'around the puck';
+    }
+    if (!where && z0 < 0.5) where = 'on the floor';
+    if (!where) {
+      const sup = [];
+      for (let j = 0; j < i; j++) {
+        const o = boxes[j], ox = Math.min(b[3], o[3]) - Math.max(b[0], o[0]), oy = Math.min(b[4], o[4]) - Math.max(b[1], o[1]);
+        if (ox > 1 && oy > 1 && Math.abs(o[5] - z0) < 1.2) sup.push({ type: pieces[j].type, area: ox * oy });
+      }
+      if (sup.length) {
+        sup.sort((a, c) => c.area - a.area);
+        const same = sup.filter(x => x.type === sup[0].type).length, t = sup[0].type;
+        where = t === p.type && same === 1 ? `on top of the first ${SHORT[t]}` : `on top of the ${SHORT[t]}${same > 1 ? 's' : ''}`;
+      } else where = 'where the picture shows';
+    }
+    const kinds = p.solids.map(kindOf).sort().join('+');
+    let text;
+    if (p.type === 'base' || p.type === 'cushion') {
+      const [a, c] = p.solids;
+      if (kinds === 'flat') text = `Lay ${n} flat ${where}`;
+      else if (kinds === 'up') text = `Stand ${n} up on its edge ${where}`;
+      else if (kinds === 'lean') text = `Prop ${n} up at a slope ${where}`;
+      else if (kinds === 'flat+flat' && Math.abs(a.o[0] - c.o[0]) < 1 && Math.abs(a.o[1] - c.o[1]) < 1) text = `Fold ${n} in half and lay it ${where}`;
+      else if (kinds === 'up+up') text = `Stand ${n} on its long edge ${where} and bend it into a corner`;
+      else if (kinds === 'lean+lean') text = `Stand ${n} up like a tent ${where}, with the fold at the top`;
+      else if (kinds === 'flat+lean') text = `Put ${n} ${where} with one half flat and the other half sloping down`;
+      else if (kinds === 'flat+up') text = `Bend ${n} into an L ${where}: one half flat, one half standing up`;
+      else text = `Put ${n} ${where}, bent the way the picture shows`;
+    } else if (p.type === 'triangle') text = p.solids[0].axis === 'z' ? `Stand ${n} on its end ${where}` : `Set ${n} down ${where}, point up`;
+    else if (p.type === 'puck') text = p.solids[0].axis === 'z' ? `Lay ${n} flat ${where}` : `Stand ${n} on its rim ${where}, like a wheel`;
+    else if (p.type === 'hoop') text = p.solids[0].axis === 'z' ? `Lay ${n} flat ${where}` : `Stand ${n} up on its rim ${where}`;
+    else text = `Lay ${n} flat ${where}`;
+    return { text: text + '.', type: p.type, k, T };
+  });
+}
+
+/* ---------- small drawings of each kind of piece, for the parts list ---------- */
+const ICON_BUILDS = {
+  base: baseFlat(0, 0, 0, 'x'), cushion: cushFlat(0, 0, 0, 'x'), triangle: tri(0, 0, 0, 'y'),
+  pad: pad(0, 0, 0), hoop: hoop(0, 0, 0), puck: puck(0, 0, 0),
+};
+const icons = {};
+for (const t in ICON_BUILDS) icons[t] = drawBuild({ name: PIECE_NAMES[t], pieces: [ICON_BUILDS[t]], stickers: [] }, pal);
+const TYPES = Object.keys(ICON_BUILDS);
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : (word.endsWith('s') ? 'es' : 's')}`;
+
+/* ---------- state ---------- */
+let build = BUILDS.find(b => b.id === q.get('b')) || BUILDS.find(b => b.id === 'castle') || BUILDS[0];
+let n = 0;            // 0 = before you start, 1..N = steps, N + 1 = finished
+let owned = SETUPS[q.get('own')] ? q.get('own') : (SETUPS[prefs.get('setup')] ? prefs.get('setup') : '');
+let steps = [], N = 0, viewer = null, mode = 'flat';
+
+/* ---------- mock-up controls ---------- */
+$('pick').innerHTML = SETUP_IDS.map(id => `<optgroup label="${esc(SETUPS[id].label)}">${BUILDS.filter(b => b.setup === id).map(b => `<option value="${b.id}">${esc(b.name)}</option>`).join('')}</optgroup>`).join('');
+$('own').innerHTML = `<option value="">Not chosen yet</option>` + SETUP_IDS.map(id => `<option value="${id}">${esc(SETUPS[id].label)}</option>`).join('');
+$('own').value = owned;
+$('pick').addEventListener('change', e => openBuild(e.target.value));
+$('own').addEventListener('change', e => { owned = e.target.value; renderBuild(); });
+const setWidth = phone => { $('frame').classList.toggle('phone', phone); $('wPhone').setAttribute('aria-pressed', phone); $('wFull').setAttribute('aria-pressed', !phone); };
+$('wPhone').addEventListener('click', () => setWidth(true));
+$('wFull').addEventListener('click', () => setWidth(false));
+if (q.get('w') === 'phone') setWidth(true);
+
+function openBuild(id, scroll) {
+  build = BUILDS.find(b => b.id === id) || build;
+  n = 0;
+  leave3D();
+  renderBuild();
+  if (scroll) $('frame').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ---------- everything that changes with the build ---------- */
+function renderBuild() {
+  const pieces = piecesOf(build);
+  steps = describeSteps(pieces); N = steps.length;
+  $('pick').value = build.id;
+  $('frame').style.setProperty('--t', `var(--${build.theme})`);
+  $('name').textContent = build.name;
+  const [a, b] = prep(build).feet.map(v => Math.ceil(v / 12 * 2) / 2).sort((x, y) => y - x);
+  $('meta').innerHTML = `<li class="theme">${esc(THEMES[build.theme])}</li><li>${N} pieces</li><li>${esc(SETUPS[build.setup].label)}</li><li>About ${a} × ${b} ft of floor</li>`;
+  const label = untestedLabel(build);
+  $('tested').hidden = !label;
+  $('testedBtn').textContent = label;
+
+  // does the visitor's set-up have the pieces?
+  const used = {}; pieces.forEach(p => used[p.type] = (used[p.type] || 0) + 1);
+  const have = owned ? inventory(owned) : null, missing = [];
+  if (have) for (const t of TYPES) if ((used[t] || 0) > have[t]) missing.push(plural(used[t] - have[t], SHORT[t]));
+  const fit = $('fit');
+  fit.className = 'fit' + (!owned ? '' : missing.length ? ' no' : ' ok');
+  fit.innerHTML = !owned ? `Made for ${esc(SETUPS[build.setup].label)}.`
+    : missing.length ? `<b>This one needs ${esc(SETUPS[build.setup].label)}.</b> With ${esc(SETUPS[owned].label)} you are short ${esc(missing.join(', '))}. <a href="../../index.html">See builds you can make</a>`
+    : `You have every piece for this.`;
+
+  $('partsH').textContent = `You need ${N} pieces`;
+  const spare = inventory(build.setup), left = [];
+  for (const t of TYPES) { const s = spare[t] - (used[t] || 0); if (s > 0) left.push(plural(s, SHORT[t])); }
+  $('left').textContent = left.length ? `Not used in this build: ${left.join(', ')}.` : `This build uses every piece of ${SETUPS[build.setup].label}.`;
+  $('allH').textContent = `All ${N} steps`;
+  $('all').innerHTML = steps.map((s, i) => `<li><button type="button" data-step="${i + 1}"><span class="th draw">${drawStep(build, i + 1, { label: `Step ${i + 1}` })}</span><span class="num">${i + 1}</span><span class="tx">${esc(s.text)}</span></button></li>`).join('');
+  $('prog').innerHTML = steps.map((s, i) => `<button type="button" data-step="${i + 1}" aria-label="Go to step ${i + 1}"></button>`).join('');
+  $('printHero').innerHTML = drawStep(build, 0);
+
+  // where next: same pieces first, same theme first within that
+  const pool = (owned && fits(build.setup, owned) ? canMake(BUILDS, owned) : BUILDS.filter(x => x.setup === build.setup)).filter(x => x.id !== build.id);
+  const rank = x => (x.setup === build.setup ? 0 : 2) + (x.theme === build.theme ? 0 : 1);
+  const next = pool.map((x, i) => [rank(x), i, x]).sort((p, r) => p[0] - r[0] || p[1] - r[1]).slice(0, 4).map(r => r[2]);
+  $('simH').textContent = 'Build next with the same pieces';
+  $('simP').textContent = owned && fits(build.setup, owned) ? `Nothing extra needed: these all work with ${SETUPS[owned].label}.` : `These all use ${SETUPS[build.setup].label}.`;
+  $('cards').innerHTML = next.map(x => `<button type="button" class="bcard" data-build="${x.id}" style="--c:var(--${x.theme})"><span class="pic draw">${drawBuild(x, pal)}</span><span class="nm">${esc(x.name)}</span><span class="sub"><b>${esc(THEMES[x.theme])}</b> · ${piecesOf(x).length} pieces${untestedLabel(x) ? ' · ' + untestedLabel(x) : ''}</span></button>`).join('');
+  const i = BUILDS.indexOf(build), prev = BUILDS[(i + BUILDS.length - 1) % BUILDS.length], nxt = BUILDS[(i + 1) % BUILDS.length];
+  $('prevB').textContent = `← ${prev.name}`; $('prevB').dataset.build = prev.id;
+  $('nextB').textContent = `${nxt.name} →`; $('nextB').dataset.build = nxt.id;
+  renderStep(false);
+}
+
+/* ---------- everything that changes with the step ---------- */
+function renderStep(animate = true) {
+  const done = n > N, s = steps[n - 1];
+  if (mode === 'flat') $('draw').innerHTML = drawStep(build, done ? 0 : n, { animate, label: s ? `${build.name}, step ${n} of ${N}` : build.name });
+  else if (viewer) viewer.showThrough(done ? 0 : n);
+  $('tag').textContent = mode === '3d' ? 'Live 3D from the site’s own viewer. Drag to spin, pinch or scroll to zoom.' : 'Mock-up note: this flat drawing stands in for the picture a parent sees first. "Spin in 3D" loads the real viewer.';
+
+  $('kicker').textContent = n === 0 ? 'Before you start' : done ? 'Finished' : `Step ${n} of ${N}`;
+  $('say').textContent = n === 0 ? `Clear some floor, then put down one piece at a time.` : done ? `All ${N} pieces are down. Give it a push to check it stands firm.` : s.text;
+  $('piece').innerHTML = n === 0 ? `This is the finished build. The steps start from an empty floor.`
+    : done ? `<button type="button" class="linkish" id="again">Start again from step 1</button>`
+    : `<span class="ico draw">${icons[s.type]}</span><span>${esc(PIECE_NAMES[s.type])}${s.T > 1 ? ` · ${s.k} of ${s.T}` : ''}</span>`;
+  [...$('prog').children].forEach((el, i) => { el.className = i + 1 < n ? 'done' : i + 1 === n ? 'now' : ''; });
+
+  $('back').hidden = n === 0;
+  $('next').innerHTML = n === 0 ? `Start building <small>${N} steps</small>` : done ? 'Pick the next build ↓' : n === N ? 'Finish' : `Next piece <small>${n} of ${N}</small>`;
+
+  // parts list ticks off as pieces go down
+  const placed = {}; steps.slice(0, Math.min(n, N)).forEach(x => placed[x.type] = (placed[x.type] || 0) + 1);
+  const used = {}; steps.forEach(x => used[x.type] = (used[x.type] || 0) + 1);
+  const have = owned ? inventory(owned) : null;
+  $('parts').innerHTML = TYPES.filter(t => used[t]).map(t => {
+    const short = have && used[t] > have[t];
+    const note = short ? `<small class="miss">Your set-up has ${have[t]}</small>` : n === 0 ? '' : `<small>${placed[t] === used[t] ? 'All down' : `${placed[t] || 0} of ${used[t]} down`}</small>`;
+    return `<li class="${s && s.type === t ? 'now' : ''}"><span class="ico draw">${icons[t]}</span><span class="nm">${esc(PIECE_NAMES[t])}${note}</span><span class="qty">× ${used[t]}</span></li>`;
+  }).join('');
+  [...$('all').querySelectorAll('button')].forEach((el, i) => i + 1 === n ? el.setAttribute('aria-current', 'step') : el.removeAttribute('aria-current'));
+}
+const go = to => { n = Math.max(0, Math.min(N + 1, to)); renderStep(); };
+
+$('next').addEventListener('click', () => n > N ? $('similar').scrollIntoView({ behavior: 'smooth' }) : go(n + 1));
+$('back').addEventListener('click', () => go(n - 1));
+document.addEventListener('click', e => {
+  const st = e.target.closest('[data-step]'), b = e.target.closest('[data-build]');
+  if (st) go(+st.dataset.step);
+  else if (b) openBuild(b.dataset.build, true);
+  else if (e.target.id === 'again') go(1);
+});
+document.addEventListener('keydown', e => {
+  if (e.target.closest('select, input')) return;
+  if (e.key === 'ArrowRight' && n <= N) go(n + 1);
+  if (e.key === 'ArrowLeft') go(n - 1);
+});
+$('testedBtn').addEventListener('click', () => { const open = $('testedWhy').hidden; $('testedWhy').hidden = !open; $('testedBtn').setAttribute('aria-expanded', open); });
+
+/* ---------- 3D on request: the site's real viewer, loaded only when asked for ---------- */
+function setMode(m) {
+  mode = m;
+  $('draw').hidden = m === '3d'; $('three').hidden = m !== '3d';
+  $('vFlat').setAttribute('aria-pressed', m === 'flat'); $('v3d').setAttribute('aria-pressed', m === '3d');
+}
+function leave3D() { viewer = null; $('three').innerHTML = ''; setMode('flat'); $('msg').hidden = true; }
+$('vFlat').addEventListener('click', () => { leave3D(); renderStep(false); });
+$('v3d').addEventListener('click', async () => {
+  if (mode === '3d') return;
+  setMode('3d');
+  $('three').innerHTML = '<canvas aria-label="3D view of the build"></canvas>';
+  $('msg').hidden = false; $('msg').textContent = 'Loading 3D…';
+  try {
+    const { createViewer } = await import('../../js/viewer3d.js');
+    viewer = await createViewer($('three').firstChild, build, colors);
+    $('msg').hidden = true;
+    renderStep(false);
+  } catch {
+    leave3D();
+    $('msg').hidden = false; $('msg').textContent = '3D does not work in this browser. The picture and the steps still do.';
+    renderStep(false);
+  }
+});
+
+/* ---------- print, send, keep the screen on ---------- */
+const note = text => { $('actNote').hidden = false; $('actNote').textContent = text; };
+$('print').addEventListener('click', () => window.print());
+$('share').addEventListener('click', async () => {
+  const url = new URL(`../../build.html?b=${build.id}`, location.href).href;
+  try {
+    if (navigator.share) await navigator.share({ title: `${build.name} · Couch Coach`, url });
+    else { await navigator.clipboard.writeText(url); note('Link copied. Paste it into a message.'); }
+  } catch { note(`Link to this build: ${url}`); }
+});
+if ('wakeLock' in navigator) {
+  let lock = null;
+  $('awake').hidden = false;
+  $('awake').addEventListener('click', async () => {
+    try {
+      if (lock) { await lock.release(); lock = null; } else lock = await navigator.wakeLock.request('screen');
+      $('awake').setAttribute('aria-pressed', !!lock);
+      note(lock ? 'The screen will stay on while this page is open.' : 'The screen will dim as usual.');
+    } catch { note('This phone would not keep the screen on.'); }
+  });
+}
+
+renderBuild();
+const startAt = parseInt(q.get('step'), 10);
+if (startAt) go(startAt);
+if (q.get('view') === '3d') $('v3d').click();
+</script>
+</body>
+</html>

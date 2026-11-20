@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star path: sheet tracker mock-up</title>
+<link rel="icon" href="../../favicon.svg">
+<link rel="stylesheet" href="../../css/brand.css">
+<link rel="stylesheet" href="../../css/gallery.css">
+<style>
+/* Mock-up only. Everything the tracker needs is under .sp- so it could move to gallery.css as is. */
+.wrap { padding-bottom: var(--dock-h, 56px); }
+
+/* ---------- design notes (review aid, not part of the design) ---------- */
+.notes { margin: 4px 0 16px; padding: 0 16px; }
+.notes summary { display: flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 600; font-size: 17px; }
+.notes summary::-webkit-details-marker { display: none; }
+.notes summary::before { content: ""; flex: none; width: 8px; height: 8px; border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink); transform: rotate(-45deg); }
+.notes[open] summary::before { transform: rotate(45deg); margin-top: -4px; }
+.notes summary small { font-family: var(--text); font-weight: 400; font-size: 13px; color: var(--stone); }
+.notes-in { padding: 0 0 16px; font-size: 14.5px; max-width: 78ch; }
+.notes h3 { font-size: 16px; margin: 16px 0 4px; }
+.notes ul { margin: 4px 0 0; padding-left: 20px; }
+.notes li { margin: 3px 0; }
+.notes .states { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.notes .states a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--edge); background: var(--oat); font-weight: 600; font-size: 14px; text-decoration: none; }
+
+/* ---------- the dock: everything fixed to the bottom of the screen ---------- */
+.sp-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; display: flex; flex-direction: column; pointer-events: none; }
+.sp-dock > * { pointer-events: auto; }
+
+/* ---------- the tray ---------- */
+.sp-tray { background: var(--paper); border-top: 2px solid var(--ink); padding: 6px 16px calc(12px + env(safe-area-inset-bottom)); }
+.sp-in { max-width: 1148px; margin: 0 auto; }
+.sp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; }
+.sp-say { min-width: 0; }
+.sp-say b { display: block; font-family: var(--display); font-weight: 600; font-size: 17px; line-height: 1.2; }
+.sp-say .small { display: block; }
+.sp-say .small.loud { color: var(--ink); font-weight: 600; }
+.sp-say .t-wide { display: none; }
+.sp-tools { display: flex; flex: none; gap: 2px; margin-right: -8px; }
+.sp-tool { min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 12px; background: none; font-weight: 600; font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; display: inline-flex; align-items: center; gap: 6px; }
+.sp-tool .chev { width: 8px; height: 8px; border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink); transform: rotate(45deg); margin-top: -4px; }
+
+.sp-body { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; }
+.sp-faces { display: flex; gap: 22px; flex: 1 1 100%; min-width: 0; perspective: 600px; }
+.sp-face { display: none; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.sp-face.cur { display: flex; }
+.sp-face-lab { display: none; font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--stone); }
+.sp-face.cur .sp-face-lab { color: var(--ink); }
+.sp-stars { display: flex; justify-content: space-between; flex: 1; max-width: 340px; margin: 0; padding: 0; list-style: none; }
+.sp-star { position: relative; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--edge); }
+.sp-star > svg { grid-area: 1 / 1; width: 44px; height: 44px; display: block; }
+.sp-star.go { --c: var(--go); } .sp-star.fort { --c: var(--fort); } .sp-star.climb { --c: var(--climb); }
+button.sp-star[aria-pressed=true] { background: var(--oat); box-shadow: 0 0 0 2.5px var(--ink); }
+.sp-star.next { color: var(--ink); }
+
+.sp-acts { display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 100%; }
+.sp-acts .btn { flex: 1 1 auto; padding: 0 14px; }
+
+/* ---------- small moments ---------- */
+.sp-star.pop .sp-fill { animation: sp-pop .38s cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes sp-pop { from { transform: scale(.2) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.sp-face.flip { animation: sp-flip .34s ease-out both; transform-origin: 50% 50%; }
+@keyframes sp-flip { from { transform: rotateX(-88deg); opacity: .2; } to { transform: none; opacity: 1; } }
+.sp-face.wave .sp-star { animation: sp-wave .5s ease-in-out both; animation-delay: calc(var(--i) * 70ms + .15s); }
+@keyframes sp-wave { 40% { transform: translateY(-7px); } }
+/* page full: the slab, the triangle and the hoop look over the edge of the tray, then duck back */
+.sp-cheer { position: relative; height: 0; }
+.sp-cheer-in { position: absolute; left: 0; right: 0; bottom: 0; height: 44px; overflow: hidden; pointer-events: none; padding: 0 16px; }
+.sp-cheer-row { position: relative; max-width: 1148px; height: 100%; margin: 0 auto; }
+.sp-cheer svg { position: absolute; bottom: -3px; width: 36px; height: 36px; transform: translateY(115%); }
+.sp-cheer svg:nth-child(1) { left: 6px; color: var(--pond); }
+.sp-cheer svg:nth-child(2) { left: 50px; color: var(--clay); animation-delay: .12s; }
+.sp-cheer svg:nth-child(3) { left: 94px; color: var(--amber); animation-delay: .24s; }
+.sp-cheer.go svg { animation-name: sp-peek; animation-duration: 1.7s; animation-timing-function: cubic-bezier(.3, 1.3, .5, 1); animation-fill-mode: both; }
+@keyframes sp-peek { 0% { transform: translateY(115%); } 22% { transform: translateY(0) rotate(-5deg); } 40% { transform: translateY(14%) rotate(3deg); } 58% { transform: translateY(0); } 78% { transform: translateY(0); } 100% { transform: translateY(115%); } }
+.hold .sp-cheer svg { animation: none; transform: rotate(-4deg); }
+
+/* ---------- tucked away: a small pill that brings the tray back ---------- */
+.sp-pill { align-self: flex-end; margin: 0 16px calc(14px + env(safe-area-inset-bottom)); padding: 0 16px 0 10px; min-height: 48px; box-shadow: 0 3px 0 #000; font-size: 15px; }
+.sp-pill .sp-fill { width: 28px; height: 28px; }
+.sp-pill .chev { width: 8px; height: 8px; border-left: 2.5px solid var(--ink); border-top: 2.5px solid var(--ink); transform: rotate(45deg); margin: 4px 2px 0 4px; }
+.sp-pill.bump .sp-fill { animation: sp-pop .38s cubic-bezier(.3, 1.5, .5, 1) both; }
+
+/* ---------- undo ---------- */
+.sp-toast { align-self: center; display: flex; align-items: center; gap: 4px; margin: 0 16px 10px; padding: 2px 6px 2px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; box-shadow: 0 3px 0 #000; }
+.sp-toast button { min-height: 44px; min-width: 44px; padding: 0 10px; border: 0; background: none; color: var(--paper); font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 2px; border-radius: 999px; }
+.sp-toast button:focus-visible { outline-color: var(--paper); outline-offset: -3px; }
+.sp-toast .x { text-decoration: none; font-size: 20px; line-height: 1; }
+.sp-toast:last-child { margin-bottom: calc(14px + env(safe-area-inset-bottom)); }
+
+/* small phones: two buttons still share one row */
+@media (max-width: 399px) { .sp-acts { gap: 6px; } .sp-acts .btn { flex: 1 1 0; padding: 0 6px; font-size: 14.5px; } .sp-acts .btn:nth-child(3) { flex-basis: 100%; } }
+/* two pages on a phone: name the side beside the row when there is room */
+@media (min-width: 360px) { .sp-tray.two .sp-face-lab { display: block; min-width: 36px; } }
+@media (min-width: 600px) {
+  .sp-faces { flex: 0 1 auto; }
+  .sp-stars { gap: 6px; flex: none; }
+  .sp-acts { flex: 0 1 auto; margin-left: auto; }
+  .sp-acts .btn { flex: none; padding: 0 18px; }
+  .sp-body { flex-wrap: nowrap; }
+}
+/* room for both sides at once: no flipping needed */
+@media (min-width: 900px) {
+  .sp-face { display: flex; flex: none; }
+  .sp-face-lab { display: block; }
+  .sp-tray.two .sp-say .t-wide { display: block; }
+  .sp-tray.two .sp-say .t-narrow, .sp-acts .narrow { display: none; }
+  .sp-face.flip { animation: none; }
+}
+@media print { .sp-dock { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="page">
+  <header class="top"><a class="brand" href="../../index.html" id="brand"></a><a class="pill" href="../../sheet.html">Print a sheet</a></header>
+
+  <details class="panel notes" id="notes">
+    <summary><span>Design notes: Star path <small>Mock-up. Nothing is saved.</small></span></summary>
+    <div class="notes-in">
+      <h3>The idea</h3>
+      <p>The printed sheet gives the child a star to color for each build they make, so the tracker is that same row of six stars: each build you add colors one in, left to right, in its theme color with its theme shape inside. Fill six and the front is done; stop there, or turn the row over and fill six more for the back.</p>
+
+      <h3>States</h3>
+      <ul>
+        <li><b>Empty:</b> no tracker at all. It appears with the first pick.</li>
+        <li><b>First pick to five:</b> "Max's sheet: 3 of 6". Colored stars are picks, outlined stars are open. One button: Open sheet. Open spots are filled with ideas that fit, so the sheet always prints full.</li>
+        <li><b>Front full:</b> the stars do one small wave and the slab, the triangle and the hoop look over the edge of the tray, then duck back. Two buttons: Add a back page, Open 1-page sheet.</li>
+        <li><b>Working on the back:</b> the row turns over to a fresh six. "Back: 3 of 6". Buttons: See the front, Open 2-page sheet. From 900px wide both rows show side by side and nothing flips.</li>
+        <li><b>All full:</b> "Both sides are full". A thirteenth tap changes nothing and the tray says "Take one off to add another."</li>
+      </ul>
+      <div class="states" id="states"></div>
+
+      <h3>One page or two</h3>
+      <ul>
+        <li>A sheet starts as one page. The choice is only asked when it matters: at six stars.</li>
+        <li>Add a back page turns the row over. Tapping "Add to sheet" on a seventh card does the same thing, so a parent on a roll is never stopped.</li>
+        <li>The button always says what will open: Open sheet, Open 1-page sheet, Open 2-page sheet.</li>
+        <li>To go back to one page: Clear, then Remove the back page.</li>
+      </ul>
+
+      <h3>Taking picks off, hiding, clearing</h3>
+      <ul>
+        <li><b>One pick:</b> tap its card button again, or tap its star to see its name, then Take it off. Later stars slide down so the row never has gaps.</li>
+        <li><b>Hide:</b> tucks the tray into a small pill at the bottom right ("3 of 6 · Show") that stays for as long as picks exist. New picks bump the pill; it does not spring back open, except to explain a full sheet.</li>
+        <li><b>Clear:</b> asks first, with Keep them as the main button. After clearing, a "Sheet cleared. Undo" bar stays until it is dismissed or a new pick is made.</li>
+      </ul>
+
+      <h3>Suggestions and theme shapes</h3>
+      <ul>
+        <li>Suggestions are no longer counted in the tracker. They are one quiet line: "Pick 3 more, or we fill the rest for you."</li>
+        <li>Theme colors are used only as themes: a star takes the color and shape of its build's theme, so the row also shows the mix (all forts, or a bit of everything).</li>
+      </ul>
+
+      <h3>References (Mobbin)</h3>
+      <ul>
+        <li><b>Honest Greens</b>, stamp card: stamped spots beside numbered empty ones on a fixed-size card. Borrowed: a fixed row that fills in order, and a second card behind the first.</li>
+        <li><b>Finch</b>, streak row and "A Shiny Star for You": a calm seven-spot strip and a soft reward moment. Borrowed: the tone of the page-full moment.</li>
+        <li><b>Duolingo ABC</b> and <b>Uxcel</b>, earned stars: colored star against a pale outline. Borrowed: filled against outlined as the whole progress language, no numbers needed for a child.</li>
+        <li><b>Rocket Money</b> and <b>Shopee</b>, selection bars: "Continue with 2 Subscriptions", "Add (3)". Borrowed: the button itself says what you get (Open 2-page sheet).</li>
+        <li><b>pushr</b>, week widget: a compact row with the count beside it. Borrowed: title and count on one line above the row.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div class="intro">
+    <h1>Build ideas for your play couch</h1>
+    <p class="sub">Cars, forts and slides. Free. Tap one to see it go together piece by piece.</p>
+  </div>
+  <main id="list"></main>
+</div>
+
+<div class="sp-dock" id="dock"></div>
+
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { palette } from '../../js/flat.js';
+import { cardHtml, drawWhenSeen } from '../../js/card.js';
+import { installBrand, lockup, star } from '../../js/brand.js';
+import { createPrefs } from '../../js/prefs.js';
+import { OWNED, THEMES } from '../../js/setups.js';
+import { candidates } from '../../js/sheet-state.js';
+import { esc } from '../../js/html.js';
+
+const PER_PAGE = 6;
+const q = new URLSearchParams(location.search), $ = id => document.getElementById(id);
+// nothing here reads or writes the browser's storage: choices are the defaults plus the address
+const prefs = createPrefs({ getItem: () => null, setItem() {} });
+const own = OWNED[q.get('own')] ? q.get('own') : 'couch-addon';
+const shown = candidates(BUILDS, own).slice(0, 15);
+const find = id => BUILDS.find(b => b.id === id);
+
+// "Cole,Thomas" reads "Cole and Thomas"; three names read "Cole, Thomas and Ada". The title wraps
+// to a second line when the names are long, so nothing is cut off.
+function kidNames(text) {
+  const names = (text || '').split(',').map(t => t.trim().slice(0, 14)).filter(Boolean).slice(0, 4);
+  return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0] || '';
+}
+
+// ---------- state: in memory only ----------
+// picks: build ids in the order they were added. The first six are the front, the next six the back.
+const s = { picks: [], pages: 1, side: 'front', hidden: false, ask: false, peek: -1, undo: null, full: false, flash: '',
+  kid: kidNames(q.get('kid')), just: -1, cheer: false, flipped: false };
+
+const cap = () => s.pages * PER_PAGE;
+const snapshot = () => ({ picks: [...s.picks], pages: s.pages, side: s.side });
+function settle() { s.ask = false; s.peek = -1; s.full = false; s.flash = ''; }
+
+// A tap on a card's button: a picked build comes off, anything else takes the next open star.
+function toggle(id) {
+  settle();
+  const i = s.picks.indexOf(id);
+  if (i >= 0) { s.picks.splice(i, 1); return; }
+  if (s.picks.length >= 2 * PER_PAGE) { s.full = true; s.hidden = false; return; }
+  s.undo = null;
+  if (s.picks.length >= cap()) { s.pages = 2; s.flash = 'That one starts the back.'; }
+  s.picks.push(id);
+  const side = s.picks.length > PER_PAGE ? 'back' : 'front';
+  s.flipped = side !== s.side; s.side = side;
+  s.just = s.picks.length - 1;
+  s.cheer = s.picks.length % PER_PAGE === 0;
+}
+
+const ACTS = {
+  hide() { settle(); s.hidden = true; },
+  show() { s.hidden = false; },
+  'add-back'() { settle(); s.pages = 2; s.side = 'back'; s.flipped = true; s.flash = 'Now pick up to six for the back.'; },
+  flip() { settle(); s.side = s.side === 'front' ? 'back' : 'front'; s.flipped = true; },
+  ask() { settle(); s.ask = true; },
+  keep() { settle(); },
+  clear() { const was = snapshot(); settle(); Object.assign(s, { picks: [], pages: 1, side: 'front', undo: { was, said: 'Sheet cleared.' } }); },
+  'drop-back'() { const was = snapshot(); settle(); Object.assign(s, { picks: s.picks.slice(0, PER_PAGE), pages: 1, side: 'front', undo: { was, said: 'Back page removed.' } }); },
+  undo() { if (s.undo) Object.assign(s, s.undo.was, { undo: null, hidden: false }); },
+  'undo-x'() { s.undo = null; },
+  peek(el) { const i = +el.dataset.i; settle(); s.peek = i; },
+  'take-off'() { const i = s.peek; settle(); if (i >= 0) s.picks.splice(i, 1); },
+};
+
+// ---------- what the tray says ----------
+const plural = (n, w = 'build') => `${n} ${w}${n === 1 ? '' : 's'}`;
+export function trackerModel(st) {
+  const n = st.picks.length, two = st.pages === 2, front = Math.min(n, PER_PAGE), back = Math.max(0, n - PER_PAGE);
+  const who = st.kid ? `${st.kid}'s sheet` : 'Your sheet', total = st.pages * PER_PAGE, left = total - n;
+  const rest = left ? `Pick ${left} more, or we fill the rest for you.` : '';
+  const open = { label: two ? 'Open 2-page sheet' : n === PER_PAGE ? 'Open 1-page sheet' : 'Open sheet', href: '../../sheet.html' };
+  if (st.peek >= 0 && find(st.picks[st.peek])) {
+    const b = find(st.picks[st.peek]);
+    return { title: b.name, note: `Star ${st.peek % PER_PAGE + 1} on the ${st.peek < PER_PAGE ? 'front' : 'back'}. ${THEMES[b.theme]}.`,
+      buttons: [{ act: 'take-off', label: 'Take it off' }, { act: 'keep', label: 'Keep it', primary: true }], tools: false };
+  }
+  if (st.ask) return { title: two ? 'Clear what?' : `Take ${n === 1 ? 'this build' : `all ${n} builds`} off the sheet?`, note: 'You can undo this right after.', tools: false,
+    buttons: [...(two ? [{ act: 'drop-back', label: 'Remove the back page' }] : []), { act: 'clear', label: two ? 'Clear both sides' : 'Clear sheet' }, { act: 'keep', label: 'Keep them', primary: true }] };
+  if (!two) return n < PER_PAGE
+    ? { title: `${who}: ${n} of ${PER_PAGE}`, note: rest, buttons: [{ ...open, primary: true }], tools: true }
+    : { title: 'The front is full', note: 'Open it as one page, or add a back page for six more.', tools: true,
+      buttons: [{ act: 'add-back', label: 'Add a back page' }, { ...open, primary: true }] };
+  const flip = { act: 'flip', label: st.side === 'front' ? 'See the back' : 'See the front', narrow: true };
+  const wide = `${who}: ${n} of ${total}`;
+  if (!left) return { title: 'Both sides are full', wide: 'Both sides are full', note: st.full ? 'Take one off to add another.' : `You picked all ${total}.`, loud: st.full,
+    buttons: [flip, { ...open, primary: true }], tools: true };
+  return { title: st.side === 'back' ? `Back: ${back} of ${PER_PAGE}` : `Front: ${front} of ${PER_PAGE}`, wide,
+    note: st.flash || (st.side === 'front' && front === PER_PAGE ? 'The front is full. New picks go on the back.' : rest),
+    buttons: [flip, { ...open, primary: true }], tools: true };
+}
+const pillText = st => { const n = st.picks.length; return n === 2 * PER_PAGE ? 'Sheet is full' : n === PER_PAGE && st.pages === 1 ? 'Front is full' : `${n} of ${st.pages * PER_PAGE}`; };
+
+// ---------- drawings ----------
+const PTS = '12,2.6 14.8,8.7 21.4,9.4 16.5,13.9 17.9,20.5 12,17.1 6.1,20.5 7.5,13.9 2.6,9.4 9.2,8.7';
+// the brand star, colored in: its build's theme color with that theme's shape in the middle
+const colored = theme => `<svg class="sp-fill" viewBox="0 0 24 24" aria-hidden="true"><polygon points="${PTS}" fill="var(--${theme || 'ink'}, var(--ink))" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>${
+  theme ? `<use href="#cc-${theme}" x="8.1" y="8.4" width="7.8" height="7.8" style="color:#fff"/>` : ''}</svg>`;
+const shape = t => `<svg viewBox="0 0 20 20" aria-hidden="true"><use href="#cc-${t}"/></svg>`;
+
+function faceHtml(side) {
+  const from = side === 'front' ? 0 : PER_PAGE, cur = s.side === side;
+  const stars = Array.from({ length: PER_PAGE }, (_, k) => {
+    const i = from + k, b = find(s.picks[i]);
+    if (!b) return `<li><span class="sp-star${i === s.picks.length ? ' next' : ''}" style="--i:${k}">${star()}</span></li>`;
+    return `<li><button type="button" class="sp-star ${b.theme}${i === s.just ? ' pop' : ''}" style="--i:${k}" data-act="peek" data-i="${i}" data-k="star${i}" aria-pressed="${s.peek === i}"
+      aria-label="Star ${k + 1} on the ${side}: ${esc(b.name)}. Tap to take it off.">${star()}${colored(b.theme)}</button></li>`;
+  }).join('');
+  const wave = s.cheer && (s.picks.length === PER_PAGE ? side === 'front' : side === 'back');
+  return `<div class="sp-face${cur ? ' cur' : ''}${cur && s.flipped ? ' flip' : ''}${wave ? ' wave' : ''}"><span class="sp-face-lab">${side === 'front' ? 'Front' : 'Back'}</span><ul class="sp-stars" aria-label="${side === 'front' ? 'Front' : 'Back'} of the sheet">${stars}</ul></div>`;
+}
+
+const btnHtml = b => b.href
+  ? `<a class="btn${b.primary ? ' primary' : ''}" href="${b.href}" data-k="open">${esc(b.label)}</a>`
+  : `<button type="button" class="btn${b.primary ? ' primary' : ''}${b.narrow ? ' narrow' : ''}" data-act="${b.act}" data-k="${b.act}">${esc(b.label)}</button>`;
+
+function dockHtml() {
+  const n = s.picks.length;
+  const toast = s.undo ? `<div class="sp-toast on-dark" role="status"><span>${esc(s.undo.said)}</span><button type="button" data-act="undo" data-k="undo">Undo</button><button type="button" class="x" data-act="undo-x" aria-label="Dismiss">×</button></div>` : '';
+  if (!n) return toast;
+  if (s.hidden) return `${toast}<button type="button" class="btn sp-pill${s.just >= 0 ? ' bump' : ''}" data-act="show" data-k="show" aria-label="Show the sheet tracker. ${esc(pillText(s))}.">${colored('')}<span>${esc(pillText(s))} · Show</span><span class="chev"></span></button>`;
+  const m = trackerModel(s);
+  return `${toast}<div class="sp-cheer${s.cheer ? ' go' : ''}"><div class="sp-cheer-in"><div class="sp-cheer-row">${shape('fort')}${shape('climb')}${shape('go')}</div></div></div>
+  <section class="sp-tray${s.pages === 2 ? ' two' : ''}" aria-label="Your sheet"><div class="sp-in">
+    <div class="sp-head">
+      <p class="sp-say" aria-live="polite"><b class="t-narrow">${esc(m.title)}</b>${m.wide ? `<b class="t-wide">${esc(m.wide)}</b>` : ''}<span class="small${m.loud ? ' loud' : ''}">${esc(m.note)}</span></p>
+      ${m.tools ? `<div class="sp-tools"><button type="button" class="sp-tool" data-act="ask" data-k="ask">Clear</button><button type="button" class="sp-tool" data-act="hide" data-k="hide">Hide<span class="chev"></span></button></div>` : ''}
+    </div>
+    <div class="sp-body">
+      <div class="sp-faces">${faceHtml('front')}${s.pages === 2 ? faceHtml('back') : ''}</div>
+      <div class="sp-acts">${m.buttons.map(btnHtml).join('')}</div>
+    </div>
+  </div></section>`;
+}
+
+// ---------- page ----------
+installBrand();
+$('brand').innerHTML = lockup();
+$('list').innerHTML = `<section class="sec"><div class="sec-head"><h2>You can build these now</h2><span class="small">${plural(shown.length)} of ${candidates(BUILDS, own).length}, for ${esc(OWNED[own].tag)}</span></div>
+  <div class="grid">${shown.map(b => cardHtml(b, { owned: own })).join('')}</div></section>`;
+$('list').querySelectorAll('a.card-open').forEach(a => a.setAttribute('href', '../../' + a.getAttribute('href')));
+drawWhenSeen($('list'), find, () => palette(prefs.colors()));
+
+function render(focusKey) {
+  $('dock').innerHTML = dockHtml();
+  $('dock').classList.toggle('hold', q.get('cheer') === 'hold');
+  $('list').querySelectorAll('[data-add]').forEach(btn => {
+    const on = s.picks.includes(btn.dataset.add);
+    btn.setAttribute('aria-pressed', on);
+    btn.textContent = on ? 'On your sheet' : 'Add to sheet';
+  });
+  if (focusKey) ($('dock').querySelector(`[data-k="${focusKey}"]`) || $('dock').querySelector('.btn.primary, .sp-pill'))?.focus();
+  s.just = -1; s.cheer = false; s.flipped = false;
+}
+new ResizeObserver(() => $('page').style.setProperty('--dock-h', `${$('dock').offsetHeight + 40}px`)).observe($('dock'));
+
+$('list').addEventListener('click', e => {
+  const btn = e.target.closest('[data-add]');
+  if (btn) { toggle(btn.dataset.add); render(); }
+});
+$('dock').addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  ACTS[el.dataset.act]?.(el);
+  render({ hide: 'show', show: 'hide', peek: 'take-off', ask: 'keep', flip: 'flip' }[el.dataset.act] || 'open');
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && (s.ask || s.peek >= 0)) { settle(); render('open'); } });
+
+// REVIEW AIDS, not features: ?picked=0..12 &pages=2 &side=front|back &hide=1 &ask=1 &peek=<star 1..12>
+// &cleared=1 &full=1 &cheer=hold &kid=<name> or &kid=Cole,Thomas &own=<set-up> &notes=open
+{
+  const n = Math.max(0, Math.min(2 * PER_PAGE, parseInt(q.get('picked'), 10) || 0));
+  s.picks = shown.slice(0, n).map(b => b.id);
+  s.pages = n > PER_PAGE || q.get('pages') === '2' ? 2 : 1;
+  s.side = q.get('side') === 'front' || s.pages === 1 ? 'front' : q.get('side') === 'back' || n > PER_PAGE ? 'back' : 'front';
+  s.hidden = q.get('hide') === '1';
+  s.ask = q.get('ask') === '1' && n > 0;
+  s.peek = q.get('peek') ? Math.min(n, parseInt(q.get('peek'), 10) || 0) - 1 : -1;
+  s.full = q.get('full') === '1' && n === 2 * PER_PAGE;
+  s.cheer = q.get('cheer') === 'hold' && n > 0 && n % PER_PAGE === 0;
+  if (q.get('cleared') === '1') { s.undo = { was: snapshot(), said: 'Sheet cleared.' }; s.picks = []; s.pages = 1; s.side = 'front'; }
+  if (q.get('notes') === 'open') $('notes').open = true;
+  $('states').innerHTML = [['Empty', ''], ['3 picked', 'picked=3'], ['Front full', 'picked=6'], ['On the back', 'picked=9'], ['All full', 'picked=12&full=1'],
+    ['Hidden', 'picked=3&hide=1'], ['Clear asked', 'picked=9&ask=1'], ['Cleared', 'picked=3&cleared=1'], ['Star tapped', 'picked=4&peek=2']]
+    .map(([t, p]) => `<a href="?${p}${p ? '&' : ''}kid=Max">${t}</a>`).join('');
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sheet tracker: four designs</title>
+<link rel="icon" href="../../favicon.svg">
+<link rel="stylesheet" href="../../css/brand.css">
+<style>
+  .wrap { max-width: 1760px; }
+  h1 { font-size: clamp(28px, 4vw, 40px); margin: 20px 0 6px; }
+  .lede { max-width: 70ch; margin-bottom: 14px; }
+  .states { position: sticky; top: 0; z-index: 3; background: var(--oat); padding: 10px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; border-bottom: 1px solid var(--seam); }
+  .states b { font-family: var(--display); margin-right: 4px; }
+  .cols { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); margin-top: 18px; }
+  .col h2 { font-size: 24px; }
+  .col .idea { margin: 4px 0 10px; min-height: 4.4em; }
+  .phone { width: 100%; max-width: 400px; height: 640px; border: 10px solid var(--ink); border-radius: 36px; overflow: hidden; background: var(--oat); }
+  .phone iframe { width: 100%; height: 100%; border: 0; display: block; }
+  dl { margin: 12px 0 0; display: grid; gap: 8px; font-size: 14.5px; }
+  dt { font-weight: 700; } dd { margin: 0; color: var(--stone); }
+  .col .pill { margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sheet tracker: four designs</h1>
+  <p class="lede">Each phone below is a live mock-up with real build cards. Tap "Add to sheet" inside any of them, or use the buttons to jump all four to the same state. Every design supports a 1-page or 2-page sheet, Hide, Clear with undo, and several children's names.</p>
+  <div class="states" id="states"><b>Show all four at:</b></div>
+  <div class="cols" id="cols"></div>
+</div>
+<script>
+  const DESIGNS = [
+    { file: 'slot-strip', name: 'Slot strip', idea: 'Six numbered places per page fill with tiny drawings of the builds you picked.',
+      pages: 'Page two is offered when page one is full; a 7th pick starts it.', best: 'You see exactly which builds are on the sheet.', risk: 'Tallest of the four on a phone, about 170px.', extra: { view2: 'pages=2&view=2' } },
+    { file: 'goal-meter', name: 'Goal meter', idea: 'One slim bar and one line: "3 of 6 picked. 3 more fills page one."',
+      pages: 'At six: "Print 1 page" or "Fill the back", and the bar grows to twelve.', best: 'Smallest, with one obvious next step.', risk: 'Which builds you picked is hidden until you open the panel.' },
+    { file: 'mini-paper', name: 'Mini paper', idea: 'A tiny picture of the sheet itself fills in; tap it to pull up a bigger view.',
+      pages: 'Choose 1 or 2 pages in the pull-up; a 7th pick starts page two.', best: 'Shows the real object in one 68px row, with reorder in the pull-up.', risk: 'Tiny cells show theme color, not which build.' },
+    { file: 'star-path', name: 'Star path', idea: 'Six stars, like the ones on the printed sheet, color in as you pick.',
+      pages: 'At six: "Add a back page" flips the row to six more stars.', best: 'The one a child can follow along with.', risk: 'Tall on a phone, and the name of a build shows only on tap.' },
+  ];
+  const STATES = [['First pick', 'picked=1'], ['3 picked', 'picked=3'], ['Page one full', 'picked=6'], ['On page two', 'picked=9'], ['All 12', 'picked=12'], ['Hidden', 'picked=4&hidden=1&hide=1&tucked=1'], ['Two kids', 'picked=3&kid=Cole,Thomas']];
+  const url = (d, q) => `${d.file}.html?${q}`;
+  document.getElementById('cols').innerHTML = DESIGNS.map(d => `<section class="col">
+    <h2>${d.name}</h2><p class="idea">${d.idea}</p>
+    <div class="phone"><iframe title="${d.name}" data-file="${d.file}" src="${url(d, 'picked=3')}"></iframe></div>
+    <dl><div><dt>1 page or 2</dt><dd>${d.pages}</dd></div><div><dt>Best at</dt><dd>${d.best}</dd></div><div><dt>Watch out</dt><dd>${d.risk}</dd></div></dl>
+    <a class="pill" href="${url(d, 'picked=3&notes=open&notes=1')}">Open full size, with design notes</a></section>`).join('');
+  const bar = document.getElementById('states');
+  bar.insertAdjacentHTML('beforeend', STATES.map(([label, q], i) => `<button class="chip" type="button" data-q="${q}" aria-pressed="${i === 1}">${label}</button>`).join(''));
+  bar.addEventListener('click', e => {
+    const b = e.target.closest('[data-q]'); if (!b) return;
+    bar.querySelectorAll('[data-q]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    document.querySelectorAll('iframe').forEach(f => { f.src = `${f.dataset.file}.html?${b.dataset.q}`; });
+  });
+</script>
+</body>
+</html>

@@ -20,10 +20,11 @@ test('every build has a unique id, a name, a known set-up and a theme', () => {
   }
 });
 
-test('each set-up has exactly 12 builds, at least three per theme', () => {
+test('each set-up has at least 12 floor-only builds, three or more per theme, and one couch has three that lean on something', () => {
+  assert.deepEqual(BUILDS.filter(b => b.prop).map(b => [b.id, b.setup, b.prop.kind]), [['toy-car-ramp', 'couch', 'sofa'], ['wall-den', 'couch', 'wall'], ['sofa-slide', 'couch', 'sofa']]);
   for (const setup of SETUP_IDS) {
-    const list = BUILDS.filter(b => b.setup === setup);
-    assert.equal(list.length, 12, setup);
+    const list = BUILDS.filter(b => b.setup === setup && !b.prop);
+    assert.equal(list.length, setup === 'couch' ? 14 : 12, setup);
     for (const theme of Object.keys(THEMES)) assert.ok(list.filter(b => b.theme === theme).length >= 3, `${setup} ${theme}`);
   }
 });

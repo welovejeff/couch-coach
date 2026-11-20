@@ -50,6 +50,15 @@ export const wheel = (cx, y) => piece('puck', { profile: circle(PUCK_R), axis: '
 // the round add-on assembled: hoop, two pucks inside, pad on top
 export const ottoman = (cx, cy, z) => [hoop(cx, cy, z), puck(cx, cy, z), puck(cx, cy, z + 5.5), pad(cx, cy, z + 11)];
 
+// say in the build's own words how a piece goes down, when the usual wording would be wrong
+export const how = (p, text) => ({ ...p, how: text });
+
+/* ---------- things in the room a build leans on ---------- */
+// Not foam and not counted as pieces: drawn in a quiet colour behind the build. Both sit at x < 0.
+// `words` is how steps and labels name it.
+export const sofa = (y = -20, wide = 73) => ({ kind: 'sofa', words: 'your sofa', solids: [box(-34, y, 0, 34, wide, 17), box(-43, y, 0, 9, wide, 34)] });
+export const wall = (y = -24, wide = 114) => ({ kind: 'wall', words: 'a wall', solids: [box(-4, y, 0, 4, wide, 44)] });
+
 // mark pieces as belonging to the second couch
 export const second = (...pieces) => pieces.flat().map(p => ({ ...p, couch: 2 }));
 
@@ -60,3 +69,5 @@ export const piecesOf = build => build.pieces.flat();
 export function solidsOf(build) {
   return piecesOf(build).flatMap((p, i) => p.solids.map(s => ({ ...s, piece: i, role: ROLES[p.type] + (p.couch === 2 ? '2' : '') })));
 }
+// Everything to draw: the sofa or wall the build leans on (piece -1, so it is always shown), then the foam.
+export const sceneOf = build => [...(build.prop?.solids || []).map(s => ({ ...s, piece: -1, role: 'prop' })), ...solidsOf(build)];

@@ -1,5 +1,5 @@
 // The 3D view of one build. three.js is loaded only when a viewer is created.
-import { solidsOf } from './pieces.js';
+import { sceneOf } from './pieces.js';
 import { palette, roleHex } from './flat.js';
 
 // The library is z-up and left-handed (x down-right, y down-left on screen); three.js is y-up and
@@ -18,15 +18,15 @@ export async function createViewer(canvas, build, colors) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#ffffff');
-  scene.add(new THREE.HemisphereLight('#ffffff', '#b9c3d6', 1.5));
+  scene.background = new THREE.Color('#fffbf4');   // Paper, the colour of the picture frame
+  scene.add(new THREE.HemisphereLight('#ffffff', '#d9cbb5', 1.5));
   const sun = new THREE.DirectionalLight('#ffffff', 1.6);
   sun.position.set(-0.4, 1, 0.7);
   scene.add(sun);
 
-  const pal = palette(colors), white = new THREE.Color('#ffffff');
+  const pal = palette(colors), wash = new THREE.Color('#fffbf4');
   const meshes = [];   // { piece, mesh, edges, color }
-  for (const solid of solidsOf(build)) {
+  for (const solid of sceneOf(build)) {
     const shape = new THREE.Shape(solid.profile.map(([u, v]) => new THREE.Vector2(u, v)));
     if (solid.hole) shape.holes.push(new THREE.Path(solid.hole.map(([u, v]) => new THREE.Vector2(u, v))));
     const geo = new THREE.ExtrudeGeometry(shape, { depth: solid.len, bevelEnabled: false, curveSegments: 1 });
@@ -48,7 +48,7 @@ export async function createViewer(canvas, build, colors) {
   const box = new THREE.Box3();
   meshes.forEach(({ mesh }) => box.expandByObject(mesh));
   const center = box.getCenter(new THREE.Vector3()), radius = box.getSize(new THREE.Vector3()).length() / 2;
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(radius * 1.6, 48), new THREE.MeshBasicMaterial({ color: '#eef1f6' }));
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(radius * 1.6, 48), new THREE.MeshBasicMaterial({ color: '#ffffff' }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(center.x, -0.1, center.z);
   scene.add(floor);
@@ -77,7 +77,8 @@ export async function createViewer(canvas, build, colors) {
     render();
   };
   controls.addEventListener('change', render);
-  new ResizeObserver(resize).observe(canvas);
+  const watcher = new ResizeObserver(resize);
+  watcher.observe(canvas);
   resize();
 
   return {
@@ -87,9 +88,16 @@ export async function createViewer(canvas, build, colors) {
         const visible = n === 0 || piece < n;
         mesh.visible = edges.visible = visible;
         mesh.material.color.copy(color);
-        if (n !== 0 && piece < n - 1) mesh.material.color.lerp(white, 0.6);
+        if (n !== 0 && piece >= 0 && piece < n - 1) mesh.material.color.lerp(wash, 0.6);
       }
       render();
+    },
+    // let go of the canvas and the graphics memory when the visitor goes back to the picture
+    dispose() {
+      watcher.disconnect();
+      controls.dispose();
+      for (const { mesh, edges } of meshes) { mesh.geometry.dispose(); mesh.material.dispose(); edges.geometry.dispose(); edges.material.dispose(); }
+      renderer.dispose();
     },
   };
 }

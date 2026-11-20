@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Print flow mock-up · Couch Coach design sprint</title>
+<style>
+:root {
+  --ink: #1d2230; --muted: #5d6474; --line: #d5d8df; --bg: #f3f4f6; --panel: #fff;
+  --go: #2f7de1; --go-bg: #e4f0ff; --fort: #8a4fd3; --fort-bg: #f1e7ff; --climb: #ef7d1a; --climb-bg: #ffeeda;
+  --sys: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Brand track picks the display face; this is a system stand-in. */
+  --round: ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.4 var(--sys); padding-bottom: 84px; overflow-x: hidden; }
+[hidden] { display: none !important; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------- sprint notes (not part of the product) ---------- */
+.why { background: #fff; border-bottom: 1px solid var(--line); padding: 16px 0 14px; }
+.why h1 { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 2px; }
+.why h2 { font-size: 20px; margin: 0 0 10px; }
+.why ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px 24px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); counter-reset: n; }
+.why li { counter-increment: n; padding-left: 30px; position: relative; font-size: 14px; }
+.why li::before { content: counter(n); position: absolute; left: 0; top: 1px; width: 21px; height: 21px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+.why li b { display: block; }
+.why li span { color: var(--muted); }
+.tag { display: flex; align-items: center; gap: 10px; margin: 26px 0 10px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.tag::after { content: ""; flex: 1; border-top: 1px dashed #b9bdc7; }
+
+/* ---------- shared controls ---------- */
+.btn { min-height: 44px; padding: 9px 16px; border-radius: 10px; border: 1.5px solid var(--ink); background: #fff; font-weight: 650; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.quiet { border-color: var(--line); font-weight: 600; }
+.btn:focus-visible, .chip input:focus-visible + span, .card:focus-visible, .sw:focus-visible { outline: 3px solid var(--go); outline-offset: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; border: 0; padding: 0; margin: 0; }
+.chips legend, .lab { padding: 0; margin: 0 0 6px; font-weight: 700; font-size: 13px; display: block; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip span { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 13px; border: 1.5px solid var(--line); border-radius: 20px; background: #fff; font-weight: 600; font-size: 14px; cursor: pointer; }
+.chip input:checked + span { background: var(--ink); border-color: var(--ink); color: #fff; }
+.chip small { font-weight: 500; opacity: .75; margin-left: 6px; }
+.help { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
+.untested { font-size: 10.5px; color: var(--muted); background: rgba(255,255,255,.88); border-radius: 5px; padding: 1px 5px; }
+
+/* ---------- A. gallery excerpt ---------- */
+.gal { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.gal-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.gal-top strong { font-size: 17px; }
+.gal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 700px) { .gal-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.gcard { position: relative; border: 2px solid var(--c); background: var(--cbg); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.go { --c: var(--go); --cbg: var(--go-bg); } .fort { --c: var(--fort); --cbg: var(--fort-bg); } .climb { --c: var(--climb); --cbg: var(--climb-bg); }
+.gcard .pic { height: 150px; padding: 18px 10px 0; }
+.gcard svg, .pick svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.gcard .untested { position: absolute; left: 6px; top: 6px; }
+.gcard .nm { font-weight: 700; padding: 4px 8px 0; font-size: 14px; }
+.gcard button { margin: 6px 8px 8px; min-height: 40px; border-radius: 9px; border: 1.5px solid var(--ink); background: #fff; font-weight: 650; font-size: 13.5px; }
+.gcard button[aria-pressed=true] { background: var(--ink); color: #fff; }
+.tray { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding: 10px 12px; background: var(--bg); border-radius: 10px; font-size: 14px; }
+
+/* ---------- B. sheet page ---------- */
+.layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0; }
+.panel h3 { margin: 0 0 12px; font-size: 17px; display: flex; align-items: baseline; gap: 8px; }
+.panel h3 i { font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); border: 1.5px solid var(--line); border-radius: 12px; padding: 1px 8px; }
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field input[type=text] { width: 100%; min-height: 44px; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 16px; }
+.swrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sw { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1.5px var(--line); padding: 0; background: var(--v); }
+.sw[aria-pressed=true] { box-shadow: 0 0 0 3px var(--ink); }
+.swrow label.custom { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.swrow input[type=color] { width: 36px; height: 36px; padding: 0; border: 1.5px solid var(--line); border-radius: 8px; background: none; }
+
+.preview { min-width: 0; }
+.pv-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 10px; }
+.pv-head p { margin: 0; font-size: 14px; }
+.pv-head .acts { display: flex; gap: 8px; }
+.desk { background: #dcdfe5; border-radius: 14px; padding: 14px; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+.slot { min-width: 0; }
+.slot .side { font-size: 12px; font-weight: 700; color: var(--muted); margin: 0 0 6px; text-transform: uppercase; letter-spacing: .05em; }
+.slot .side span { font-weight: 500; text-transform: none; letter-spacing: 0; }
+
+/* the paper: real size, shrunk with zoom to fit its slot */
+.page { width: var(--pw); height: var(--ph); background: #fff; padding: 0.35in; display: flex; flex-direction: column; gap: 0.13in; box-shadow: 0 2px 4px rgba(0,0,0,.12), 0 14px 30px rgba(20,30,60,.2); overflow: hidden; font-family: var(--round); color: #1b2440; }
+.page header { height: 0.66in; flex: none; display: grid; place-items: center; }
+.page header h4 { margin: 0; font-size: 32pt; line-height: 1; white-space: nowrap; }
+.grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 0.16in; }
+.card { position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; border: 4px solid var(--c); background: var(--cbg); border-radius: 0.24in; overflow: hidden; cursor: pointer; }
+.card .pic { flex: 1; min-height: 0; padding: 0.1in 0.3in 0.02in; }
+.card svg.b, .card .pic > svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.card .name { flex: none; background: var(--c); color: #fff; font-size: 21pt; line-height: 1; padding: 0.085in 0.1in 0.1in; text-align: center; white-space: nowrap; }
+.card .num { position: absolute; top: 0.07in; left: 0.07in; width: 0.56in; height: 0.56in; border-radius: 50%; background: var(--c); color: #fff; font-size: 25pt; display: grid; place-items: center; line-height: 1; }
+.card .star { position: absolute; top: 0.05in; right: 0.05in; width: 0.74in; height: 0.74in; }
+.card .star path { fill: #fff; stroke: var(--c); stroke-width: 1.5; stroke-linejoin: round; }
+.card .ut { position: absolute; left: 0.1in; bottom: 0.52in; font-family: var(--sys); font-size: 8pt; color: #55607a; background: rgba(255,255,255,.85); border-radius: 0.05in; padding: 0 0.04in; }
+.per4 .card .name { font-size: 26pt; padding: 0.11in; } .per4 .card .ut { bottom: 0.62in; }
+.per4 .card .num { width: 0.7in; height: 0.7in; font-size: 31pt; } .per4 .card .star { width: 0.95in; height: 0.95in; }
+.ink-less .card { background: #fff; }
+.ink-less .card .name { background: #fff; color: var(--c); border-top: 3px solid var(--c); }
+.ink-less .card .num { background: #fff; color: var(--c); border: 3px solid var(--c); }
+.ink-line .card { --c: #2a2d36; background: #fff; border-width: 3px; }
+.ink-line .card .name { background: #fff; color: #2a2d36; border-top: 3px solid #2a2d36; }
+.ink-line .card .num { background: #fff; color: #2a2d36; border: 3px solid #2a2d36; }
+.page footer { flex: none; height: 0.2in; display: flex; justify-content: space-between; align-items: center; font-family: var(--sys); font-size: 7.5pt; color: #55607a; white-space: nowrap; }
+.key { display: flex; gap: 0.13in; align-items: center; }
+.key i { display: inline-block; width: 0.13in; height: 0.13in; border-radius: 50%; margin-right: 0.05in; vertical-align: -1px; }
+/* screen-only marks on the paper */
+.card.sel { outline: 0.07in solid var(--ink); outline-offset: 0.03in; }
+.card .kept { position: absolute; right: 0.1in; bottom: 0.56in; font-family: var(--sys); font-weight: 700; font-size: 11pt; background: var(--ink); color: #fff; border-radius: 0.2in; padding: 0.03in 0.12in; }
+.card.flash { animation: flash .7s; }
+@keyframes flash { from { box-shadow: 0 0 0 0.16in rgba(29,34,48,.45); } to { box-shadow: 0 0 0 0 rgba(29,34,48,0); } }
+
+/* print step */
+.checks { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; }
+.checks li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 12px; font-size: 14px; }
+.checks li + li { border-top: 1px solid var(--line); }
+.checks b { text-align: right; }
+.printrow { display: grid; gap: 8px; margin-top: 12px; }
+details.tip { margin-top: 10px; font-size: 14px; }
+details.tip summary { cursor: pointer; font-weight: 650; padding: 8px 0; min-height: 40px; }
+details.tip p { margin: 0 0 8px; color: var(--muted); }
+
+/* sticky bar on phones */
+.bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: #fff; border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.bar div { font-size: 13px; color: var(--muted); min-width: 0; }
+.bar div b { display: block; color: var(--ink); font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar .btn { flex: none; padding-inline: 24px; }
+
+/* card editor: bottom sheet on phones, dialog on desktop */
+.scrim { position: fixed; inset: 0; background: rgba(20,24,36,.4); z-index: 30; }
+.editor { position: fixed; z-index: 31; left: 0; right: 0; bottom: 0; max-height: 78vh; overflow-y: auto; background: #fff; border-radius: 18px 18px 0 0; padding: 14px 16px calc(18px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 30px rgba(0,0,0,.2); }
+.editor .eh { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.editor .eh strong { font-size: 17px; }
+.editor .ea { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 6px; }
+.editor .ea .btn { padding-inline: 6px; font-size: 14px; }
+.editor .ea .btn[aria-pressed=true] { background: var(--ink); color: #fff; }
+.editor h5 { margin: 16px 0 8px; font-size: 15px; }
+.picks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.pick { position: relative; border: 2px solid var(--c); background: var(--cbg); border-radius: 10px; padding: 0; overflow: hidden; text-align: center; min-width: 0; }
+.pick .pic { aspect-ratio: 1; padding: 16px 6px 0; }
+.pick .nm { display: block; font-weight: 700; font-size: 12.5px; padding: 2px 4px 6px; line-height: 1.15; }
+.pick .untested { position: absolute; left: 4px; top: 4px; font-size: 9.5px; }
+.toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 40; background: var(--ink); color: #fff; padding: 9px 16px; border-radius: 20px; font-size: 14px; max-width: calc(100vw - 32px); text-align: center; }
+
+@media (min-width: 980px) {
+  body { padding-bottom: 40px; }
+  .layout { grid-template-columns: 370px minmax(0, 1fr); align-items: start; }
+  .settings { grid-column: 1; grid-row: 1; }
+  .printp { grid-column: 1; grid-row: 2; }
+  .preview { grid-column: 2; grid-row: 1 / span 3; position: sticky; top: 12px; }
+  .desk { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .desk.one { grid-template-columns: minmax(0, 520px); justify-content: center; }
+  .bar { display: none; }
+  .editor { left: 50%; right: auto; bottom: auto; top: 50%; transform: translate(-50%, -50%); width: 640px; border-radius: 18px; max-height: 84vh; }
+  .picks { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .toast { bottom: 28px; }
+}
+
+@media print {
+  body { background: #fff; padding: 0; }
+  .np, .why, .bar, .scrim, .editor, .toast, .settings, .printp, .pv-head, .slot .side, .card .kept { display: none !important; }
+  .wrap { max-width: none; padding: 0; }
+  .layout, .desk, .preview { display: block; position: static; padding: 0; background: none; border-radius: 0; }
+  .page { zoom: 1 !important; box-shadow: none; break-after: page; }
+  .slot:last-child .page { break-after: auto; }
+  .card.sel { outline: 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+<style id="pagesize">@page { size: letter portrait; margin: 0; }</style>
+</head>
+<body>
+
+<section class="why np">
+  <div class="wrap">
+    <h1>Design sprint · print flow · mock-up, neutral styling</h1>
+    <h2>What changed and why</h2>
+    <ol>
+      <li><b>You can add a build to the sheet from where you find it.</b><span>Today the only way in is a small "Printable sheet" text link, and the sheet ignores what you liked. Gallery cards get an "Add to sheet" button and a running count.</span></li>
+      <li><b>The paper is the editor.</b><span>Today the 12 builds are fixed. Tap any card on the preview to swap it, keep it, or move it. "Shuffle" changes every card you have not kept.</span></li>
+      <li><b>The sheet uses every build you can make.</b><span>Today a family with a round add-on never sees the 12 couch-only builds on a sheet. Now swaps draw from all builds that fit what you own.</span></li>
+      <li><b>Choices that match real printers and real toddlers.</b><span>A4 or US Letter (guessed from your region), one side or two, 6 big or 4 bigger pictures, and a less-ink or color-in version.</span></li>
+      <li><b>Print settings shown as a short list that follows your choices.</b><span>Today it is one dense paragraph that only fits US Letter two-sided. Now four lines, plus help for printers that cannot print two-sided.</span></li>
+      <li><b>A way out for a phone with no printer.</b><span>Most visitors arrive on a phone. "Send to my computer" shares a link that reopens this exact sheet. Nothing is uploaded; the choices travel in the link.</span></li>
+      <li><b>A star a child can actually color in.</b><span>Today the star is already filled and half an inch wide. It is now a larger empty outline, numbers are bigger, and the child's name is on both sides.</span></li>
+      <li><b>The controls stop covering the page on a phone.</b><span>Today a sticky toolbar takes about a third of a phone screen. Settings scroll away; only a one-line bar with Print stays.</span></li>
+    </ol>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="tag np">A · Getting here: gallery excerpt (real page belongs to the gallery track)</div>
+  <section class="gal np" aria-label="Gallery excerpt">
+    <div class="gal-top"><strong>Builds you can make</strong><a class="btn quiet" href="#sheet">Print a sheet</a></div>
+    <div class="gal-grid" id="gal"></div>
+    <div class="tray"><span id="trayText"></span><a class="btn primary" href="#sheet">Open sheet</a></div>
+  </section>
+
+  <div class="tag np" id="sheet">B · The sheet page</div>
+  <main class="layout">
+    <section class="panel settings">
+      <h3><i>1</i> Make it theirs</h3>
+      <div class="field">
+        <label class="lab" for="kid">Child's name <span style="font-weight:500;color:var(--muted)">(optional)</span></label>
+        <input type="text" id="kid" maxlength="14" placeholder="e.g. Max" autocomplete="off">
+        <p class="help">Printed in the title. It stays on this device.</p>
+      </div>
+      <fieldset class="chips field" id="setup"><legend>What do you own?</legend></fieldset>
+      <div class="field"><span class="lab">Couch color</span><div class="swrow" id="sw-nug"></div></div>
+      <div class="field" id="row-nug2"><span class="lab">Second couch color</span><div class="swrow" id="sw-nug2"></div></div>
+      <div class="field" id="row-chk"><span class="lab">Round add-on color</span><div class="swrow" id="sw-chk"></div></div>
+    </section>
+
+    <section class="preview">
+      <div class="pv-head">
+        <p><b id="pvCount"></b><br><span style="color:var(--muted)">Tap a card on the paper to swap, keep or move it.</span></p>
+        <div class="acts"><button class="btn" id="shuffle">Shuffle</button><button class="btn quiet" id="reset">Start over</button></div>
+      </div>
+      <div class="desk" id="desk"></div>
+    </section>
+
+    <section class="panel printp">
+      <h3><i>2</i> Paper and print</h3>
+      <fieldset class="chips field" id="per"><legend>Picture size</legend></fieldset>
+      <fieldset class="chips field" id="sides"><legend>Sides</legend></fieldset>
+      <fieldset class="chips field" id="paper"><legend>Paper</legend></fieldset>
+      <fieldset class="chips field" id="ink"><legend>Ink</legend></fieldset>
+      <div class="field">
+        <span class="lab">In the print window, check these</span>
+        <ul class="checks" id="checks"></ul>
+      </div>
+      <div class="printrow">
+        <button class="btn primary" id="print">Print</button>
+        <button class="btn" id="pdf">Save as PDF</button>
+        <button class="btn" id="send">Send to my computer</button>
+      </div>
+      <details class="tip" id="tipDuplex"><summary>My printer can't print two-sided</summary>
+        <p>Print page 1 only. Put the sheet back in the tray with the blank side ready, then print page 2 only. Or choose "One side" above and print a single page.</p></details>
+      <details class="tip"><summary>Make it last</summary>
+        <p>Card stock or a plastic sleeve survives a toddler longer than plain paper. Use a dry-wipe pen on a sleeve and the stars can be wiped and colored again.</p></details>
+    </section>
+  </main>
+</div>
+
+<div class="bar np"><div><b id="barTitle"></b><span id="barSub"></span></div><button class="btn primary" id="print2">Print</button></div>
+<div class="scrim np" id="scrim" hidden></div>
+<section class="editor np" id="editor" role="dialog" aria-modal="true" aria-labelledby="edTitle" hidden></section>
+<div class="toast np" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { drawBuild, palette } from '../../js/flat.js';
+import { SETUPS, SETUP_IDS, DEFAULT_SETUP, THEMES, canMake, untestedLabel } from '../../js/setups.js';
+import { browserPrefs } from '../../js/prefs.js';
+import { esc } from '../../js/html.js';
+
+const $ = id => document.getElementById(id);
+const byId = id => BUILDS.find(b => b.id === id);
+const PAPER = { letter: { label: 'US Letter', w: '8.5in', h: '11in', px: 816, css: 'letter' }, a4: { label: 'A4', w: '210mm', h: '297mm', px: 793.7, css: 'A4' } };
+const SWATCHES = ['#3f86d6', '#2f4b7c', '#5aa9a0', '#6b8f4e', '#f4b63a', '#e8826a', '#d9a3b5', '#8d6fb5', '#9a9ca3', '#c9b79c'];
+const STAR = '<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.6l-5.9 3.2 1.2-6.6L2.5 9.6l6.6-.9z"/></svg>';
+
+// Start from what the visitor already chose on the real site; this mock-up never writes those back.
+const prefs = browserPrefs();
+const s = {
+  kid: prefs.get('kid'), setup: SETUPS[prefs.get('setup')] ? prefs.get('setup') : DEFAULT_SETUP,
+  nug: prefs.get('nug'), nug2: prefs.get('nug2'), chk: prefs.get('chk'),
+  per: 6, sides: 2, ink: 'full', paper: /^(en-US|en-CA|es-MX|es-US|fr-CA)/.test(navigator.language) ? 'letter' : 'a4',
+  sheet: [], kept: new Set(),
+};
+let sel = -1, swapTheme = '';
+
+// The choices travel in the link, so "send to my computer" needs no server.
+const toHash = () => '#' + new URLSearchParams({ k: s.kid, s: s.setup, n: s.nug, n2: s.nug2, c: s.chk, p: s.per, d: s.sides, i: s.ink, z: s.paper, b: s.sheet.join('.'), l: [...s.kept].join('.') });
+function fromHash() {
+  const q = new URLSearchParams(location.hash.slice(1));
+  if (!q.get('b')) return;
+  const hex = v => /^#[0-9a-f]{6}$/i.test(v || '') ? v : '';
+  s.kid = (q.get('k') || '').slice(0, 14);
+  if (SETUPS[q.get('s')]) s.setup = q.get('s');
+  s.nug = hex(q.get('n')) || s.nug; s.nug2 = hex(q.get('n2')); s.chk = hex(q.get('c')) || s.chk;
+  s.per = q.get('p') === '4' ? 4 : 6; s.sides = q.get('d') === '1' ? 1 : 2;
+  if (['full', 'less', 'line'].includes(q.get('i'))) s.ink = q.get('i');
+  if (PAPER[q.get('z')]) s.paper = q.get('z');
+  s.sheet = q.get('b').split('.').filter(byId);
+  s.kept = new Set((q.get('l') || '').split('.').filter(byId));
+}
+
+// Builds made for exactly this set-up come first, then every other build the family can make.
+const pool = () => { const all = canMake(BUILDS, s.setup); return [...all.filter(b => b.setup === s.setup), ...all.filter(b => b.setup !== s.setup)]; };
+const slots = () => s.per * s.sides;
+const spares = () => pool().filter(b => !s.sheet.includes(b.id));
+function settle() {
+  const ok = new Set(pool().map(b => b.id));
+  s.sheet = s.sheet.filter(id => ok.has(id)).slice(0, slots());
+  for (const b of pool()) { if (s.sheet.length >= slots()) break; if (!s.sheet.includes(b.id)) s.sheet.push(b.id); }
+  s.kept = new Set([...s.kept].filter(id => s.sheet.includes(id)));
+}
+
+const pal = () => palette({ nug: s.nug, nug2: s.nug2 || s.nug, chk: s.chk });
+// Color-in version: same drawing with white faces and dark edges. The real site would do this inside flat.js.
+const lineArt = svg => svg.replace(/(<path d="[^"]*") fill="#[0-9a-f]{6}" stroke="#[0-9a-f]{6}"\/>/g, '$1 fill="#fff" stroke="#fff"/>').replace(/class="ln" stroke="#[0-9a-f]{6}"/g, 'class="ln" stroke="#2a2d36"');
+const picture = b => s.ink === 'line' ? lineArt(drawBuild(b, pal())) : drawBuild(b, pal());
+const utag = (b, cls) => untestedLabel(b) ? `<span class="${cls}">${untestedLabel(b)}</span>` : '';
+
+function chips(id, name, options, current, onPick) {
+  const el = $(id), legend = el.querySelector('legend').outerHTML;
+  el.innerHTML = legend + options.map(([v, text, note]) => `<label class="chip"><input type="radio" name="${name}" value="${v}"${String(v) === String(current) ? ' checked' : ''}><span>${esc(text)}${note ? `<small>${esc(note)}</small>` : ''}</span></label>`).join('');
+  el.onchange = e => onPick(e.target.value);
+}
+function swatches(key) {
+  const cur = (key === 'nug2' ? (s.nug2 || s.nug) : s[key]).toLowerCase();
+  $('sw-' + key).innerHTML = SWATCHES.map(v => `<button class="sw" style="--v:${v}" data-v="${v}" aria-pressed="${v === cur}" aria-label="Color ${v}"></button>`).join('')
+    + `<label class="custom"><input type="color" value="${cur}" aria-label="Other color">Other</label>`;
+  $('sw-' + key).onclick = e => { const v = e.target.dataset?.v; if (v) { s[key] = v; render(); } };
+  $('sw-' + key).oninput = e => { if (e.target.type === 'color') { s[key] = e.target.value; drawPaper(); drawGallery(); } };
+}
+
+function drawPaper() {
+  const P = PAPER[s.paper], title = pg => pg === 0 ? (s.kid ? `${esc(s.kid)}’s Couch Builds` : 'My Couch Builds') : (s.kid ? `More of ${esc(s.kid)}’s Builds` : 'More Couch Builds');
+  const card = (id, i) => { const b = byId(id); return `<section class="card ${b.theme}${i === sel ? ' sel' : ''}" data-i="${i}" tabindex="0" role="button" aria-label="Card ${i + 1}, ${esc(b.name)}. Change this card">
+    <div class="num">${i + 1}</div>${STAR}<div class="pic">${picture(b)}</div>${utag(b, 'ut')}${s.kept.has(id) ? '<span class="kept">Kept</span>' : ''}<div class="name">${esc(b.name)}</div></section>`; };
+  const pages = Array.from({ length: s.sides }, (_, pg) => s.sheet.slice(pg * s.per, (pg + 1) * s.per).map((id, i) => card(id, pg * s.per + i)).join(''));
+  $('desk').className = 'desk' + (s.sides === 1 ? ' one' : '');
+  $('desk').innerHTML = pages.map((cards, pg) => `<div class="slot"><p class="side">${s.sides === 1 ? 'The page' : pg ? 'Back' : 'Front'} <span>· ${P.label}</span></p>
+    <article class="page per${s.per} ink-${s.ink}" style="--pw:${P.w};--ph:${P.h}"><header><h4>${title(pg)}</h4></header><div class="grid">${cards}</div>
+    <footer><span class="key">${Object.entries(THEMES).map(([id, name]) => `<span><i style="background:${s.ink === 'line' ? '#fff;outline:1px solid #2a2d36' : `var(--${id})`}"></i>${esc(name)}</span>`).join('')}<span>☆ Color the star when you build it</span></span>
+    <span>${SETUPS[s.setup].label} · grown-up nearby</span></footer></article></div>`).join('');
+  fit();
+}
+function fit() { const P = PAPER[s.paper]; document.querySelectorAll('.slot').forEach(slot => { slot.querySelector('.page').style.zoom = Math.min(1, slot.clientWidth / P.px); }); }
+
+function drawGallery() {
+  const p = pool(), show = [p[0], p[1], p[12], p[13]].filter(Boolean);
+  $('gal').innerHTML = show.map(b => { const on = s.sheet.includes(b.id); return `<div class="gcard ${b.theme}"><div class="pic">${drawBuild(b, pal())}</div>${utag(b, 'untested')}
+    <div class="nm">${esc(b.name)}</div><button data-id="${b.id}" aria-pressed="${on}">${on ? 'On the sheet ✓' : '+ Add to sheet'}</button></div>`; }).join('');
+  $('trayText').innerHTML = `<b>${s.sheet.length} builds</b> on ${s.kid ? esc(s.kid) + '’s' : 'your'} sheet`;
+}
+
+function drawSide() {
+  const P = PAPER[s.paper], n = s.sheet.length, total = pool().length;
+  $('pvCount').textContent = `${n} of the ${total} builds you can make`;
+  $('row-nug2').hidden = SETUPS[s.setup].couches !== 2;
+  $('row-chk').hidden = !SETUPS[s.setup].addon;
+  chips('setup', 'setup', SETUP_IDS.map(id => [id, SETUPS[id].label]), s.setup, v => { s.setup = v; s.sheet = []; s.kept.clear(); render(); });
+  chips('per', 'per', [[6, '6 big', 'ages 3+'], [4, '4 bigger', 'under 3']], s.per, v => { s.per = +v; render(); });
+  chips('sides', 'sides', [[2, 'Two sides', `${s.per * 2} builds`], [1, 'One side', `${s.per} builds`]], s.sides, v => { s.sides = +v; render(); });
+  chips('paper', 'paper', [['letter', 'US Letter'], ['a4', 'A4']], s.paper, v => { s.paper = v; render(); });
+  chips('ink', 'ink', [['full', 'Full color'], ['less', 'Less ink'], ['line', 'Color-in', 'black only']], s.ink, v => { s.ink = v; render(); });
+  for (const k of ['nug', 'nug2', 'chk']) swatches(k);
+  $('checks').innerHTML = [['Paper size', P.label], ['Two-sided', s.sides === 2 ? 'On, flip on long edge' : 'Off'], ['Scale', '100% (not "fit to page")'], ['Background graphics', s.ink === 'line' ? 'Either' : 'On'], ['Pages', s.sides === 2 ? '2' : '1']].map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('');
+  $('tipDuplex').hidden = s.sides === 1;
+  $('pagesize').textContent = `@page { size: ${P.css} portrait; margin: 0; }`;
+  $('barTitle').textContent = s.kid ? `${s.kid}’s sheet` : 'Your sheet';
+  $('barSub').textContent = `${n} builds · ${P.label} · ${s.sides === 2 ? 'two-sided' : 'one side'}`;
+}
+function render() { settle(); drawSide(); drawPaper(); drawGallery(); if (sel >= 0) drawEditor(); history.replaceState(null, '', toHash()); }
+
+let toastTimer;
+function toast(msg) { $('toast').textContent = msg; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { $('toast').hidden = true; }, 2600); }
+function flash(i) { const c = document.querySelector(`.card[data-i="${i}"]`); if (c) { c.classList.add('flash'); c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } }
+
+/* ---------- card editor ---------- */
+function drawEditor() {
+  const b = byId(s.sheet[sel]), kept = s.kept.has(b.id), list = spares().filter(x => !swapTheme || x.theme === swapTheme);
+  $('editor').innerHTML = `<div class="eh"><strong id="edTitle">Card ${sel + 1} · ${esc(b.name)}</strong><button class="btn quiet" data-a="close">Done</button></div>
+    <div class="ea"><button class="btn" data-a="keep" aria-pressed="${kept}">${kept ? 'Kept ✓' : 'Keep'}</button>
+      <button class="btn quiet" data-a="up"${sel === 0 ? ' disabled' : ''}>Move earlier</button><button class="btn quiet" data-a="down"${sel === s.sheet.length - 1 ? ' disabled' : ''}>Move later</button></div>
+    <p class="help">Kept cards stay when you shuffle. <a href="../../build.html?b=${encodeURIComponent(b.id)}">See ${esc(b.name)} in 3D</a></p>
+    <h5>Swap for another build</h5>
+    ${spares().length ? `<div class="chips">${[['', 'All'], ...Object.entries(THEMES)].map(([v, t]) => `<label class="chip"><input type="radio" name="st" value="${v}"${v === swapTheme ? ' checked' : ''}><span>${esc(t)}</span></label>`).join('')}</div>
+    <div class="picks">${list.map(x => `<button class="pick ${x.theme}" data-swap="${x.id}"><div class="pic">${drawBuild(x, pal())}</div>${utag(x, 'untested')}<span class="nm">${esc(x.name)}</span></button>`).join('') || '<p class="help">No spare builds in this theme.</p>'}</div>`
+    : '<p class="help">Every build you can make is already on this sheet. Use Move earlier and Move later to change the order, or pick One side to choose a smaller set.</p>'}`;
+}
+function openEditor(i) { sel = i; swapTheme = ''; drawEditor(); $('editor').hidden = $('scrim').hidden = false; drawPaper(); $('editor').querySelector('[data-a=close]').focus(); }
+function closeEditor() { const was = sel; sel = -1; $('editor').hidden = $('scrim').hidden = true; drawPaper(); document.querySelector(`.card[data-i="${was}"]`)?.focus(); }
+$('editor').addEventListener('click', e => {
+  const a = e.target.closest('[data-a]')?.dataset.a, swap = e.target.closest('[data-swap]')?.dataset.swap, id = s.sheet[sel];
+  if (a === 'close') return closeEditor();
+  if (a === 'keep') { s.kept.has(id) ? s.kept.delete(id) : s.kept.add(id); render(); }
+  if (a === 'up' || a === 'down') { const j = sel + (a === 'up' ? -1 : 1); [s.sheet[sel], s.sheet[j]] = [s.sheet[j], s.sheet[sel]]; sel = j; render(); }
+  if (swap) { const i = sel; s.kept.delete(id); s.sheet[i] = swap; closeEditor(); render(); flash(i); toast(`${byId(swap).name} is now card ${i + 1}`); }
+});
+$('editor').addEventListener('change', e => { if (e.target.name === 'st') { swapTheme = e.target.value; drawEditor(); } });
+$('scrim').addEventListener('click', closeEditor);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && sel >= 0) closeEditor(); });
+$('desk').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) openEditor(+c.dataset.i); });
+$('desk').addEventListener('keydown', e => { const c = e.target.closest('.card'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openEditor(+c.dataset.i); } });
+
+/* ---------- gallery add / remove ---------- */
+$('gal').addEventListener('click', e => {
+  const id = e.target.dataset?.id; if (!id) return;
+  if (s.sheet.includes(id)) {
+    const i = s.sheet.indexOf(id), spare = spares()[0]; s.kept.delete(id);
+    if (spare) { s.sheet[i] = spare.id; toast(`${byId(id).name} taken off. ${spare.name} fills the gap.`); } else toast('That is every build you can make, so it stays on the sheet.');
+  } else {
+    let i = -1; for (let j = s.sheet.length - 1; j >= 0; j--) if (!s.kept.has(s.sheet[j])) { i = j; break; }
+    if (i < 0) return toast('Every card is kept. Un-keep one on the sheet first.');
+    const out = byId(s.sheet[i]).name; s.sheet[i] = id; s.kept.add(id); toast(`${byId(id).name} added and kept. It replaced ${out}.`);
+  }
+  render();
+});
+
+/* ---------- shuffle, reset, inputs, print ---------- */
+$('shuffle').addEventListener('click', () => {
+  const free = pool().map(b => b.id).filter(id => !s.kept.has(id));
+  for (let i = free.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [free[i], free[j]] = [free[j], free[i]]; }
+  s.sheet = s.sheet.map(id => s.kept.has(id) ? id : free.shift());
+  render(); toast(s.kept.size ? `Shuffled. ${s.kept.size} kept card${s.kept.size === 1 ? '' : 's'} stayed put.` : 'Shuffled. Keep the ones you like, then shuffle again.');
+});
+$('reset').addEventListener('click', () => { s.sheet = []; s.kept.clear(); render(); toast('Back to the suggested builds.'); });
+$('kid').value = s.kid;
+$('kid').addEventListener('input', () => { s.kid = $('kid').value.trim(); drawPaper(); drawSide(); drawGallery(); history.replaceState(null, '', toHash()); });
+const doPrint = () => window.print();
+$('print').addEventListener('click', doPrint); $('print2').addEventListener('click', doPrint);
+$('pdf').addEventListener('click', () => { toast('In the print window, choose "Save as PDF" as the printer. On an iPhone, pinch the preview open, then Share.'); setTimeout(doPrint, 1800); });
+$('send').addEventListener('click', async () => {
+  const url = location.href.split('#')[0] + toHash();
+  try { if (navigator.share) await navigator.share({ title: 'Couch Coach sheet', url }); else { await navigator.clipboard.writeText(url); toast('Link copied. Open it on the computer with the printer.'); } }
+  catch { toast('Copy the address of this page and open it on your computer.'); }
+});
+window.addEventListener('resize', fit);
+
+fromHash(); $('kid').value = s.kid; render();
+</script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Couch Coach brand route: Calm and minimal</title>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #F5F2EA; --card: #FFFFFF; --ink: #232B29; --soft: #56605C; --pine: #2E4B43; --line: #DAD4C6; --night: #1F2725;
+  --go: #3F6183; --go-t: #E4EBF1;
+  --fort: #76557A; --fort-t: #EEE7EF;
+  --climb: #9A5532; --climb-t: #F4E7DC;
+  --sage: #86A593; --apricot: #E3A77C;
+  /* Fraunces and Figtree are both SIL Open Font Licence and can be self-hosted later. Neither is loaded here. */
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --text: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 16px; line-height: 1.5; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+h1, h2, h3, p, figure, dl, dd, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+svg { display: block; }
+.board { max-width: 1080px; margin: 0 auto; padding: 40px 16px 96px; }
+.intro { padding-bottom: 8px; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+.intro h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 6vw, 52px); line-height: 1.08; letter-spacing: -.015em; margin: 10px 0 14px; }
+.intro p { max-width: 58ch; color: var(--soft); font-size: 17px; }
+section.part { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--line); }
+.part > h2 { font-family: var(--display); font-weight: 400; font-size: 28px; letter-spacing: -.01em; margin: 6px 0 6px; }
+.part > .lead { color: var(--soft); max-width: 62ch; margin-bottom: 28px; }
+.note { color: var(--soft); font-size: 14px; max-width: 62ch; margin-top: 16px; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+
+/* 1 logo */
+.logo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 16px; }
+.tile { border-radius: 20px; padding: 32px 28px; background: var(--card); min-width: 0; }
+.tile.dark { background: var(--night); color: var(--paper); }
+.tile.tint { background: #ECE7DB; }
+.tile .cap { font-size: 13px; color: var(--soft); margin-top: 22px; }
+.tile.dark .cap { color: #C9CFC9; }
+.lockup { width: 100%; max-width: 420px; height: auto; }
+.lockup text { font-family: var(--display); font-weight: 400; letter-spacing: -.5px; }
+.sizes { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 24px; }
+.sizes figure { display: grid; justify-items: start; gap: 8px; font-size: 12px; color: var(--soft); }
+.tile.dark .sizes figure { color: #C9CFC9; }
+.app { border-radius: 22%; background: var(--paper); padding: 14%; }
+.tile.dark .app { background: #2B3532; }
+
+/* 2 colour */
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; }
+.sw { background: var(--card); border-radius: 16px; overflow: hidden; min-width: 0; }
+.sw i { display: block; height: 72px; background: var(--c); border-bottom: 1px solid var(--line); }
+.sw div { padding: 10px 12px 12px; font-size: 13px; color: var(--soft); line-height: 1.4; }
+.sw b { display: block; color: var(--ink); font-size: 15px; font-weight: 600; }
+.sub { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); margin: 36px 0 12px; font-weight: 400; }
+.themes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.theme { border-radius: 16px; padding: 16px; background: var(--t); min-width: 0; }
+.theme .tag { display: flex; align-items: center; gap: 8px; color: var(--c); font-weight: 600; }
+.theme .tag svg { width: 14px; height: 14px; fill: var(--c); flex: none; }
+.theme p { font-size: 13px; color: var(--soft); margin-top: 6px; }
+.pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.pair { border-radius: 16px; padding: 14px 16px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); font-size: 15px; min-width: 0; }
+.pair b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.2; }
+.pair small { font-size: 12.5px; opacity: 1; }
+
+/* 3 type */
+.type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.spec { background: var(--card); border-radius: 20px; padding: 28px; min-width: 0; }
+.spec .who { font-size: 13px; color: var(--soft); margin-bottom: 18px; }
+.spec .row { display: grid; gap: 2px; padding: 12px 0; border-top: 1px solid var(--line); }
+.spec .row small { font-size: 12px; color: var(--soft); }
+.d1 { font-family: var(--display); font-size: 40px; line-height: 1.08; letter-spacing: -.015em; }
+.d2 { font-family: var(--display); font-size: 28px; line-height: 1.15; letter-spacing: -.01em; }
+.d3 { font-family: var(--display); font-size: 19px; line-height: 1.25; }
+.t1 { font-size: 17px; } .t2 { font-size: 15px; } .t3 { font-size: 13px; color: var(--soft); }
+
+/* 4 voice */
+.voice { font-family: var(--display); font-size: clamp(20px, 3vw, 26px); line-height: 1.35; max-width: 36em; margin-bottom: 28px; }
+.copy { background: var(--card); border-radius: 20px; padding: 4px 24px; }
+.copy > div { display: grid; grid-template-columns: 190px 1fr; gap: 6px 24px; padding: 18px 0; border-top: 1px solid var(--line); }
+.copy > div:first-child { border-top: 0; }
+.copy dt { font-size: 13px; color: var(--soft); padding-top: 3px; }
+.copy dd { min-width: 0; }
+.copy dd.big { font-family: var(--display); font-size: 28px; line-height: 1.15; letter-spacing: -.01em; }
+.copy dd small { display: block; color: var(--soft); font-size: 13px; margin-top: 4px; }
+.copy dd span.or { color: var(--soft); }
+@media (max-width: 640px) { .copy { padding: 4px 18px; } .copy > div { grid-template-columns: 1fr; } }
+
+/* shared UI pieces used in the applied mock-up */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0; margin: 0 0 18px; min-width: 0; }
+.chips legend { padding: 0; margin-bottom: 8px; font-size: 13px; color: var(--soft); }
+.chips label { cursor: pointer; }
+.chips input { position: absolute; opacity: 0; pointer-events: none; }
+.chips span { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--line); border-radius: 22px; background: var(--card); font-size: 15px; color: var(--ink); }
+.chips span svg { width: 11px; height: 11px; fill: var(--c); flex: none; }
+.chips input:checked + span { background: var(--pine); border-color: var(--pine); color: var(--paper); }
+.chips input:checked + span svg { fill: var(--paper); }
+.chips input:focus-visible + span { outline: 3px solid var(--go); outline-offset: 2px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border: 0; border-radius: 24px; background: var(--pine); color: var(--paper); font: 600 16px var(--text); text-decoration: none; cursor: pointer; }
+.untested { display: inline-block; font-size: 12px; line-height: 1.3; color: var(--soft); border: 1px dashed #A9A698; border-radius: 10px; padding: 2px 8px; background: var(--card); white-space: nowrap; }
+
+/* 5 applied */
+.applied { display: grid; grid-template-columns: minmax(0, 390px) minmax(0, 1fr); gap: 48px; align-items: start; }
+.col-h { font-size: 13px; color: var(--soft); margin-bottom: 12px; }
+.phone { width: 100%; max-width: 390px; background: var(--paper); border: 1px solid var(--line); border-radius: 36px; overflow: hidden; box-shadow: 0 24px 48px -28px rgba(35, 43, 41, .35); }
+.screen { padding: 14px 16px 28px; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+.bar .brand { display: flex; align-items: center; gap: 9px; font-family: var(--display); font-size: 21px; letter-spacing: -.01em; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.bar .brand svg { width: 30px; height: 30px; }
+.bar .print { font-size: 15px; font-weight: 600; color: var(--pine); text-underline-offset: 3px; min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap; }
+.screen h3.head { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.08; letter-spacing: -.015em; margin: 26px 0 12px; }
+.screen .pitch { font-size: 16px; color: var(--ink); }
+.screen .fits { font-size: 13px; color: var(--soft); margin: 8px 0 28px; }
+.screen details { margin: -4px 0 22px; }
+.screen summary { min-height: 44px; display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--pine); font-weight: 600; cursor: pointer; list-style: none; }
+.screen summary::-webkit-details-marker { display: none; }
+.screen summary i, .dots i { width: 18px; height: 18px; border-radius: 50%; background: var(--c); display: inline-block; border: 1px solid rgba(35, 43, 41, .18); }
+.dots { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: var(--soft); padding: 4px 0 6px; }
+.dots span { display: inline-flex; align-items: center; gap: 8px; }
+.count { font-size: 13px; color: var(--soft); padding-top: 18px; border-top: 1px solid var(--line); margin-bottom: 14px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
+.bcard { display: block; color: inherit; text-decoration: none; min-width: 0; }
+.bcard .pic { aspect-ratio: 1 / 1; border-radius: 18px; background: var(--t); padding: 12px; display: grid; }
+.bcard .pic svg, .scard .pic svg { width: 100%; height: 100%; min-height: 0; }
+.bcard .name { font-family: var(--display); font-size: 19px; line-height: 1.2; margin: 10px 0 3px; }
+.bcard .kind { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--c); margin-bottom: 7px; }
+.bcard .kind svg { width: 10px; height: 10px; fill: var(--c); flex: none; }
+.go { --c: var(--go); --t: var(--go-t); } .fort { --c: var(--fort); --t: var(--fort-t); } .climb { --c: var(--climb); --t: var(--climb-t); }
+.empty { margin-top: 24px; border: 1px dashed #A9A698; border-radius: 18px; padding: 20px; background: var(--card); }
+.empty p { margin-bottom: 14px; }
+
+.sheet { background: #fff; border-radius: 6px; padding: 28px 24px 20px; box-shadow: 0 24px 48px -28px rgba(35, 43, 41, .35); border: 1px solid var(--line); }
+.sheet header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.sheet header h3 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 5vw, 38px); line-height: 1.1; letter-spacing: -.015em; }
+.sheet header svg { width: 40px; height: 40px; flex: none; }
+.sheet .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.scard { position: relative; border: 1.5px solid var(--ink); border-radius: 20px; padding: 14px 16px 16px; min-width: 0; background: #fff; }
+.scard .top { display: flex; align-items: center; justify-content: space-between; }
+.scard .num { font-family: var(--display); font-size: 26px; line-height: 1; }
+.scard .done { width: 34px; height: 34px; border: 1.5px dashed var(--ink); border-radius: 50%; }
+.scard .pic { aspect-ratio: 4 / 3; display: grid; margin: 4px 0 8px; border-radius: 14px; background: var(--t); padding: 8px; }
+.scard .name { font-family: var(--display); font-size: 30px; line-height: 1.1; letter-spacing: -.01em; }
+.scard .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.scard .kind { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--c); }
+.scard .kind svg { width: 11px; height: 11px; fill: var(--c); }
+.sheet footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--soft); }
+@media (max-width: 860px) { .applied { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 480px) {
+  .phone { max-width: none; width: auto; margin: 0 -16px; border-radius: 0; border-width: 1px 0; box-shadow: none; }
+  .tile, .spec { padding: 24px 20px; }
+}
+
+/* 6 not */
+.nots { display: grid; gap: 0; max-width: 46em; }
+.nots li { font-family: var(--display); font-size: 20px; line-height: 1.35; padding: 16px 0; border-top: 1px solid var(--line); }
+.nots li:first-child { border-top: 0; }
+.nots li span { display: block; font-family: var(--text); font-size: 15px; color: var(--soft); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- shared shapes: the mark, and one small shape per build theme -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="mark" viewBox="0 0 64 64">
+    <rect class="slab" x="5" y="43" width="54" height="13" rx="4.5" fill="var(--slab, #2E4B43)"/>
+    <path d="M12.5 37.5H31L12.5 19Z" fill="#86A593" stroke="#86A593" stroke-width="5" stroke-linejoin="round"/>
+    <circle cx="45" cy="29.5" r="8.5" fill="none" stroke="#E3A77C" stroke-width="6"/>
+  </symbol>
+  <symbol id="s-go" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5.5"/></symbol>
+  <symbol id="s-fort" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" rx="2"/></symbol>
+  <symbol id="s-climb" viewBox="0 0 12 12"><path d="M1.5 11h9.5L1.5 1.5Z" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="board">
+
+<header class="intro">
+  <p class="eyebrow">Couch Coach · brand route</p>
+  <h1>Calm and minimal</h1>
+  <p>A tidy playroom. Warm paper, soft foam colours, one quiet serif, and a lot of room around the drawings so a parent can find a build with one thumb and a child can point at the one they want.</p>
+</header>
+
+<!-- 1 -->
+<section class="part" id="logo">
+  <p class="eyebrow">1 · Logo</p>
+  <h2>Three pieces, put away</h2>
+  <p class="lead">A slab, a triangle pillow and a hoop, the three shapes every build is made from, set down side-on so they read as a small couch.</p>
+
+  <div class="logo-grid">
+    <div class="tile">
+      <svg class="lockup" viewBox="0 0 330 72" role="img" aria-label="Couch Coach">
+        <use href="#mark" x="0" y="4" width="64" height="64"/>
+        <text x="80" y="50" font-size="42" fill="#232B29">Couch Coach</text>
+      </svg>
+      <p class="cap">Mark and wordmark on Card</p>
+    </div>
+    <div class="tile dark" style="--slab:#F5F2EA">
+      <svg class="lockup" viewBox="0 0 330 72" role="img" aria-label="Couch Coach">
+        <use href="#mark" x="0" y="4" width="64" height="64"/>
+        <text x="80" y="50" font-size="42" fill="#F5F2EA">Couch Coach</text>
+      </svg>
+      <p class="cap">On Night. The slab turns to Paper; sage and apricot stay.</p>
+    </div>
+    <div class="tile tint">
+      <div class="sizes">
+        <figure><svg width="132" height="132" role="img" aria-label="Couch Coach mark"><use href="#mark" width="132" height="132"/></svg>Mark, large</figure>
+        <figure><svg class="app" width="64" height="64" aria-hidden="true"><use href="#mark" width="100%" height="100%"/></svg>Home-screen icon</figure>
+        <figure><svg width="32" height="32" aria-hidden="true"><use href="#mark" width="32" height="32"/></svg>32px</figure>
+        <figure><svg width="16" height="16" aria-hidden="true"><use href="#mark" width="16" height="16"/></svg>16px</figure>
+      </div>
+      <p class="cap">Sizes on light</p>
+    </div>
+    <div class="tile dark" style="--slab:#F5F2EA">
+      <div class="sizes">
+        <figure><svg width="132" height="132" role="img" aria-label="Couch Coach mark"><use href="#mark" width="132" height="132"/></svg>Mark, large</figure>
+        <figure><svg class="app" width="64" height="64" aria-hidden="true"><use href="#mark" width="100%" height="100%"/></svg>Home-screen icon</figure>
+        <figure><svg width="32" height="32" aria-hidden="true"><use href="#mark" width="32" height="32"/></svg>32px</figure>
+        <figure><svg width="16" height="16" aria-hidden="true"><use href="#mark" width="16" height="16"/></svg>16px</figure>
+      </div>
+      <p class="cap">Sizes on dark</p>
+    </div>
+  </div>
+  <p class="note">The wordmark here is live text in the fallback serif. The final wordmark would be Fraunces, converted to outlines so it looks the same everywhere.</p>
+</section>
+
+<!-- 2 -->
+<section class="part" id="colour">
+  <p class="eyebrow">2 · Colour</p>
+  <h2>Paper, pine, and two foam colours</h2>
+  <p class="lead">Most of every screen is Paper and Card. Pine is the only colour that means "tap this". Colour beyond that belongs to the drawings.</p>
+
+  <div class="swatches">
+    <div class="sw" style="--c:#F5F2EA"><i></i><div><b>Paper</b><span class="mono">#F5F2EA</span><br>Page background</div></div>
+    <div class="sw" style="--c:#FFFFFF"><i></i><div><b>Card</b><span class="mono">#FFFFFF</span><br>Chips, panels, the printed sheet</div></div>
+    <div class="sw" style="--c:#232B29"><i></i><div><b>Ink</b><span class="mono">#232B29</span><br>Headlines and body text</div></div>
+    <div class="sw" style="--c:#56605C"><i></i><div><b>Soft ink</b><span class="mono">#56605C</span><br>Captions, labels, the kid-tested note</div></div>
+    <div class="sw" style="--c:#2E4B43"><i></i><div><b>Pine</b><span class="mono">#2E4B43</span><br>Buttons, links, the chosen filter</div></div>
+    <div class="sw" style="--c:#DAD4C6"><i></i><div><b>Line</b><span class="mono">#DAD4C6</span><br>Hairlines and chip outlines. Never text.</div></div>
+    <div class="sw" style="--c:#1F2725"><i></i><div><b>Night</b><span class="mono">#1F2725</span><br>Dark backgrounds, for example the 3D stage</div></div>
+  </div>
+
+  <h3 class="sub">Default colours in the drawings</h3>
+  <div class="swatches">
+    <div class="sw" style="--c:#86A593"><i></i><div><b>Sage</b><span class="mono">#86A593</span><br>Play couch, first and second, until the parent picks their own</div></div>
+    <div class="sw" style="--c:#E3A77C"><i></i><div><b>Apricot</b><span class="mono">#E3A77C</span><br>Round add-on</div></div>
+  </div>
+  <p class="note">A parent's own couch colours replace Sage and Apricot as they do today. The drawings in section 5 are the real ones, drawn with these two defaults. The emoji stickers on today's drawings are left off in this route.</p>
+
+  <h3 class="sub">The three build themes</h3>
+  <div class="themes">
+    <div class="theme go"><div class="tag"><svg><use href="#s-go"/></svg>Things that go</div><p>Harbour <span class="mono">#3F6183</span> on tint <span class="mono">#E4EBF1</span>. Shape: a circle, like a wheel.</p></div>
+    <div class="theme fort"><div class="tag"><svg><use href="#s-fort"/></svg>Forts</div><p>Plum <span class="mono">#76557A</span> on tint <span class="mono">#EEE7EF</span>. Shape: a square, like a wall.</p></div>
+    <div class="theme climb"><div class="tag"><svg><use href="#s-climb"/></svg>Climb and slide</div><p>Clay <span class="mono">#9A5532</span> on tint <span class="mono">#F4E7DC</span>. Shape: a ramp.</p></div>
+  </div>
+  <p class="note">Each theme has a colour and a shape, so it still reads on a black-and-white print and for a colour-blind parent. The tint sits behind the drawing; the strong colour is used only for the small label.</p>
+
+  <h3 class="sub">Text and background pairs (WCAG contrast)</h3>
+  <div class="pairs">
+    <div class="pair" style="--bg:#F5F2EA;--fg:#232B29"><b>12.9 : 1</b>Ink on Paper<br><small>Body text</small></div>
+    <div class="pair" style="--bg:#FFFFFF;--fg:#232B29"><b>14.5 : 1</b>Ink on Card<br><small>Body text on panels and print</small></div>
+    <div class="pair" style="--bg:#F5F2EA;--fg:#56605C"><b>5.8 : 1</b>Soft ink on Paper<br><small>Captions and small labels</small></div>
+    <div class="pair" style="--bg:#FFFFFF;--fg:#56605C"><b>6.5 : 1</b>Soft ink on Card<br><small>The kid-tested note</small></div>
+    <div class="pair" style="--bg:#2E4B43;--fg:#F5F2EA"><b>8.5 : 1</b>Paper on Pine<br><small>Buttons, chosen filter</small></div>
+    <div class="pair" style="--bg:#F5F2EA;--fg:#2E4B43"><b>8.5 : 1</b>Pine on Paper<br><small>Links</small></div>
+    <div class="pair" style="--bg:#F5F2EA;--fg:#3F6183"><b>5.8 : 1</b>Harbour on Paper<br><small>Theme label (6.5 on Card)</small></div>
+    <div class="pair" style="--bg:#F5F2EA;--fg:#76557A"><b>5.6 : 1</b>Plum on Paper<br><small>Theme label (6.3 on Card)</small></div>
+    <div class="pair" style="--bg:#F5F2EA;--fg:#9A5532"><b>5.1 : 1</b>Clay on Paper<br><small>Theme label (5.7 on Card)</small></div>
+    <div class="pair" style="--bg:#1F2725;--fg:#F5F2EA"><b>13.7 : 1</b>Paper on Night<br><small>Text on dark</small></div>
+  </div>
+  <p class="note">Sage (2.4 : 1 on Paper) and Apricot are drawing colours only and never carry text. Line (1.3 : 1) is decoration only.</p>
+</section>
+
+<!-- 3 -->
+<section class="part" id="type">
+  <p class="eyebrow">3 · Type</p>
+  <h2>One serif for names, one sans for everything else</h2>
+  <p class="lead">Two faces, regular weight almost everywhere, sentence case, no capitals for emphasis.</p>
+
+  <div class="type-grid">
+    <div class="spec">
+      <p class="who"><b>Display: Fraunces</b> (SIL Open Font Licence, self-host later). Shown here in the fallback: Iowan Old Style on Apple devices, then Palatino, then Georgia or the device serif.</p>
+      <div class="row"><span class="d1">What shall we build today?</span><small>40 / 43, regular. Home headline (34 on a phone)</small></div>
+      <div class="row"><span class="d2">Pirate Ship</span><small>28 / 32, regular. Build page title, printed card name</small></div>
+      <div class="row"><span class="d3">Secret Hideout</span><small>19 / 24, regular. Build name on a gallery card</small></div>
+    </div>
+    <div class="spec">
+      <p class="who"><b>Text: Figtree</b> (SIL Open Font Licence, self-host later). Shown here in the fallback: the device's own sans (San Francisco, Roboto, Segoe UI).</p>
+      <div class="row"><span class="t1">36 build ideas for your play couch and round add-on.</span><small>17 / 26, regular. Pitch</small></div>
+      <div class="row"><span class="t2">1 play couch + round add-on</span><small>15 / 22, regular; 600 for buttons and links. Filters, controls</small></div>
+      <div class="row"><span class="t3">Not yet kid-tested · Step 3 of 8</span><small>13 / 18, regular, Soft ink. Labels and captions. Nothing on screen is smaller than 12.</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="part" id="voice">
+  <p class="eyebrow">4 · Voice and copy</p>
+  <h2>A friend who has already built it</h2>
+  <p class="voice">Say what it is and what to do next, in the words you would use across the room with a child on your hip. No exclamation marks, no baby talk, and never claim a build is safe or tested when it is not.</p>
+
+  <dl class="copy">
+    <div><dt>Home headline</dt><dd class="big">What shall we build today?</dd></div>
+    <div><dt>One-line pitch</dt><dd>36 build ideas for your play couch and round add-on. Pick one, see it in 3D, and follow it one piece at a time.<small>Fits the Nugget and the Chunk. Not affiliated with their maker.</small></dd></div>
+    <div><dt>Filter: what you own</dt><dd>What do you have? <span class="or">·</span> Everything <span class="or">·</span> 1 play couch <span class="or">·</span> 1 play couch + round add-on <span class="or">·</span> 2 play couches</dd></div>
+    <div><dt>Filter: theme</dt><dd>Kind of build <span class="or">·</span> All <span class="or">·</span> Things that go <span class="or">·</span> Forts <span class="or">·</span> Climb and slide</dd></div>
+    <div><dt>Colour pickers</dt><dd>Match your couch colors <span class="or">·</span> Couch <span class="or">·</span> Second couch <span class="or">·</span> Round add-on</dd></div>
+    <div><dt>Count</dt><dd>36 builds <span class="or">/</span> 12 builds you can make</dd></div>
+    <div><dt>Kid-tested label</dt><dd><span class="untested">Not yet kid-tested</span><small>Kept word for word. Where there is room (build page): "Not yet kid-tested. We have drawn this one but not built it with a child, so stay close."</small></dd></div>
+    <div><dt>Build page step caption</dt><dd>Step 3 of 8 · Triangle pillow<small>Before stepping: "All 8 pieces". Buttons: "Back" and "Next piece". Last step: "That's the lot."</small></dd></div>
+    <div><dt>Empty state</dt><dd>Nothing fits those two choices yet. Try another kind of build, or show everything.<small>Button: "Show everything"</small></dd></div>
+    <div><dt>Print button</dt><dd><span class="btn">Print the sheet</span><small>Under it: "12 builds on two sides of US Letter. Choose Save as PDF to keep a copy." Home page link: "Print a sheet"</small></dd></div>
+    <div><dt>Printed sheet title</dt><dd class="big">Max's builds</dd></div>
+    <div><dt>Sheet title, no name / side two</dt><dd>Our builds <span class="or">/</span> More builds</dd></div>
+    <div><dt>Printed sheet footer</dt><dd>Point to one. Color the circle when you have built it.<small>1 play couch + round add-on · Grown-up nearby · Page 1 of 2</small></dd></div>
+  </dl>
+</section>
+
+<!-- 5 -->
+<section class="part" id="applied">
+  <p class="eyebrow">5 · Applied</p>
+  <h2>The home page and the printed sheet</h2>
+  <p class="lead">Real builds from the library, drawn by the site's own drawing code in the default Sage and Apricot. The filters are for show and do not filter here.</p>
+
+  <div class="applied">
+    <div>
+      <p class="col-h">Gallery home, phone width (390)</p>
+      <div class="phone"><div class="screen">
+        <div class="bar">
+          <a class="brand" href="#applied"><svg aria-hidden="true"><use href="#mark"/></svg>Couch Coach</a>
+          <a class="print" href="#applied">Print a sheet</a>
+        </div>
+        <h3 class="head">What shall we build today?</h3>
+        <p class="pitch">36 build ideas for your play couch and round add-on. Pick one, see it in 3D, and follow it one piece at a time.</p>
+        <p class="fits">Fits the Nugget and the Chunk. Not affiliated with their maker.</p>
+
+        <fieldset class="chips"><legend>What do you have?</legend>
+          <label><input type="radio" name="own"><span>Everything</span></label>
+          <label><input type="radio" name="own"><span>1 play couch</span></label>
+          <label><input type="radio" name="own" checked><span>1 play couch + round add-on</span></label>
+          <label><input type="radio" name="own"><span>2 play couches</span></label>
+        </fieldset>
+        <fieldset class="chips"><legend>Kind of build</legend>
+          <label><input type="radio" name="kind" checked><span>All</span></label>
+          <label class="go"><input type="radio" name="kind"><span><svg><use href="#s-go"/></svg>Things that go</span></label>
+          <label class="fort"><input type="radio" name="kind"><span><svg><use href="#s-fort"/></svg>Forts</span></label>
+          <label class="climb"><input type="radio" name="kind"><span><svg><use href="#s-climb"/></svg>Climb and slide</span></label>
+        </fieldset>
+        <details>
+          <summary><i style="--c:#86A593"></i><i style="--c:#E3A77C;margin-left:-16px"></i>Match your couch colors</summary>
+          <div class="dots"><span><i style="--c:#86A593"></i>Couch</span><span><i style="--c:#E3A77C"></i>Round add-on</span></div>
+        </details>
+
+        <p class="count">24 builds you can make</p>
+        <div class="grid" id="grid"></div>
+
+        <div class="empty">
+          <p class="col-h" style="margin-bottom:6px">Empty state</p>
+          <p>Nothing fits those two choices yet. Try another kind of build, or show everything.</p>
+          <span class="btn">Show everything</span>
+        </div>
+      </div></div>
+    </div>
+
+    <div>
+      <p class="col-h">Printed sheet, top of side one</p>
+      <div class="sheet">
+        <header><h3>Max's builds</h3><svg aria-hidden="true"><use href="#mark"/></svg></header>
+        <div class="cards" id="sheet"></div>
+        <footer><span>Point to one. Color the circle when you have built it.</span><span>1 play couch + round add-on · Grown-up nearby</span></footer>
+      </div>
+      <p class="note">On paper the card keeps a plain Ink outline, a large name a parent can read aloud, a number to say out loud, and a dashed circle to colour in. The theme shape still shows if the sheet is printed in black and white.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="part" id="not">
+  <p class="eyebrow">6 · What this route is not</p>
+  <h2>Keeping it distinct</h2>
+  <ul class="nots">
+    <li>Not loud.<span>No primary colours, no thick coloured borders, no emoji as decoration. If a screen feels busy, something comes off it.</span></li>
+    <li>Not a toy catalogue.<span>No characters, mascots or cartoon lettering. The builds are the only pictures.</span></li>
+    <li>Not cold.<span>Warm paper, not white and grey. A serif with some softness, not a tech sans. It should feel like a home, not an app.</span></li>
+  </ul>
+</section>
+
+</div>
+
+<script type="module">
+  import { BUILDS } from '../../js/builds.js';
+  import { drawBuild, palette } from '../../js/flat.js';
+  import { THEMES, untestedLabel } from '../../js/setups.js';
+
+  const pal = palette({ nug: '#86a593', nug2: '', chk: '#e3a77c' });
+  // this route leaves the emoji stickers off the drawings
+  const draw = b => drawBuild(b, pal).replace(/<foreignObject[\s\S]*?<\/foreignObject>/g, '');
+  const pick = ids => ids.map(id => BUILDS.find(b => b.id === id)).filter(Boolean);
+  const themeName = { ...THEMES, climb: 'Climb and slide' };
+  const label = b => untestedLabel(b) ? `<span class="untested">${untestedLabel(b)}</span>` : '';
+  const kind = b => `<div class="kind"><svg aria-hidden="true"><use href="#s-${b.theme}"/></svg>${themeName[b.theme]}</div>`;
+
+  document.getElementById('grid').innerHTML = pick(['race-car', 'castle', 'big-slide', 'pirate-ship', 'camping-tent', 'little-slide']).map(b =>
+    `<a class="bcard ${b.theme}" href="../../build.html?b=${b.id}"><div class="pic">${draw(b)}</div><div class="name">${b.name}</div>${kind(b)}${label(b)}</a>`).join('');
+
+  document.getElementById('sheet').innerHTML = pick(['choo-choo-train', 'clubhouse']).map((b, i) =>
+    `<section class="scard ${b.theme}"><div class="top"><span class="num">${i + 1}</span><span class="done"></span></div><div class="pic">${draw(b)}</div><div class="name">${b.name}</div><div class="foot">${kind(b)}${label(b)}</div></section>`).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slot strip · sheet tracker mock-up · Couch Coach</title>
+<link rel="icon" href="../../favicon.svg">
+<link rel="stylesheet" href="../../css/brand.css">
+<link rel="stylesheet" href="../../css/gallery.css">
+<style>
+/* MOCK-UP ONLY. Everything the tracker needs is in this file; state lives in memory. */
+html, body { overflow-x: hidden; }
+.wrap { padding-bottom: calc(var(--tray-h, 0px) + 48px); }
+.filter { top: 0; }
+
+/* ---------- design notes (not part of the product) ---------- */
+.notes { margin: 0 -16px; padding: 0 16px; background: var(--paper); border-bottom: 1px solid var(--seam); }
+.notes summary { display: flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; list-style: none; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--stone); }
+.notes summary::-webkit-details-marker { display: none; }
+.notes summary::before { content: ""; width: 8px; height: 8px; margin: 0 2px; border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink); transform: rotate(-45deg); flex: none; }
+.notes[open] summary::before { transform: rotate(45deg); margin-top: -4px; }
+.notes summary b { color: var(--ink); }
+.notes-in { display: grid; gap: 14px 28px; padding: 2px 0 18px; font-size: 14.5px; }
+.notes h2 { font-size: 17px; margin-bottom: 4px; }
+.notes ul { margin: 0; padding-left: 18px; }
+.notes li { margin: 3px 0; }
+.notes code { font-size: 13px; background: var(--oat); padding: 1px 5px; border-radius: 6px; }
+@media (min-width: 900px) { .notes-in { grid-template-columns: 1fr 1fr; } }
+
+/* ---------- the tracker ---------- */
+.st {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; padding: 2px 16px calc(10px + env(safe-area-inset-bottom));
+  background: var(--paper); border-top: 2px solid var(--ink);
+}
+.st-in { max-width: 1148px; margin: 0 auto; }
+.st-head { display: flex; align-items: center; gap: 4px; min-height: 44px; }
+.st-title { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+.st-title b { font-family: var(--display); font-weight: 600; font-size: 17px; line-height: 1.2; max-width: 100%; overflow-wrap: anywhere;
+  /* a long name ("Cole, Thomas and Ada's sheet") wraps to two lines, then shortens */
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.st-head { padding: 4px 0; }
+.st-title .wide { display: none; }
+.st-tool {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 8px; border: 0; background: none;
+  font-weight: 600; font-size: 14px; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; border-radius: 10px;
+}
+.st-tool svg { width: 12px; height: 12px; flex: none; }
+.st-tool:last-child { margin-right: -8px; }
+
+.st-strip { display: flex; gap: 4px; max-width: 520px; }
+.st-page {
+  position: relative; flex: 1; min-width: 0; padding: 3px; border-radius: 14px;
+  background: var(--oat); border: 1.5px dashed var(--edge);
+}
+.st-page.off { display: none; }
+.st-page.full { border: 1.5px solid var(--ink); }
+.st-page.full::after {
+  content: "✓"; position: absolute; top: -9px; right: -5px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--ink); color: var(--paper); font-size: 12px; font-weight: 700; display: grid; place-items: center;
+}
+.st-cap { display: none; }
+.st-slots { display: flex; gap: 3px; }
+.st-slot {
+  flex: 1; min-width: 0; height: 48px; padding: 3px; border-radius: 10px; border: 1.5px solid transparent;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.st-slot.go { background: var(--go-tint); } .st-slot.fort { background: var(--fort-tint); } .st-slot.climb { background: var(--climb-tint); }
+.st-slot svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+.st-slot.empty { background: var(--paper); border: 1.5px dashed var(--seam); color: var(--stone); font-size: 12px; font-weight: 600; }
+.st-slot.empty.next { border-color: var(--ink); color: var(--ink); font-family: var(--display); font-size: 20px; line-height: 1; }
+.st-slot[aria-pressed=true] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+.st-slot.pop { animation: st-pop .32s ease-out; }
+@keyframes st-pop { from { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.12); } to { transform: none; opacity: 1; } }
+
+/* the other page, folded to one tile on a phone */
+.st-flip, .st-page.ghost {
+  flex: none; width: 46px; padding: 0; border-radius: 14px; background: var(--paper); color: var(--ink);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  font-size: 12px; font-weight: 700; line-height: 1; letter-spacing: -.01em;
+}
+.st-flip { border: 1.5px solid var(--edge); box-shadow: var(--slab); }
+.st-page.ghost { border: 1.5px dashed var(--ink); }
+.st-page.ghost .st-slots { display: none; }
+.st-ghost-label i { display: block; font-style: normal; font-family: var(--display); font-size: 20px; margin-bottom: 3px; text-align: center; }
+.st-ghost-label .wide { display: none; }
+.st-mini { display: grid; grid-template-columns: repeat(3, 7px); gap: 2px; }
+.st-mini i { width: 7px; height: 7px; border-radius: 2px; border: 1.5px solid var(--edge); }
+.st-mini i.on { background: var(--ink); border-color: var(--ink); }
+
+.st-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 8px; }
+.st-foot p { flex: 1 1 140px; min-width: 0; }
+.st-foot p b { display: block; font-family: var(--display); font-weight: 600; font-size: 16px; line-height: 1.2; }
+.st-foot .small { display: block; }
+.st-foot .linkish { font-size: 13px; }
+.st-btns { display: flex; gap: 8px; flex: none; margin-left: auto; }
+.st-btns .btn { padding: 0 16px; font-size: 15px; }
+
+/* tucked away: one pill that brings it back */
+.st-pill { position: fixed; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 8; box-shadow: 0 3px 0 var(--ink); padding: 0 16px; font-size: 15px; }
+.st-pill svg { width: 12px; height: 12px; }
+.st-pill .n { font-family: var(--text); font-weight: 600; font-size: 14px; }
+
+/* undo and short messages */
+.st-toast {
+  position: fixed; left: 16px; right: 16px; bottom: calc(var(--tray-h, 0px) + 14px + env(safe-area-inset-bottom)); z-index: 9;
+  max-width: 420px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 4px 8px 4px 16px; min-height: 52px; border-radius: 16px; font-weight: 600; font-size: 15px;
+}
+.st-toast button { min-height: 44px; padding: 0 14px; border: 0; background: none; color: var(--paper); font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 2px; border-radius: 10px; }
+.st-toast button:focus-visible { outline-color: var(--paper); }
+
+@media (min-width: 900px) {
+  .st { padding-bottom: 12px; }
+  .st-title .wide { display: inline; } .st-title .narrow { display: none; }
+  .st-body { display: flex; align-items: flex-end; gap: 20px; }
+  .st-strip { max-width: none; flex: none; gap: 12px; }
+  .st-page, .st-page.off { display: block; flex: none; padding: 4px; }
+  .st-flip { display: none; }
+  .st-cap { display: block; padding: 1px 4px 4px; font-size: 12px; font-weight: 700; color: var(--stone); text-align: left; }
+  .st-page.full .st-cap { color: var(--ink); }
+  .st-slots { gap: 4px; }
+  .st-slot { flex: none; width: 52px; height: 48px; }
+  .st-page.ghost { width: auto; display: block; background: var(--oat); position: relative; }
+  .st-page.ghost .st-slots { display: flex; opacity: .45; }
+  .st-ghost-label { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--ink); background: var(--paper); font-family: var(--display); font-weight: 600; font-size: 15px; white-space: nowrap; letter-spacing: 0; }
+  .st-ghost-label .wide { display: inline; } .st-ghost-label .narrow, .st-ghost-label i { display: none; }
+  .st-foot { flex: 1; margin: 0; flex-wrap: nowrap; min-height: 58px; }
+  .st-foot [data-addpage] { display: none; } /* the ghost page beside it makes the offer */
+}
+@media print { .st, .st-pill, .st-toast, .notes { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="page">
+  <details class="notes" id="notes">
+    <summary><span>Design notes · <b>Slot strip</b></span></summary>
+    <div class="notes-in">
+      <div>
+        <h2>The idea</h2>
+        <p>The tracker is the paper itself, laid flat: six places per page, each one filling with a tiny drawing of the build as it is picked. Empty places show where the next pick lands, so "how far along am I" needs no reading.</p>
+      </div>
+      <div>
+        <h2>One page or two</h2>
+        <p>Every sheet starts as one page of six. When page one is full the outline goes solid, a check appears, and page two is offered: as ghost slots beside it on a wide screen, as a "+ Page 2" tile and an "Add page two" button on a phone. Picking a seventh build also starts page two, so nobody hits a wall. On a phone one page shows at a time and the other folds into a small tile you tap to flip. An empty page two can be removed again.</p>
+      </div>
+      <div>
+        <h2>States</h2>
+        <ul>
+          <li><b>Nothing picked:</b> no tracker at all.</li>
+          <li><b>First pick:</b> strip appears, slot 1 filled, "+" in slot 2. Button: "Open sheet".</li>
+          <li><b>Page one full:</b> solid outline and check. Buttons: "Add page two" and "Open 1-page sheet".</li>
+          <li><b>Working on page two:</b> "8 of 12 picked". Button: "Open 2-page sheet".</li>
+          <li><b>All full:</b> "Both pages are full". A 13th tap says to take one off first.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Suggestions, removing, hiding, clearing</h2>
+        <ul>
+          <li><b>Suggestions</b> are left out of the strip. It shows picks only, and one line says the empty places get suggestions when the sheet opens.</li>
+          <li><b>Remove:</b> tap a slot to select it. Its name appears with "Take off" and "Keep". The place stays open and the next pick fills it. The card's own button still works too.</li>
+          <li><b>Hide:</b> tucks the tracker into a "Show sheet · 3 of 6" pill at the bottom right. The pill keeps counting and brings it back in one tap.</li>
+          <li><b>Clear:</b> asks first ("Take all 7 builds off the sheet?"), then offers Undo for 8 seconds.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Mobbin references</h2>
+        <ul>
+          <li><b>Snapchat</b>, photo multi-select: a thumbnail strip in pick order beside one forward button. <a href="https://mobbin.com/screens/a6d40d6c-4420-4334-bde0-9ac2663a5965">Screen</a></li>
+          <li><b>Shopee</b>, media picker: the limit said in plain words right above the thumbnails. <a href="https://mobbin.com/screens/d90bfda9-026b-4435-8ae8-69f09c806817">Screen</a></li>
+          <li><b>Shopify</b>, select files: "3 selected" as the headline of a bottom panel of thumbnails. <a href="https://mobbin.com/screens/fe4c261c-8197-4870-b362-a4156979d55c">Screen</a></li>
+          <li><b>Crumbl Cookies</b>, box builder: the button's words change with how many are left. <a href="https://mobbin.com/screens/dea48bed-c707-4190-a619-c17d550920d8">Screen</a></li>
+          <li><b>Fable</b>, "Pick 5-8": a range, not one fixed number. Six is enough, twelve is the most. <a href="https://mobbin.com/screens/ae56fe3f-f228-4cd5-b4d8-7c714e627d76">Screen</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Review links</h2>
+        <p><code>?picked=0</code> to <code>?picked=12</code>, <code>&amp;pages=2</code> (page two added), <code>&amp;view=1</code> (phone: which page shows), <code>&amp;select=3</code> (a slot selected), <code>&amp;hidden=1</code>, <code>&amp;confirm=1</code>, <code>&amp;cleared=1</code> (undo message), <code>&amp;kid=Max</code> or <code>&amp;kid=Cole,Thomas</code> (several children; a long name wraps to two lines), <code>&amp;notes=open</code>. Nothing is saved.</p>
+      </div>
+    </div>
+  </details>
+
+  <header class="top"><span class="brand" id="brand"></span><span class="pill" aria-hidden="true">Print a sheet</span></header>
+  <div class="intro">
+    <h1>24 build ideas for your play couch</h1>
+    <p class="sub">Cars, forts and slides. Free. Tap one to see it go together piece by piece.</p>
+  </div>
+  <div class="filter">
+    <div class="filter-in">
+      <div class="chips" id="themes" role="radiogroup" aria-label="Theme"></div>
+      <div class="status"><span id="count" aria-live="polite"></span></div>
+    </div>
+  </div>
+  <main id="list"></main>
+</div>
+
+<div class="st" id="tracker" hidden></div>
+<button class="btn st-pill" id="pill" type="button" hidden></button>
+<div class="st-toast on-dark" id="toast" role="status" hidden></div>
+
+<script type="module">
+import { BUILDS } from '../../js/builds.js';
+import { THEMES } from '../../js/setups.js';
+import { candidates } from '../../js/sheet-state.js';
+import { cardHtml, drawWhenSeen } from '../../js/card.js';
+import { installBrand, lockup, themeIcon } from '../../js/brand.js';
+import { DEFAULTS } from '../../js/prefs.js';
+import { palette, drawBuild } from '../../js/flat.js';
+import { esc } from '../../js/html.js';
+
+const q = new URLSearchParams(location.search), $ = id => document.getElementById(id);
+const OWNED = 'couch-addon', PER = 6, SHOWN = 15;
+const pool = candidates(BUILDS, OWNED), shown = pool.slice(0, SHOWN);
+const find = id => BUILDS.find(b => b.id === id);
+const pal = palette({ nug: DEFAULTS.nug, nug2: DEFAULTS.nug, chk: DEFAULTS.chk });
+// ?kid=Cole,Thomas names several children: "Cole and Thomas's sheet".
+const kids = (q.get('kid') ?? 'Max').split(',').map(k => k.trim().slice(0, 14)).filter(Boolean).slice(0, 4);
+const kidNames = kids.length > 1 ? `${kids.slice(0, -1).join(', ')} and ${kids.at(-1)}` : kids[0] || '';
+const sheetName = kidNames ? `${esc(kidNames)}'s sheet` : 'Your sheet';
+const CHEV = up => `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="${up ? 'M2 8l4-4 4 4' : 'M2 4l4 4 4-4'}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+// ---------- state: twelve places on the paper, in memory only ----------
+const S = { slots: Array(PER * 2).fill(null), pages: 1, view: 1, hidden: false, sel: -1, confirm: false, msg: '', pop: -1 };
+const total = () => S.slots.filter(Boolean).length;
+const onPage = p => S.slots.slice((p - 1) * PER, p * PER).filter(Boolean).length;
+const snapshot = () => ({ ...S, slots: [...S.slots] });
+
+function addPick(id) {
+  let i = S.slots.findIndex((s, k) => !s && k < S.pages * PER);
+  S.msg = ''; S.sel = -1; S.confirm = false;
+  if (i < 0 && S.pages === 1) { S.pages = 2; i = PER; S.msg = 'Page one was full, so this starts page two'; }
+  if (i < 0) { S.msg = 'The sheet is full. Take one off to add another.'; return; }
+  S.slots[i] = id; S.view = i < PER ? 1 : 2; S.pop = i;
+}
+function removePick(id) {
+  const i = S.slots.indexOf(id);
+  if (i < 0) return;
+  S.slots[i] = null; S.sel = -1; S.msg = ''; S.confirm = false;
+  if (!total()) Object.assign(S, { pages: 1, view: 1, hidden: false });
+}
+
+// ---------- the gallery slice ----------
+let theme = '';
+installBrand();
+$('brand').innerHTML = lockup();
+$('themes').innerHTML = [['', 'All'], ...Object.entries(THEMES)].map(([id, name]) =>
+  `<label><input type="radio" name="theme" value="${id}"${id === theme ? ' checked' : ''}><span class="chip">${id ? themeIcon(id) : ''}${esc(name)}</span></label>`).join('');
+const pics = drawWhenSeen($('list'), find, () => pal);
+
+function renderList() {
+  const list = shown.filter(b => !theme || b.theme === theme);
+  $('count').textContent = `${list.length} build${list.length === 1 ? '' : 's'} you can make with 1 couch + add-on`;
+  $('list').innerHTML = `<section class="sec"><div class="sec-head"><h2>You can build these now</h2></div>
+    <div class="grid">${list.map(b => cardHtml(b, { owned: OWNED, onSheet: S.slots.includes(b.id) })).join('')}</div></section>`
+    .replaceAll('href="build.html', 'href="../../build.html');
+  pics.watch();
+}
+function syncCards() {
+  $('list').querySelectorAll('[data-add]').forEach(btn => {
+    const on = S.slots.includes(btn.dataset.add);
+    btn.setAttribute('aria-pressed', on);
+    btn.textContent = on ? 'On your sheet' : 'Add to sheet';
+  });
+}
+
+// ---------- the tracker ----------
+const thumbs = new Map();
+const thumb = id => thumbs.get(id) || thumbs.set(id, drawBuild(find(id), pal, { rug: false })).get(id);
+
+function pageHtml(p) {
+  const start = (p - 1) * PER, c = onPage(p), next = S.slots.findIndex((s, k) => !s && k < S.pages * PER);
+  const slots = S.slots.slice(start, start + PER).map((id, k) => {
+    const i = start + k;
+    if (!id) return `<span class="st-slot empty${i === next ? ' next' : ''}" aria-hidden="true">${i === next ? '+' : k + 1}</span>`;
+    const b = find(id);
+    return `<button type="button" class="st-slot ${b.theme}${i === S.pop ? ' pop' : ''}" data-slot="${i}" aria-pressed="${i === S.sel}" aria-label="${esc(b.name)}, page ${p}, place ${k + 1}">${thumb(id)}</button>`;
+  }).join('');
+  return `<div class="st-page${c === PER ? ' full' : ''}${S.view !== p ? ' off' : ''}" role="group" aria-label="Page ${p}: ${c} of ${PER} picked">
+    <span class="st-cap">Page ${p} · ${c === PER ? 'full' : `${c} of ${PER}`}</span><div class="st-slots">${slots}</div></div>`;
+}
+const flipHtml = () => {
+  const other = S.view === 1 ? 2 : 1, start = (other - 1) * PER;
+  return `<button type="button" class="st-flip" data-flip="${other}" aria-label="Show page ${other}: ${onPage(other)} of ${PER} picked">
+    <span class="st-mini">${S.slots.slice(start, start + PER).map(id => `<i${id ? ' class="on"' : ''}></i>`).join('')}</span><span>Page ${other}</span></button>`;
+};
+const ghostHtml = () => `<button type="button" class="st-page ghost" data-addpage aria-label="Add page two">
+  <span class="st-cap">Page 2</span><span class="st-slots">${'<span class="st-slot empty"></span>'.repeat(PER)}</span>
+  <span class="st-ghost-label"><span class="narrow"><i>+</i>Page 2</span><span class="wide">Add page two</span></span></button>`;
+
+function footHtml() {
+  const n = total(), cap = S.pages * PER, left = cap - n;
+  if (S.confirm) return `<p><b>Take all ${n} build${n === 1 ? '' : 's'} off the sheet?</b><span class="small">You can undo right after.</span></p>
+    <div class="st-btns"><button type="button" class="btn quiet" data-act="keep-all">Keep them</button><button type="button" class="btn primary" data-act="clear-yes">Clear sheet</button></div>`;
+  if (S.sel >= 0 && S.slots[S.sel]) {
+    const b = find(S.slots[S.sel]);
+    return `<p><b>${esc(b.name)}</b><span class="small">Page ${S.sel < PER ? 1 : 2}, place ${S.sel % PER + 1}</span></p>
+      <div class="st-btns"><button type="button" class="btn quiet" data-act="desel">Keep</button><button type="button" class="btn" data-act="take">Take off</button></div>`;
+  }
+  const fill = left === 1 ? 'We fill the last place with a suggestion.' : `We fill the other ${left} with suggestions.`;
+  let head, sub, extra = '', btns = '';
+  if (S.pages === 1 && left) { head = `${n} of 6 picked`; sub = fill; }
+  else if (S.pages === 1) { head = 'Page one is full'; sub = 'Open it as is, or add page two for 6 more.'; btns = '<button type="button" class="btn quiet" data-addpage>Add page two</button>'; }
+  else if (!left) { head = 'Both pages are full'; sub = '12 builds, front and back.'; }
+  else if (!onPage(2)) { head = 'Page two is empty'; sub = 'We fill it with suggestions.'; extra = '<button type="button" class="linkish" data-act="drop-page">Remove page two</button>'; }
+  else { head = `${n} of 12 picked`; sub = fill; }
+  const label = S.pages === 2 ? 'Open 2-page sheet' : left ? 'Open sheet' : 'Open 1-page sheet';
+  return `<p aria-live="polite"><b>${esc(S.msg || head)}</b><span class="small">${sub}</span>${extra}</p>
+    <div class="st-btns">${btns}<a class="btn primary" href="../../sheet.html" data-act="open">${label}</a></div>`;
+}
+
+function renderTracker() {
+  const n = total(), cap = S.pages * PER, show = n > 0, el = $('tracker');
+  el.hidden = !show || S.hidden;
+  $('pill').hidden = !show || !S.hidden;
+  if (show && S.hidden) $('pill').innerHTML = `Show sheet <span class="n">· ${n} of ${cap}</span>${CHEV(true)}`;
+  if (!el.hidden) {
+    const strip = S.pages === 2
+      ? (S.view === 2 ? flipHtml() + pageHtml(1) + pageHtml(2) : pageHtml(1) + pageHtml(2) + flipHtml())
+      : pageHtml(1) + (n === PER ? ghostHtml() : '');
+    el.innerHTML = `<div class="st-in">
+      <div class="st-head">
+        <p class="st-title"><b>${sheetName}</b><span class="small"><span class="narrow">${S.pages === 2 ? `Page ${S.view} of 2` : '1 page, 6 builds'}</span><span class="wide">${S.pages === 2 ? '2 pages, 12 builds' : '1 page, 6 builds'}</span></span></p>
+        ${S.confirm ? '' : '<button type="button" class="st-tool" data-act="clear">Clear</button>'}
+        <button type="button" class="st-tool" data-act="hide" aria-label="Hide the sheet tracker">Hide${CHEV(false)}</button>
+      </div>
+      <div class="st-body"><div class="st-strip">${strip}</div><div class="st-foot">${footHtml()}</div></div></div>`;
+  } else el.innerHTML = '';
+  S.pop = -1;
+  document.body.style.setProperty('--tray-h', (el.hidden ? ($('pill').hidden ? 0 : 58) : el.offsetHeight) + 'px');
+  syncCards();
+}
+
+// ---------- undo and short messages ----------
+let toastTimer = 0;
+function toast(text, undo, stay = false) {
+  clearTimeout(toastTimer);
+  $('toast').innerHTML = `<span>${esc(text)}</span>${undo ? '<button type="button" data-undo>Undo</button>' : ''}`;
+  $('toast').hidden = false;
+  $('toast').onclick = e => { if (e.target.closest('[data-undo]')) { Object.assign(S, undo); hideToast(); renderTracker(); } };
+  if (!stay) toastTimer = setTimeout(hideToast, undo ? 8000 : 3500);
+}
+function hideToast() { clearTimeout(toastTimer); $('toast').hidden = true; }
+function clearSheet(stay) {
+  const before = { ...snapshot(), confirm: false, sel: -1, msg: '' };
+  Object.assign(S, { slots: Array(PER * 2).fill(null), pages: 1, view: 1, hidden: false, sel: -1, confirm: false, msg: '' });
+  renderTracker();
+  toast('Sheet cleared.', before, stay);
+}
+
+// ---------- wiring ----------
+$('themes').addEventListener('change', e => { theme = e.target.value; renderList(); });
+$('list').addEventListener('click', e => {
+  const btn = e.target.closest('[data-add]');
+  if (!btn) return;
+  hideToast();
+  if (S.slots.includes(btn.dataset.add)) removePick(btn.dataset.add); else addPick(btn.dataset.add);
+  renderTracker();
+});
+$('pill').addEventListener('click', () => { S.hidden = false; renderTracker(); });
+$('tracker').addEventListener('click', e => {
+  const slot = e.target.closest('[data-slot]'), flip = e.target.closest('[data-flip]'), act = e.target.closest('[data-act]')?.dataset.act;
+  if (e.target.closest('[data-addpage]')) Object.assign(S, { pages: 2, view: 2, msg: '', sel: -1 });
+  else if (slot) { const i = +slot.dataset.slot; S.sel = S.sel === i ? -1 : i; S.confirm = false; S.msg = ''; }
+  else if (flip) { S.view = +flip.dataset.flip; S.sel = -1; S.msg = ''; }
+  else if (act === 'take') removePick(S.slots[S.sel]);
+  else if (act === 'desel') S.sel = -1;
+  else if (act === 'hide') Object.assign(S, { hidden: true, sel: -1, confirm: false });
+  else if (act === 'clear') Object.assign(S, { confirm: true, sel: -1, msg: '' });
+  else if (act === 'keep-all') S.confirm = false;
+  else if (act === 'clear-yes') { clearSheet(); return; }
+  else if (act === 'drop-page') Object.assign(S, { pages: 1, view: 1, msg: '' });
+  else if (act === 'open') { e.preventDefault(); toast('Mock-up: this opens the sheet, ready to print.'); return; }
+  else return;
+  renderTracker();
+});
+addEventListener('resize', () => document.body.style.setProperty('--tray-h', ($('tracker').hidden ? ($('pill').hidden ? 0 : 58) : $('tracker').offsetHeight) + 'px'));
+
+// ---------- REVIEW AIDS: start in a given state so it can be screenshotted ----------
+const picked = Math.max(0, Math.min(PER * 2, parseInt(q.get('picked')) || 0));
+pool.slice(0, picked).forEach((b, i) => { S.slots[i] = b.id; });
+if (picked > PER || (q.get('pages') === '2' && picked)) S.pages = 2;
+S.view = S.pages === 2 ? (q.get('view') === '1' ? 1 : 2) : 1;
+const sel = parseInt(q.get('select'));
+if (sel >= 1 && S.slots[sel - 1]) { S.sel = sel - 1; S.view = sel > PER ? 2 : 1; }
+if (q.get('hidden') === '1') S.hidden = true;
+if (q.get('confirm') === '1') S.confirm = true;
+if (q.get('notes') === 'open') $('notes').open = true;
+
+renderList();
+renderTracker();
+if (q.get('cleared') === '1' && picked) clearSheet(true);
+</script>
+</body>
+</html>

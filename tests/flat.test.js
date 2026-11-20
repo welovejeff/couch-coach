@@ -35,3 +35,31 @@ test('the second couch is drawn in its own colour when one is set', () => {
 test('with no second colour the second couch takes the first couch colour', () => {
   assert.equal(roleHex(pal, 'base2'), roleHex(pal, 'base'));
 });
+
+test('drawing a build part-way keeps the frame of the whole build and leaves stickers until the end', async () => {
+  const { drawBuild, palette } = await import('../js/flat.js');
+  const { BUILDS } = await import('../js/builds.js');
+  const b = BUILDS.find(x => x.id === 'race-car'), pal = palette({ nug: '#4f7cb8', nug2: '', chk: '#9db08a' });
+  const box = svg => /viewBox="([^"]+)"/.exec(svg)[1], paths = svg => svg.split('<path').length;
+  const whole = drawBuild(b, pal), part = drawBuild(b, pal, { through: 2, fade: true });
+  assert.equal(box(part), box(whole));
+  assert.ok(paths(part) < paths(whole));
+  assert.ok(whole.includes('foreignObject') && !part.includes('foreignObject'));
+  assert.equal(drawBuild(b, pal, { through: 99 }), whole);
+});
+
+test('a colouring-in drawing has white shapes with dark outlines and no floor patch', async () => {
+  const { drawBuild, palette } = await import('../js/flat.js');
+  const { BUILDS } = await import('../js/builds.js');
+  const svg = drawBuild(BUILDS[0], palette({ nug: '#4f7cb8', nug2: '', chk: '#9db08a' }), { line: true });
+  const fills = new Set([...svg.matchAll(/<path d="[^"]+" fill="([^"]+)"/g)].map(m => m[1]));
+  assert.deepEqual([...fills], ['#ffffff']);
+  assert.ok(svg.includes('stroke="#2b2521"') && !svg.includes('<polygon'));
+});
+
+test("a drawing's path rules are scoped to the drawing", async () => {
+  const { drawBuild, palette } = await import('../js/flat.js');
+  const { BUILDS } = await import('../js/builds.js');
+  const style = /<style>([^<]+)<\/style>/.exec(drawBuild(BUILDS[0], palette({ nug: '#4f7cb8', nug2: '', chk: '#9db08a' })))[1];
+  assert.ok(style.split('}').filter(Boolean).every(rule => rule.trim().startsWith('.cc-d ')));
+});
